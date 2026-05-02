@@ -1,6 +1,7 @@
 /**
  * Snapshot of [Figma Make](https://www.figma.com/make/XrH8hl5WJDXRz969sCTfoc/Untitled)
- * (`fileKey` XrH8hl5WJDXRz969sCTfoc). Pulled via MCP resource URIs — edit when design updates.
+ * (`fileKey` XrH8hl5WJDXRz969sCTfoc). Published preview:
+ * [figma.site](https://model-like-95584888.figma.site). Pulled via MCP resource URIs — edit when design updates.
  *
  * TODO: replace with API responses; keep structure aligned with Make when refreshing from Figma.
  */

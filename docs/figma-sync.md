@@ -14,7 +14,8 @@ When Make changes, **update tokens first** (if variables changed), then **refres
 
 ## Make file
 
-- **URL:** [Figma Make — Untitled](https://www.figma.com/make/XrH8hl5WJDXRz969sCTfoc/Untitled)
+- **Editor (Make):** [Figma Make — Untitled](https://www.figma.com/make/XrH8hl5WJDXRz969sCTfoc/Untitled)
+- **Published preview (Figma Site):** [Nexa TC Application](https://model-like-95584888.figma.site) — quick visual reference before diffing source into this repo.
 - **`fileKey` for MCP:** `XrH8hl5WJDXRz969sCTfoc`
 
 ## Simplest refresh loop (Cursor + Figma MCP)
