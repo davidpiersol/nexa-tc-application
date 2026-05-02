@@ -34,20 +34,25 @@ export interface TransactionCardProps
 /**
  * Kanban transaction tile — 270px, stage accent bar, gold progress.
  */
-function TransactionCard({
-  className,
-  stage,
-  address,
-  closeDateLabel,
-  tcInitials,
-  progressPercent,
-  ...props
-}: TransactionCardProps) {
+const TransactionCard = React.forwardRef<HTMLDivElement, TransactionCardProps>(
+  (
+    {
+      className,
+      stage,
+      address,
+      closeDateLabel,
+      tcInitials,
+      progressPercent,
+      ...props
+    },
+    ref,
+  ) => {
   const pct = Math.min(100, Math.max(0, progressPercent));
   return (
     <div
+      ref={ref}
       className={cn(
-        "flex w-[270px] flex-col overflow-hidden rounded-brand-lg bg-white shadow-brand-sm",
+        "flex w-[270px] shrink-0 flex-col overflow-hidden rounded-brand-lg bg-white shadow-brand-sm",
         className,
       )}
       {...props}
@@ -71,6 +76,8 @@ function TransactionCard({
       </div>
     </div>
   );
-}
+  },
+);
+TransactionCard.displayName = "TransactionCard";
 
 export { TransactionCard, accentVariants };

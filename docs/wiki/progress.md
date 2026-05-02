@@ -11,10 +11,10 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Chapter 2 — Step 8** (Generate all 14 screen pages) |
-| **Completed** | **Step 7:** UI + graphics components (`cva`, Radix, Nexa tokens) — **`v1.0.4`**. Spec from `nexa_build_guide.md`; Figma MCP diff optional. |
-| **Next** | **Step 8** — Screen pages from Figma frames. |
-| **After that** | Chapter 3+ (Claude Code backend) |
+| **Current position** | **Chapter 3 — Step 9** (Database schema & RLS) — use **Claude Code** per guide |
+| **Completed** | **Step 8:** All mapped routes implemented — responsive screens, motion, kanban DnD, placeholders + TODOs — **`v1.0.5`**. |
+| **Next** | **Chapter 3 · Step 9** — Database schema & Row Level Security (outside Cursor UI pass). |
+| **After that** | Steps 10–15 |
 
 ---
 
@@ -38,7 +38,7 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 | 5 | Extract design tokens from Figma into Tailwind | **Complete** — see `tailwind.config.ts`, `app/globals.css`, [`docs/design-tokens-source.md`](../../docs/design-tokens-source.md) |
 | 6 | Scaffold the Next.js 14 project | **Complete** — App Router, layouts, API routes, `lib/*`, `inngest`, deps |
 | 7 | Generate all components from Figma | **Complete** — see `components/ui`, `components/graphics`, `docs/components-library.md` |
-| 8 | Generate all 14 screen pages | **In progress** — current focus |
+| 8 | Generate all 14 screen pages | **Complete** — see `app/(dashboard)`, `app/(auth)`; MFA at `/auth/mfa` |
 
 ### Step 5 — What “done” looks like
 
@@ -86,6 +86,7 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-02 | **Step 8 done:** Figma-aligned screens, Framer Motion + kanban + placeholders; **v1.0.5**. |
 | 2026-05-02 | **Step 7 done:** Component library + graphics; **v1.0.4**. |
 | 2026-05-02 | **Step 6 done:** Next.js 14 manual scaffold, packages, routes, API stubs; **v1.0.3**. |
 | 2026-05-02 | **Step 5 done:** Tailwind + globals + shadcn variable mapping; **v1.0.2**. |

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -18,19 +19,30 @@ export interface ChecklistPanelProps extends React.HTMLAttributes<HTMLDivElement
   items: ChecklistItem[];
   /** Fires when any item toggles */
   onItemChange?: (id: string, checked: boolean) => void;
+  /**
+   * Gold check pop + label strikethrough when completing an item.
+   * @default false
+   */
+  animateComplete?: boolean;
 }
 
 /**
- * Radix checkbox list — gold focus ring; parchment-style panel optional via className.
+ * Radix checkbox list — gold focus ring; optional Framer complete animation.
  */
 function ChecklistPanel({
   className,
   title,
-  items,
+  items: itemsProp,
   onItemChange,
+  animateComplete = false,
   ...props
 }: ChecklistPanelProps) {
   const uid = React.useId();
+  const [items, setItems] = React.useState(itemsProp);
+  React.useEffect(() => {
+    setItems(itemsProp);
+  }, [itemsProp]);
+
   return (
     <div
       className={cn(
@@ -47,15 +59,30 @@ function ChecklistPanel({
               id={`${uid}-${item.id}`}
               checked={item.checked}
               disabled={item.disabled}
-              onCheckedChange={(v) =>
-                onItemChange?.(item.id, v === true)
-              }
+              onCheckedChange={(v) => {
+                const next = v === true;
+                setItems((prev) =>
+                  prev.map((i) => (i.id === item.id ? { ...i, checked: next } : i)),
+                );
+                onItemChange?.(item.id, next);
+              }}
               className={cn(
                 "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded border border-neutral-300 bg-white text-brand-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 data-[state=checked]:border-brand-gold data-[state=checked]:bg-brand-gold-pale",
               )}
             >
-              <CheckboxPrimitive.Indicator>
-                <Check className="size-3.5 stroke-[3]" aria-hidden />
+              <CheckboxPrimitive.Indicator className="flex items-center justify-center">
+                {animateComplete ? (
+                  <motion.span
+                    initial={{ scale: 1.35, opacity: 0.6 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="text-brand-gold"
+                  >
+                    <Check className="size-3.5 stroke-[3]" aria-hidden />
+                  </motion.span>
+                ) : (
+                  <Check className="size-3.5 stroke-[3]" aria-hidden />
+                )}
               </CheckboxPrimitive.Indicator>
             </CheckboxPrimitive.Root>
             <label
@@ -65,7 +92,20 @@ function ChecklistPanel({
                 item.disabled && "text-neutral-600",
               )}
             >
-              {item.label}
+              {animateComplete ? (
+                <motion.span
+                  animate={{
+                    textDecoration: item.checked ? "line-through" : "none",
+                    opacity: item.checked ? 0.75 : 1,
+                  }}
+                  transition={{ duration: 0.25 }}
+                  className={cn(item.checked && "text-neutral-600")}
+                >
+                  {item.label}
+                </motion.span>
+              ) : (
+                item.label
+              )}
             </label>
           </li>
         ))}
