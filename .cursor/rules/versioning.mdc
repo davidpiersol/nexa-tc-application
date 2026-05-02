@@ -1,0 +1,32 @@
+---
+description: Release and version numbering for Nexa TC Application (v.X.Y.Z)
+alwaysApply: true
+---
+
+# Version numbering
+
+All releases use **v.X.Y.Z** where **X**, **Y**, and **Z** are non-negative integers. The canonical value lives in the repository **VERSION** file and must stay in sync with Git release tags.
+
+## Components
+
+- **X — Milestone version**  
+  Increments for major application milestones: stable baselines, planned upgrades, and significant application evolution (including milestones reached before larger upgrades or architectural shifts).
+
+- **Y — Major version (phase / sprint)**  
+  Increments after successful testing when the app is **stable with no known bugs** for the current phase or sprint—e.g. explicit approval to move to the next phase or sprint.
+
+- **Z — Patch / iteration**  
+  Increments for unit-test work, minor bugfixes, design and layout changes, and other small, non-milestone iterations.
+
+## Examples
+
+`v1.0.0` → `v1.0.1` (Z bump) → `v1.1.0` (Y bump) → `v2.0.0` (X bump).
+
+## Current baseline
+
+Start at **v1.0.0** unless **VERSION** is updated by maintainers.
+
+## Tags and releases
+
+- Git tags MUST match **VERSION** (e.g. `v1.0.0`).
+- When bumping version, update **VERSION**, changelog or release notes as appropriate, and tag consistently.

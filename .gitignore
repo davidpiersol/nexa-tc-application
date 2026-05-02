@@ -1,0 +1,25 @@
+# IDE
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies & build (common stacks)
+node_modules/
+dist/
+build/
+.next/
+out/
+*.log
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.pyc

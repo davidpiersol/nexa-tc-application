@@ -1,0 +1,22 @@
+// Nexa TC Application — Cursor AI rules
+// Rules layout follows patterns from https://github.com/PatrickJS/awesome-cursorrules
+
+// Project context
+// Describe the application purpose, stack, and architecture here as the codebase grows.
+// Stack-specific guidance lives in rules-new/*.mdc; enable or copy the files that match your stack.
+
+// Versioning — v.X.Y.Z (must align with VERSION file and Git tags)
+// X = Milestone version: stable milestones, planned upgrades, major application evolution.
+// Y = Major version (phase/sprint): bump after successful testing when stable with no known bugs for the phase/sprint.
+// Z = Patch: unit tests, minor bugfixes, design/layout tweaks, small iterations.
+// Baseline: v1.0.0. Examples: v1.0.1 (Z), v1.1.0 (Y), v2.0.0 (X).
+// Always tag releases to match VERSION (e.g. tag v1.0.0 when VERSION is v1.0.0).
+
+// Repository layout (awesome-cursorrules–inspired)
+// - .cursor/rules/     Project rules (.mdc); versioning.mdc applies globally.
+// - rules-new/          Optional stack rules from Awesome Cursor Rules (MDC format).
+// - rules/              Optional: add technology-specific .cursorrules packs per awesome-cursorrules conventions.
+
+// General guidance
+// Use clear, project-appropriate naming; keep AI-facing rules concise and actionable.
+// Prefer extending existing patterns over one-off special cases.
