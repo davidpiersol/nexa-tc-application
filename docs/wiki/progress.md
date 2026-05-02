@@ -11,10 +11,10 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Chapter 2 — Step 6** (Scaffold the Next.js 14 project) |
-| **Completed** | **Step 5:** `tailwind.config.ts` + `app/globals.css` + PostCSS/Tailwind deps — tokens from `nexa_build_guide.md` (reconcile with Figma when a file URL is available). Ship: `v1.0.2`. |
-| **Next** | Finish **Step 6** (Next.js 14 scaffold + wire `globals.css`), then **Step 7** (components from Figma). |
-| **After that** | Chapter 2 — Step 8, then Chapter 3+ |
+| **Current position** | **Chapter 2 — Step 7** (Generate all components from Figma) |
+| **Completed** | **Steps 5–6:** Tailwind tokens + Next.js 14 manual scaffold — **`v1.0.3`**. |
+| **Next** | **Step 7** — Components from Figma (`01 — Component Library`). |
+| **After that** | Chapter 2 — Step 8 (all screens), then Chapter 3+ |
 
 ---
 
@@ -36,8 +36,8 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 | Step | Title | Status |
 |------|--------|--------|
 | 5 | Extract design tokens from Figma into Tailwind | **Complete** — see `tailwind.config.ts`, `app/globals.css`, [`docs/design-tokens-source.md`](../../docs/design-tokens-source.md) |
-| 6 | Scaffold the Next.js 14 project | **In progress** — current focus |
-| 7 | Generate all components from Figma | Not started |
+| 6 | Scaffold the Next.js 14 project | **Complete** — App Router, layouts, API routes, `lib/*`, `inngest`, deps |
+| 7 | Generate all components from Figma | **In progress** — current focus |
 | 8 | Generate all 14 screen pages | Not started |
 
 ### Step 5 — What “done” looks like
@@ -48,7 +48,7 @@ Per the guide: named styles map into **`tailwind.config.ts`** and **`globals.css
 
 ### Step 6 — What “done” looks like
 
-Per the guide: Next.js 14 App Router scaffold (TypeScript strict), folder layout as specified, **`layout.tsx`** importing **`./globals.css`**, dependencies installed; manual file creation (no `create-next-app`).
+Per the guide: Next.js 14 App Router scaffold (TypeScript strict), folder layout as specified, **`layout.tsx`** importing **`./globals.css`**, dependencies installed; manual file creation (no `create-next-app`). **Done in repo at `v1.0.3`.**
 
 ---
 
@@ -86,5 +86,6 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-02 | **Step 6 done:** Next.js 14 manual scaffold, packages, routes, API stubs; **v1.0.3**. |
 | 2026-05-02 | **Step 5 done:** Tailwind + globals + shadcn variable mapping; **v1.0.2**. |
 | 2026-05-02 | Initialized tracker at **Chapter 2, Step 5**. Added `nexa_build_guide.md`, `docs/wiki/`, `CHANGELOG.md`. |

@@ -128,19 +128,15 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        brand: {
-          sm: "4px",
-          md: "8px",
-          lg: "12px",
-          full: "9999px",
-        },
+        "brand-sm": "4px",
+        "brand-md": "8px",
+        "brand-lg": "12px",
+        "brand-full": "9999px",
       },
       boxShadow: {
-        brand: {
-          sm: "0 1px 3px rgba(13, 27, 42, 0.08)",
-          md: "0 4px 8px rgba(13, 27, 42, 0.12)",
-          lg: "0 12px 24px rgba(13, 27, 42, 0.16)",
-        },
+        "brand-sm": "0 1px 3px rgba(13, 27, 42, 0.08)",
+        "brand-md": "0 4px 8px rgba(13, 27, 42, 0.12)",
+        "brand-lg": "0 12px 24px rgba(13, 27, 42, 0.16)",
       },
       keyframes: {
         "accordion-down": {

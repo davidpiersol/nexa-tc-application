@@ -1,6 +1,6 @@
 # Nexa TC Application
 
-**Current version:** [v1.0.2](VERSION)
+**Current version:** [v1.0.3](VERSION)
 
 Application repository with Cursor AI rules structured after [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules).
 
@@ -13,9 +13,13 @@ Application repository with Cursor AI rules structured after [PatrickJS/awesome-
 | [`docs/wiki/README.md`](docs/wiki/README.md) | Wiki index |
 | [`CHANGELOG.md`](CHANGELOG.md) | Version history |
 
-**Current build position:** Chapter 2, Step 6 — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
+**Current build position:** Chapter 2, Step 7 — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
 
 **Design tokens:** [`tailwind.config.ts`](tailwind.config.ts), [`app/globals.css`](app/globals.css), notes in [`docs/design-tokens-source.md`](docs/design-tokens-source.md).
+
+**Scripts:** `npm run dev` · `npm run build` · `npm run start` · `npm run lint`
+
+Copy [`.env.example`](.env.example) to `.env.local` and fill keys (`.env.local` is gitignored).
 
 ## Cursor rules layout
 
