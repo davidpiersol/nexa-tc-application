@@ -11,10 +11,10 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Chapter 2 — Step 5** (Extract design tokens from Figma into Tailwind) |
-| **Completed** | Repo bootstrap (`v1.0.0`); guide + wiki + changelog added (`v1.0.1`). *Chapter 1 Figma steps are not verified in this repository—confirm in Figma if needed.* |
-| **Next** | Chapter 2 — Step 6 (Scaffold the Next.js 14 project) |
-| **After that** | Chapter 2 — Steps 7 → 8, then Chapter 3+ |
+| **Current position** | **Chapter 2 — Step 6** (Scaffold the Next.js 14 project) |
+| **Completed** | **Step 5:** `tailwind.config.ts` + `app/globals.css` + PostCSS/Tailwind deps — tokens from `nexa_build_guide.md` (reconcile with Figma when a file URL is available). Ship: `v1.0.2`. |
+| **Next** | Finish **Step 6** (Next.js 14 scaffold + wire `globals.css`), then **Step 7** (components from Figma). |
+| **After that** | Chapter 2 — Step 8, then Chapter 3+ |
 
 ---
 
@@ -35,14 +35,20 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | Step | Title | Status |
 |------|--------|--------|
-| 5 | Extract design tokens from Figma into Tailwind | **In progress** — current focus |
-| 6 | Scaffold the Next.js 14 project | Not started |
+| 5 | Extract design tokens from Figma into Tailwind | **Complete** — see `tailwind.config.ts`, `app/globals.css`, [`docs/design-tokens-source.md`](../../docs/design-tokens-source.md) |
+| 6 | Scaffold the Next.js 14 project | **In progress** — current focus |
 | 7 | Generate all components from Figma | Not started |
 | 8 | Generate all 14 screen pages | Not started |
 
 ### Step 5 — What “done” looks like
 
-Per the guide: Figma MCP reads page **“00 — Design Tokens”**; named styles are mapped into **`tailwind.config.ts`** (brand / neutral / status colors, fonts, spacing, shadows, radii, shadcn-related extensions) and **`globals.css`** (fonts, CSS variables, warm neutral base, dark mode scaffold).
+Per the guide: named styles map into **`tailwind.config.ts`** and **`globals.css`**. If your live Figma file differs, paste the **Figma URL** and run an MCP diff against these files.
+
+---
+
+### Step 6 — What “done” looks like
+
+Per the guide: Next.js 14 App Router scaffold (TypeScript strict), folder layout as specified, **`layout.tsx`** importing **`./globals.css`**, dependencies installed; manual file creation (no `create-next-app`).
 
 ---
 
@@ -80,4 +86,5 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-02 | **Step 5 done:** Tailwind + globals + shadcn variable mapping; **v1.0.2**. |
 | 2026-05-02 | Initialized tracker at **Chapter 2, Step 5**. Added `nexa_build_guide.md`, `docs/wiki/`, `CHANGELOG.md`. |

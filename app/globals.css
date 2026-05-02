@@ -1,0 +1,106 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@400;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Font stacks (Next.js can override via next/font in layout.tsx) */
+    --font-display: "Playfair Display", Georgia, serif;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-prose: Georgia, "Times New Roman", serif;
+
+    /* Radius — guide: md = 8px default for components */
+    --radius: 8px;
+
+    /* Nexa warm canvas (neutral/50) */
+    --background: 40 33% 96%;
+    --foreground: 20 9% 11%;
+
+    /* Primary action — brand navy */
+    --primary: 218 47% 20%;
+    --primary-foreground: 40 33% 96%;
+
+    /* Secondary surfaces — parchment / cream */
+    --secondary: 35 43% 90%;
+    --secondary-foreground: 218 47% 20%;
+
+    /* Muted — neutral/100, secondary text neutral/600 */
+    --muted: 35 21% 91%;
+    --muted-foreground: 30 6% 40%;
+
+    /* Accent — brand gold (CTAs, highlights) */
+    --accent: 38 66% 47%;
+    --accent-foreground: 218 47% 20%;
+
+    /* Destructive — status/danger */
+    --destructive: 0 72% 36%;
+    --destructive-foreground: 40 33% 96%;
+
+    /* Cards & popovers */
+    --card: 40 33% 96%;
+    --card-foreground: 20 9% 11%;
+    --popover: 40 33% 96%;
+    --popover-foreground: 20 9% 11%;
+
+    /* Borders & inputs — neutral/300 */
+    --border: 33 13% 74%;
+    --input: 33 13% 74%;
+    --ring: 38 66% 47%;
+
+    /* Charts — navy / gold / steel / brown / success */
+    --chart-1: 218 47% 20%;
+    --chart-2: 38 66% 47%;
+    --chart-3: 207 52% 36%;
+    --chart-4: 25 46% 28%;
+    --chart-5: 153 39% 30%;
+  }
+
+  .dark {
+    --background: 214 53% 11%;
+    --foreground: 40 33% 96%;
+
+    --primary: 42 76% 60%;
+    --primary-foreground: 214 53% 11%;
+
+    --secondary: 213 52% 25%;
+    --secondary-foreground: 40 33% 96%;
+
+    --muted: 213 52% 25%;
+    --muted-foreground: 35 21% 91%;
+
+    --accent: 38 66% 47%;
+    --accent-foreground: 214 53% 11%;
+
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 40 33% 96%;
+
+    --card: 218 47% 20%;
+    --card-foreground: 40 33% 96%;
+    --popover: 218 47% 20%;
+    --popover-foreground: 40 33% 96%;
+
+    --border: 213 52% 35%;
+    --input: 213 52% 35%;
+    --ring: 42 76% 60%;
+
+    --chart-1: 42 76% 60%;
+    --chart-2: 207 41% 50%;
+    --chart-3: 38 66% 47%;
+    --chart-4: 35 43% 90%;
+    --chart-5: 153 39% 45%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+}
