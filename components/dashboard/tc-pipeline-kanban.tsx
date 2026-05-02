@@ -30,14 +30,15 @@ export type PipelineCard = {
   id: string;
 } & Pick<
   TransactionCardProps,
-  "address" | "closeDateLabel" | "tcInitials" | "progressPercent" | "stage"
+  "address" | "subtitle" | "closeDateLabel" | "tcInitials" | "progressPercent" | "stage"
 >;
 
+/** Column order matches Figma Make `TCDashboard` (left → right). */
 const COLUMN_META: { id: PipelineColumnId; label: string }[] = [
+  { id: "prelisting", label: "Pre-listing" },
   { id: "listing", label: "Active listing" },
   { id: "contract", label: "Under contract" },
   { id: "pending", label: "Pending" },
-  { id: "prelisting", label: "Pre-listing" },
   { id: "closed", label: "Closed" },
 ];
 
@@ -95,6 +96,7 @@ function DraggableCard({
     >
       <TransactionCard
         address={card.address}
+        subtitle={card.subtitle}
         closeDateLabel={card.closeDateLabel}
         tcInitials={card.tcInitials}
         progressPercent={card.progressPercent}
@@ -219,6 +221,7 @@ export function TcPipelineKanban({
           >
             <TransactionCard
               address={activeCard.address}
+              subtitle={activeCard.subtitle}
               closeDateLabel={activeCard.closeDateLabel}
               tcInitials={activeCard.tcInitials}
               progressPercent={activeCard.progressPercent}

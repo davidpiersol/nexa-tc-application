@@ -12,7 +12,7 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 | | |
 |--|--|
 | **Current position** | **Chapter 3 — Step 9** (Database schema & RLS) — use **Claude Code** per guide |
-| **Completed** | **Step 8:** All mapped routes implemented — responsive screens, motion, kanban DnD, placeholders + TODOs — **`v1.0.5`**. |
+| **Completed** | **Step 8:** All mapped routes — **`v1.0.5`**. **Milestone `v2.0.0`:** Figma Make file **`XrH8hl5WJDXRz969sCTfoc`** ported into **`lib/data/figma-make.ts`**, `/tc` + `/buyer/[id]` + [`docs/figma-sync.md`](../../docs/figma-sync.md). |
 | **Next** | **Chapter 3 · Step 9** — Database schema & Row Level Security (outside Cursor UI pass). |
 | **After that** | Steps 10–15 |
 

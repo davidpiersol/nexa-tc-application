@@ -1,17 +1,45 @@
 import type { ReactNode } from "react";
 import { HeroGraphic } from "@/components/graphics/HeroGraphic";
+import { DocumentIcons } from "@/components/graphics/DocumentIcons";
 import { Button } from "@/components/ui/button";
-import { TimelineBar } from "@/components/ui/timeline-bar";
-import { buyerTimelinePlaceholder } from "@/lib/data/screen-placeholders";
+import { DocumentCard } from "@/components/ui/document-card";
+import { ProgressTimeline } from "@/components/ui/progress-timeline";
+import type { BuyerDocFromMake } from "@/lib/data/figma-make";
+import {
+  buyerDocumentsFromMake,
+  buyerImportantDatesFromMake,
+  buyerTimelineFromMake,
+} from "@/lib/data/figma-make";
 
 type Props = { params: { id: string } };
 
+const CATEGORY_LABEL: Record<BuyerDocFromMake["category"], string> = {
+  contract: "Contract",
+  disclosure: "Disclosure",
+  inspection: "Inspection",
+  loan: "Loan",
+  title: "Title",
+  photos: "Photos",
+};
+
+function statusVariant(
+  status: BuyerDocFromMake["status"],
+): React.ComponentProps<typeof DocumentCard>["statusVariant"] {
+  if (status === "approved") return "success";
+  if (status === "pending") return "warning";
+  return "danger";
+}
+
 /**
- * Figma: **Buyer Dashboard/Default** → `/buyer/[id]`
- * TODO: buyer-scoped transaction + messaging.
+ * Figma Make **BuyerDashboard** → `/buyer/[id]` — hero, timeline, dates, documents.
+ * TODO: buyer-scoped transaction + messaging + API-backed lists.
  */
 export default function BuyerDashboardPage({ params }: Props) {
-  const steps = buyerTimelinePlaceholder;
+  const timelineSteps = buyerTimelineFromMake.map((s) => ({
+    label: s.label,
+    completed: s.completed,
+    active: s.active,
+  }));
 
   return (
     <div className="flex flex-col gap-10">
@@ -33,7 +61,6 @@ export default function BuyerDashboardPage({ params }: Props) {
               <BadgePill>Under contract</BadgePill>
             </div>
             <div className="flex flex-wrap gap-3">
-              {/* Gold reserved for primary CTA */}
               <Button variant="gold" type="button">
                 View documents
               </Button>
@@ -52,8 +79,50 @@ export default function BuyerDashboardPage({ params }: Props) {
         <h3 id="buyer-progress" className="font-display text-heading-md text-brand-navy">
           Your progress
         </h3>
-        <div className="mt-6 overflow-x-auto rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm sm:p-6">
-          <TimelineBar steps={steps} />
+        <div className="mt-6 rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm sm:p-6">
+          <ProgressTimeline steps={timelineSteps} />
+        </div>
+      </section>
+
+      <section aria-labelledby="buyer-dates">
+        <h3 id="buyer-dates" className="font-display text-heading-md text-brand-navy">
+          Important dates
+        </h3>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {buyerImportantDatesFromMake.map((d) => (
+            <div
+              key={`${d.month}-${d.day}-${d.event}`}
+              className="rounded-brand-lg border border-neutral-300 bg-neutral-50 p-4 text-center shadow-brand-sm"
+            >
+              <p className="font-sans text-xs font-semibold uppercase tracking-wide text-brand-navy">
+                {d.month}
+              </p>
+              <p className="mt-1 font-display text-3xl font-bold text-brand-navy">{d.day}</p>
+              <p className="mt-2 font-sans text-sm text-neutral-600">{d.event}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="buyer-docs">
+        <h3 id="buyer-docs" className="font-display text-heading-md text-brand-navy">
+          Documents
+        </h3>
+        <div className="mt-4 flex flex-wrap gap-4">
+          {buyerDocumentsFromMake.map((doc) => {
+            const Icon = DocumentIcons[doc.category];
+            return (
+              <DocumentCard
+                key={doc.filename}
+                category={CATEGORY_LABEL[doc.category]}
+                fileName={doc.filename}
+                statusVariant={statusVariant(doc.status)}
+                statusLabel={doc.status}
+                dateLabel={doc.date}
+                thumbnail={<Icon size={56} />}
+              />
+            );
+          })}
         </div>
       </section>
 

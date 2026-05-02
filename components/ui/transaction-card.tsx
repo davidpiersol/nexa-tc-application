@@ -23,6 +23,8 @@ export interface TransactionCardProps
     VariantProps<typeof accentVariants> {
   /** Property / transaction title */
   address: string;
+  /** Optional second line (e.g. city/state from Figma Make) */
+  subtitle?: string;
   /** Close or milestone label */
   closeDateLabel: string;
   /** TC initials for avatar */
@@ -40,6 +42,7 @@ const TransactionCard = React.forwardRef<HTMLDivElement, TransactionCardProps>(
       className,
       stage,
       address,
+      subtitle,
       closeDateLabel,
       tcInitials,
       progressPercent,
@@ -61,6 +64,9 @@ const TransactionCard = React.forwardRef<HTMLDivElement, TransactionCardProps>(
       <div className="flex flex-col gap-3 p-4">
         <div>
           <p className="font-sans font-bold text-brand-navy">{address}</p>
+          {subtitle ? (
+            <p className="mt-0.5 font-sans text-sm text-neutral-600">{subtitle}</p>
+          ) : null}
           <p className="mt-1 font-sans text-sm text-neutral-600">{closeDateLabel}</p>
         </div>
         <div className="flex items-center gap-2">

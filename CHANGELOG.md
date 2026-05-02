@@ -2,6 +2,21 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v2.0.0] - 2026-05-02
+
+### Added
+
+- **Figma Make integration (milestone):** snapshot module [`lib/data/figma-make.ts`](lib/data/figma-make.ts) sourced from Make file key **`XrH8hl5WJDXRz969sCTfoc`** — TC pipeline, KPIs, deadlines, tasks; buyer timeline, dates, documents.
+- **[`docs/figma-sync.md`](docs/figma-sync.md)** — how to refresh from Make via MCP, token ownership, and future edits without restarting the app.
+- **`ProgressTimeline`** ([`components/ui/progress-timeline.tsx`](components/ui/progress-timeline.tsx)) — responsive horizontal/vertical timeline (SSR-safe; no `window`).
+- **`TransactionCard`** optional **`subtitle`** (e.g. city/state from Make).
+
+### Changed
+
+- **`/tc`:** Uses Make-aligned stats, kanban data (column order matches Make: pre-listing → … → closed), deadlines and tasks rows.
+- **`/buyer/[id]`:** Buyer dashboard sections aligned with Make — progress timeline, important dates, document grid with **`DocumentIcons`** thumbnails.
+- **`TcPipelineKanban`:** Column order matches Figma Make **`TCDashboard`**.
+
 ## [v1.0.5] - 2026-05-02
 
 ### Added
@@ -85,6 +100,7 @@ Tokens are authored from **`nexa_build_guide.md`** Step 2 (same names as Figma p
 
 - Initial repository: Cursor rules layout (awesome-cursorrules–style), versioning policy (`v1.0.0`), `rules-new/` templates, baseline tag `v1.0.0`.
 
+[v2.0.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.5...v2.0.0
 [v1.0.5]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.4...v1.0.5
 [v1.0.4]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.3...v1.0.4
 [v1.0.3]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.2...v1.0.3

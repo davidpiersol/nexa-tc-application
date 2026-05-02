@@ -1,6 +1,6 @@
 # Nexa TC Application
 
-**Current version:** [v1.0.5](VERSION)
+**Current version:** [v2.0.0](VERSION)
 
 Application repository with Cursor AI rules structured after [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules).
 
@@ -12,10 +12,11 @@ Application repository with Cursor AI rules structured after [PatrickJS/awesome-
 | [`docs/wiki/progress.md`](docs/wiki/progress.md) | **Step tracker** — completed work, current step, next steps |
 | [`docs/wiki/README.md`](docs/wiki/README.md) | Wiki index |
 | [`CHANGELOG.md`](CHANGELOG.md) | Version history |
+| [`docs/figma-sync.md`](docs/figma-sync.md) | **Figma Make** ↔ repo sync (`fileKey`, MCP refresh loop) |
 
 **Current build position:** Chapter 3 (Claude Code backend) — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
 
-**Design tokens:** [`tailwind.config.ts`](tailwind.config.ts), [`app/globals.css`](app/globals.css), notes in [`docs/design-tokens-source.md`](docs/design-tokens-source.md).
+**Design tokens:** [`tailwind.config.ts`](tailwind.config.ts), [`app/globals.css`](app/globals.css), notes in [`docs/design-tokens-source.md`](docs/design-tokens-source.md). **Make snapshot:** [`lib/data/figma-make.ts`](lib/data/figma-make.ts).
 
 **UI library:** [`components/ui`](components/ui) (`cva` + Radix + Nexa tokens), [`components/graphics`](components/graphics). See [`docs/components-library.md`](docs/components-library.md).
 

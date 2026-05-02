@@ -4,31 +4,26 @@ import { StatCountUp } from "@/components/motion/stat-count-up";
 import { Badge } from "@/components/ui/badge";
 import { StatsCard } from "@/components/ui/stats-card";
 import {
-  TC_STATS_PLACEHOLDER,
-  tcPipelinePlaceholder,
-} from "@/lib/data/screen-placeholders";
+  TC_STATS_FROM_MAKE,
+  tcDeadlinesFromMake,
+  tcPipelineFromMake,
+  tcTasksFromMake,
+} from "@/lib/data/figma-make";
 
 /**
  * Figma: **TC Dashboard/Default** → `/tc`
- * TODO: wire KPI + pipeline to `/api/transactions` + dashboard aggregates.
+ * KPI + pipeline aligned with Figma Make snapshot (`lib/data/figma-make.ts`).
+ * TODO: wire to `/api/transactions` + dashboard aggregates.
  */
 export default function TcDashboardPage() {
-  const stats = TC_STATS_PLACEHOLDER;
-  const pipeline = tcPipelinePlaceholder();
+  const stats = TC_STATS_FROM_MAKE;
+  const pipeline = tcPipelineFromMake;
 
   /* TODO: GET /api/dashboard/tc/deadlines */
-  const deadlines = [
-    { id: "dl1", label: "HOA docs due", date: "Apr 18", tone: "gold" as const },
-    { id: "dl2", label: "Loan contingency end", date: "Apr 22", tone: "navy" as const },
-    { id: "dl3", label: "Walk-through", date: "Apr 25", tone: "brown" as const },
-  ];
+  const deadlines = tcDeadlinesFromMake;
 
   /* TODO: GET /api/dashboard/tc/tasks */
-  const tasks = [
-    { id: "t1", label: "Request payoff statement", priority: "gold" as const },
-    { id: "t2", label: "Verify wire instructions", priority: "navy" as const },
-    { id: "t3", label: "Schedule final walk-through", priority: "brown" as const },
-  ];
+  const tasks = tcTasksFromMake;
 
   return (
     <div className="flex flex-col gap-8 lg:gap-10">
@@ -68,7 +63,7 @@ export default function TcDashboardPage() {
             </h2>
             <p className="mt-1 font-sans text-sm text-neutral-600">
               {/* TODO: filtered view state */}
-              Drag cards between stages · placeholder data
+              Drag cards between stages · data from Figma Make snapshot
             </p>
           </div>
         </div>
@@ -82,22 +77,29 @@ export default function TcDashboardPage() {
             {deadlines.map((d) => (
               <li
                 key={d.id}
-                className="flex items-center justify-between rounded-brand-md border border-neutral-300 bg-white px-4 py-3 shadow-brand-sm"
+                className="flex flex-col gap-1 rounded-brand-md border border-neutral-300 bg-white px-4 py-3 shadow-brand-sm sm:flex-row sm:items-center sm:justify-between"
               >
-                <span className="flex items-center gap-3 font-sans text-ui-body text-neutral-900">
+                <span className="flex items-start gap-3 font-sans text-ui-body text-neutral-900">
                   <span
                     className={
-                      d.tone === "gold"
-                        ? "size-2 rounded-full bg-brand-gold"
-                        : d.tone === "navy"
-                          ? "size-2 rounded-full bg-brand-navy"
-                          : "size-2 rounded-full bg-brand-brown"
+                      d.priority === "high"
+                        ? "mt-1.5 size-2 shrink-0 rounded-full bg-brand-gold"
+                        : d.priority === "medium"
+                          ? "mt-1.5 size-2 shrink-0 rounded-full bg-brand-navy"
+                          : "mt-1.5 size-2 shrink-0 rounded-full bg-brand-brown"
                     }
                     aria-hidden
                   />
-                  {d.label}
+                  <span>
+                    <span className="block font-semibold">{d.address}</span>
+                    <span className="text-sm text-neutral-600">
+                      {d.type}
+                    </span>
+                  </span>
                 </span>
-                <span className="font-sans text-sm text-neutral-600">{d.date}</span>
+                <span className="shrink-0 pl-8 font-sans text-sm text-neutral-600 sm:pl-0">
+                  {d.date}
+                </span>
               </li>
             ))}
           </ul>
@@ -108,21 +110,29 @@ export default function TcDashboardPage() {
             {tasks.map((t) => (
               <li
                 key={t.id}
-                className="flex items-center justify-between rounded-brand-md border border-neutral-300 bg-white px-4 py-3 shadow-brand-sm"
+                className="flex items-center justify-between gap-3 rounded-brand-md border border-neutral-300 bg-white px-4 py-3 shadow-brand-sm"
               >
-                <span className="font-sans text-ui-body text-neutral-900">{t.label}</span>
+                <span
+                  className={
+                    t.completed
+                      ? "font-sans text-ui-body text-neutral-500 line-through"
+                      : "font-sans text-ui-body text-neutral-900"
+                  }
+                >
+                  {t.name}
+                </span>
                 <Badge
                   variant={
-                    t.priority === "gold"
+                    t.priority === "high"
                       ? "gold"
-                      : t.priority === "navy"
+                      : t.priority === "medium"
                         ? "navy"
                         : "neutral"
                   }
                 >
-                  {t.priority === "gold"
+                  {t.priority === "high"
                     ? "High"
-                    : t.priority === "navy"
+                    : t.priority === "medium"
                       ? "Medium"
                       : "Low"}
                 </Badge>
