@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v2.1.1] - 2026-05-02
+
+### Added
+
+- **Vitest** + [`vitest.config.ts`](vitest.config.ts) — unit tests under [`tests/unit/`](tests/unit/) (`paths`, `mfa`, `csrf-constants`, `supabase/env`).
+- **npm scripts:** `typecheck`, `test`, `test:watch`, **`verify`** (lint + typecheck + test + build), **`smoke`** ([`scripts/smoke-http.sh`](scripts/smoke-http.sh)).
+- **[`.github/workflows/ci.yml`](.github/workflows/ci.yml)** — GitHub Actions **`npm ci`** + **`npm run verify`** on push/PR to `main`.
+- **[`docs/session-next.md`](docs/session-next.md)** — handoff placemarker, permissions checklist, explicit **NEXT STEP (Step 11)**.
+
+### Fixed
+
+- **Supabase env fallbacks:** [`lib/supabase/env.ts`](lib/supabase/env.ts) — empty-string **`NEXT_PUBLIC_SUPABASE_*`** in `.env.local` no longer breaks middleware (was causing **500** when `??` did not apply).
+
 ## [v2.1.0] - 2026-05-02
 
 ### Added
@@ -139,6 +152,7 @@ Tokens are authored from **`nexa_build_guide.md`** Step 2 (same names as Figma p
 
 - Initial repository: Cursor rules layout (awesome-cursorrules–style), versioning policy (`v1.0.0`), `rules-new/` templates, baseline tag `v1.0.0`.
 
+[v2.1.1]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.1.0...v2.1.1
 [v2.1.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.2...v2.1.0
 [v2.0.2]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.0...v2.0.1

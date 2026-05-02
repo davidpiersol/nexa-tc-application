@@ -1,6 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import type { CookieOptions } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
+import {
+  resolvePublicSupabaseAnonKey,
+  resolvePublicSupabaseUrl,
+} from "@/lib/supabase/env";
 
 type CookieSetItem = { name: string; value: string; options?: CookieOptions };
 
@@ -12,8 +16,8 @@ export function createMiddlewareSupabase(
   request: NextRequest,
   response: NextResponse,
 ) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co";
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-anon-key";
+  const url = resolvePublicSupabaseUrl();
+  const key = resolvePublicSupabaseAnonKey();
 
   return createServerClient(url, key, {
     cookies: {

@@ -1,5 +1,7 @@
 # Build progress tracker
 
+**Read next:** [`docs/session-next.md`](../../docs/session-next.md) — handoff, permissions checklist, **NEXT STEP**.
+
 **Last updated:** 2026-05-02  
 **Guide:** [`nexa_build_guide.md`](../../nexa_build_guide.md)
 
@@ -86,6 +88,7 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-02 | **QA pass:** Vitest + `verify` + smoke script + Supabase empty-env fix + CI workflow + [`docs/session-next.md`](../../docs/session-next.md) — **`v2.1.1`**. |
 | 2026-05-02 | **Step 10 done:** Auth/MFA/middleware/CSRF/invites/security headers — **`v2.1.0`**. |
 | 2026-05-02 | **RLS follow-up:** Agent **`transactions` INSERT** policy + **`email_ingestion.from_email`** index — migration **`20260503120000_*`** · **`v2.0.2`**. |
 | 2026-05-02 | **Step 9 done:** Core schema, RLS (52 policies), `updated_at` + audit triggers, `get_user_tenant_id` / `generate_transaction_email` — **`v2.0.1`**. |

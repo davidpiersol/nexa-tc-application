@@ -1,6 +1,6 @@
 # Nexa TC Application
 
-**Current version:** [v2.1.0](VERSION)
+**Current version:** [v2.1.1](VERSION)
 
 Application repository with Cursor AI rules structured after [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules).
 
@@ -23,7 +23,9 @@ Application repository with Cursor AI rules structured after [PatrickJS/awesome-
 
 **UI library:** [`components/ui`](components/ui) (`cva` + Radix + Nexa tokens), [`components/graphics`](components/graphics). See [`docs/components-library.md`](docs/components-library.md).
 
-**Scripts:** `npm run dev` · `npm run build` · `npm run start` · `npm run lint`
+**Scripts:** `npm run dev` · `npm run build` · `npm run start` · `npm run lint` · **`npm run verify`** (lint + typecheck + unit tests + build) · **`npm run smoke`** (HTTP smoke; run dev server first)
+
+**Next session:** [`docs/session-next.md`](docs/session-next.md)
 
 Copy [`.env.example`](.env.example) to `.env.local` and fill keys (`.env.local` is gitignored).
 
