@@ -11,9 +11,9 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Chapter 3 — Step 10** (Auth, MFA & security hardening) — use **Claude Code** per guide |
-| **Completed** | Through **Step 9:** Supabase migrations — [`supabase/migrations/`](../../supabase/migrations/) (`initial_schema`, `row_level_security`, `triggers`) — **`v2.0.1`**. Earlier: **Step 8** **`v1.0.5`**; **Milestone `v2.0.0`** Figma Make + [`docs/figma-sync.md`](../../docs/figma-sync.md). |
-| **Next** | **Chapter 3 · Step 10** — Auth, MFA & security hardening. |
+| **Current position** | **Chapter 4 — Step 11** (External API integrations) — use **Claude Code** per guide |
+| **Completed** | **Step 10** (`v2.1.0`): middleware session refresh + **`x-nexa-*` headers**, MFA gate for **tc/admin/superadmin**, login client, TOTP MFA page, CSRF (`/api/csrf` + validation), security headers (`next.config.mjs`), Upstash API rate limits on Route Handlers, invite JWT + Redis replay guard + redeem route, Postmark helper, audit helper — see [`CHANGELOG.md`](../../CHANGELOG.md). Earlier through **Step 9** **`v2.0.2`**, **`v2.0.1`**, **`v2.0.0`**. |
+| **Next** | **Chapter 4 · Step 11** — Build all external API integrations. |
 | **After that** | Steps 10–15 |
 
 ---
@@ -57,7 +57,7 @@ Per the guide: Next.js 14 App Router scaffold (TypeScript strict), folder layout
 | Step | Title | Status |
 |------|--------|--------|
 | 9 | Database schema & Row Level Security | **Complete** — see [`supabase/migrations/`](../../supabase/migrations/) · tagged **`v2.0.1`** |
-| 10 | Auth, MFA & security hardening | Not started |
+| 10 | Auth, MFA & security hardening | **Complete** — middleware, MFA, CSRF, headers, rate limits (API routes), invites — **`v2.1.0`** |
 
 ---
 
@@ -86,6 +86,7 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-02 | **Step 10 done:** Auth/MFA/middleware/CSRF/invites/security headers — **`v2.1.0`**. |
 | 2026-05-02 | **RLS follow-up:** Agent **`transactions` INSERT** policy + **`email_ingestion.from_email`** index — migration **`20260503120000_*`** · **`v2.0.2`**. |
 | 2026-05-02 | **Step 9 done:** Core schema, RLS (52 policies), `updated_at` + audit triggers, `get_user_tenant_id` / `generate_transaction_email` — **`v2.0.1`**. |
 | 2026-05-02 | **Step 8 done:** Figma-aligned screens, Framer Motion + kanban + placeholders; **v1.0.5**. |

@@ -2,6 +2,24 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v2.1.0] - 2026-05-02
+
+### Added
+
+- **Root [`middleware.ts`](middleware.ts)** — Supabase session refresh ([`lib/supabase/middleware.ts`](lib/supabase/middleware.ts)), injects **`x-nexa-user-id`**, **`x-nexa-tenant-id`**, **`x-nexa-role`** from JWT metadata; protects dashboard prefixes; **MFA gate** for **tc / admin / superadmin** until **AAL2** (`currentLevel === aal2`), with **`401`** JSON for blocked API calls.
+- **Auth UI:** [`login-form.tsx`](app/(auth)/login/login-form.tsx) (`signInWithPassword` + redirect); [`auth/mfa/page.tsx`](app/(auth)/auth/mfa/page.tsx) — Supabase **TOTP** enroll + **`challengeAndVerify`** (lazy browser client to satisfy SSR build).
+- **CSRF:** [`lib/security/csrf-constants.ts`](lib/security/csrf-constants.ts), [`csrf-server.ts`](lib/security/csrf-server.ts), [`GET /api/csrf`](app/api/csrf/route.ts) — httpOnly cookie + header **`x-csrf-token`**; **`POST /api/transactions`** and **`POST /api/invite/redeem`** validate tokens.
+- **Rate limiting (Upstash, Node Route Handlers):** [`lib/security/enforce-rate-limit.ts`](lib/security/enforce-rate-limit.ts) — **100/min** per user id or IP on **`POST /api/transactions`** and **`POST /api/invite/redeem`**. *(Middleware stays Edge-safe: login **10/15m/IP** from spec is not applied in middleware because `@upstash/redis` targets Node; use Supabase Auth dashboard limits + optional dedicated login Route Handler later.)*
+- **Security headers** in [`next.config.mjs`](next.config.mjs) — CSP, **`X-Frame-Options: DENY`**, **`nosniff`**, **`Referrer-Policy: strict-origin`**, **`Permissions-Policy`**, HSTS (production only).
+- **Audit helper:** [`lib/security/audit.ts`](lib/security/audit.ts) — inserts **`audit_log`** rows with optional IP / **`user_agent`** in JSON payload.
+- **Invites:** [`lib/invite/jwt.ts`](lib/invite/jwt.ts) (**jose**, 72h HS256), [`lib/invite/redis.ts`](lib/invite/redis.ts) replay prevention, [`POST /api/invite/redeem`](app/api/invite/redeem/route.ts), [`lib/email/postmark-invite.ts`](lib/email/postmark-invite.ts); invite UI [`invite/[token]`](app/(auth)/invite/[token]/page.tsx).
+- **Service role:** [`lib/supabase/admin.ts`](lib/supabase/admin.ts) for redeem path only (server-only).
+- **DB:** [`20260503140000_user_role_superadmin.sql`](supabase/migrations/20260503140000_user_role_superadmin.sql) — **`superadmin`** enum label for MFA/RBAC text.
+
+### Changed
+
+- **`docs/wiki/progress.md`** — Step **10** complete; current step **11**.
+
 ## [v2.0.2] - 2026-05-02
 
 ### Added
@@ -121,6 +139,7 @@ Tokens are authored from **`nexa_build_guide.md`** Step 2 (same names as Figma p
 
 - Initial repository: Cursor rules layout (awesome-cursorrules–style), versioning policy (`v1.0.0`), `rules-new/` templates, baseline tag `v1.0.0`.
 
+[v2.1.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.2...v2.1.0
 [v2.0.2]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.5...v2.0.0

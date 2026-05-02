@@ -1,6 +1,6 @@
 # Nexa TC Application
 
-**Current version:** [v2.0.2](VERSION)
+**Current version:** [v2.1.0](VERSION)
 
 Application repository with Cursor AI rules structured after [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules).
 
@@ -13,9 +13,9 @@ Application repository with Cursor AI rules structured after [PatrickJS/awesome-
 | [`docs/wiki/README.md`](docs/wiki/README.md) | Wiki index |
 | [`CHANGELOG.md`](CHANGELOG.md) | Version history |
 | [`docs/figma-sync.md`](docs/figma-sync.md) | **Figma Make** ↔ repo sync (`fileKey`, MCP refresh loop) |
-| [`supabase/migrations/`](supabase/migrations/) | **Step 9** — Postgres schema, RLS, triggers (includes agent tx INSERT + email index · **`v2.0.2`**) |
+| [`supabase/migrations/`](supabase/migrations/) | **Step 9** — Postgres schema, RLS, triggers · **Step 10** — auth/security (`middleware`, MFA, CSRF — **`v2.1.0`**) |
 
-**Current build position:** Chapter 3 · Step 10 — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
+**Current build position:** Chapter 4 · Step 11 — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
 
 **Design tokens:** [`tailwind.config.ts`](tailwind.config.ts), [`app/globals.css`](app/globals.css), notes in [`docs/design-tokens-source.md`](docs/design-tokens-source.md). **Make snapshot:** [`lib/data/figma-make.ts`](lib/data/figma-make.ts).
 

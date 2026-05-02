@@ -1,6 +1,6 @@
 {
   "name": "nexa-tc-application",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -29,6 +29,7 @@
     "framer-motion": "^11.18.2",
     "fuse.js": "^7.1.0",
     "inngest": "^3.31.7",
+    "jose": "^5.10.0",
     "lucide-react": "^0.469.0",
     "next": "^14.2.21",
     "pdf-lib": "^1.17.1",
