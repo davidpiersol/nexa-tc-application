@@ -1,8 +1,19 @@
 # Nexa TC Application
 
-**Current version:** [v1.0.0](VERSION)
+**Current version:** [v1.0.1](VERSION)
 
 Application repository with Cursor AI rules structured after [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules).
+
+## Build guide & progress
+
+| Resource | Description |
+|----------|-------------|
+| [`nexa_build_guide.md`](nexa_build_guide.md) | Full Nexa build guide (Figma › Cursor › Claude Code › Production); copy-paste prompts |
+| [`docs/wiki/progress.md`](docs/wiki/progress.md) | **Step tracker** — completed work, current step, next steps |
+| [`docs/wiki/README.md`](docs/wiki/README.md) | Wiki index |
+| [`CHANGELOG.md`](CHANGELOG.md) | Version history |
+
+**Current build position:** Chapter 2, Step 5 — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
 
 ## Cursor rules layout
 
