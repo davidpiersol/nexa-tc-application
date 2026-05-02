@@ -2,6 +2,14 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v2.0.2] - 2026-05-02
+
+### Added
+
+- **Migration [`20260503120000_agent_tx_insert_email_index.sql`](supabase/migrations/20260503120000_agent_tx_insert_email_index.sql):**
+  - **`transactions_insert_agent`** — `authenticated` users with role **`agent`** may **INSERT** rows in **`transactions`** for their tenant (matches build guide “Agents: … INSERT … linked transactions” alongside existing TC/admin insert policy). Any tenant agent can open a transaction row; tighten later if only certain agents should.
+  - **`idx_email_ingestion_from_email`** — B-tree on **`email_ingestion.from_email`** for inbound lookup and routing.
+
 ## [v2.0.1] - 2026-05-02
 
 ### Added
@@ -113,6 +121,7 @@ Tokens are authored from **`nexa_build_guide.md`** Step 2 (same names as Figma p
 
 - Initial repository: Cursor rules layout (awesome-cursorrules–style), versioning policy (`v1.0.0`), `rules-new/` templates, baseline tag `v1.0.0`.
 
+[v2.0.2]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.5...v2.0.0
 [v1.0.5]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.4...v1.0.5

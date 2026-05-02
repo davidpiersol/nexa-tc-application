@@ -86,6 +86,7 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-02 | **RLS follow-up:** Agent **`transactions` INSERT** policy + **`email_ingestion.from_email`** index — migration **`20260503120000_*`** · **`v2.0.2`**. |
 | 2026-05-02 | **Step 9 done:** Core schema, RLS (52 policies), `updated_at` + audit triggers, `get_user_tenant_id` / `generate_transaction_email` — **`v2.0.1`**. |
 | 2026-05-02 | **Step 8 done:** Figma-aligned screens, Framer Motion + kanban + placeholders; **v1.0.5**. |
 | 2026-05-02 | **Step 7 done:** Component library + graphics; **v1.0.4**. |
