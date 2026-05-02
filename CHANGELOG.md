@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v2.0.1] - 2026-05-02
+
+### Added
+
+- **Chapter 3 · Step 9 — Supabase migrations** ([`supabase/migrations/`](supabase/migrations/)):
+  - **`20260502120000_initial_schema.sql`** — enums (`user_role`, `transaction_status`, `document_status`, `document_category`, `party_role`), tables (`tenants`, `users`, `transactions`, `transaction_parties`, `documents`, `checklists`, `checklist_items`, `checklist_templates`, `messages`, `email_ingestion`, `tasks`, `audit_log`, `api_integrations`), indexes (`tenant_id`, child `transaction_id`, `status`, `users.email`, `transactions.close_date DESC`), **`get_user_tenant_id()`**, **`generate_transaction_email(uuid)`**.
+  - **`20260502120001_row_level_security.sql`** — session helpers (`session_tenant_id`, `session_role`, party predicates), **RLS on all tables** with role-scoped CRUD per build guide (tenant isolation, TC/admin vs parties vs **`audit_log`** insert-only / no select).
+  - **`20260502120002_triggers.sql`** — **`set_updated_at`** on mutable tables, **`audit_row_change`** after INSERT/UPDATE/DELETE on business tables, append-only enforcement on **`audit_log`**.
+
+### Changed
+
+- **`docs/wiki/progress.md`** — Step 9 marked complete; current step **Step 10**.
+
 ## [v2.0.0] - 2026-05-02
 
 ### Added
@@ -100,6 +113,7 @@ Tokens are authored from **`nexa_build_guide.md`** Step 2 (same names as Figma p
 
 - Initial repository: Cursor rules layout (awesome-cursorrules–style), versioning policy (`v1.0.0`), `rules-new/` templates, baseline tag `v1.0.0`.
 
+[v2.0.1]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.5...v2.0.0
 [v1.0.5]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.4...v1.0.5
 [v1.0.4]: https://github.com/davidpiersol/nexa-tc-application/compare/v1.0.3...v1.0.4

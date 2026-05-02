@@ -11,9 +11,9 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Chapter 3 — Step 9** (Database schema & RLS) — use **Claude Code** per guide |
-| **Completed** | **Step 8:** All mapped routes — **`v1.0.5`**. **Milestone `v2.0.0`:** Figma Make file **`XrH8hl5WJDXRz969sCTfoc`** ported into **`lib/data/figma-make.ts`**, `/tc` + `/buyer/[id]` + [`docs/figma-sync.md`](../../docs/figma-sync.md). |
-| **Next** | **Chapter 3 · Step 9** — Database schema & Row Level Security (outside Cursor UI pass). |
+| **Current position** | **Chapter 3 — Step 10** (Auth, MFA & security hardening) — use **Claude Code** per guide |
+| **Completed** | Through **Step 9:** Supabase migrations — [`supabase/migrations/`](../../supabase/migrations/) (`initial_schema`, `row_level_security`, `triggers`) — **`v2.0.1`**. Earlier: **Step 8** **`v1.0.5`**; **Milestone `v2.0.0`** Figma Make + [`docs/figma-sync.md`](../../docs/figma-sync.md). |
+| **Next** | **Chapter 3 · Step 10** — Auth, MFA & security hardening. |
 | **After that** | Steps 10–15 |
 
 ---
@@ -56,7 +56,7 @@ Per the guide: Next.js 14 App Router scaffold (TypeScript strict), folder layout
 
 | Step | Title | Status |
 |------|--------|--------|
-| 9 | Database schema & Row Level Security | Not started |
+| 9 | Database schema & Row Level Security | **Complete** — see [`supabase/migrations/`](../../supabase/migrations/) · tagged **`v2.0.1`** |
 | 10 | Auth, MFA & security hardening | Not started |
 
 ---
@@ -86,6 +86,7 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-02 | **Step 9 done:** Core schema, RLS (52 policies), `updated_at` + audit triggers, `get_user_tenant_id` / `generate_transaction_email` — **`v2.0.1`**. |
 | 2026-05-02 | **Step 8 done:** Figma-aligned screens, Framer Motion + kanban + placeholders; **v1.0.5**. |
 | 2026-05-02 | **Step 7 done:** Component library + graphics; **v1.0.4**. |
 | 2026-05-02 | **Step 6 done:** Next.js 14 manual scaffold, packages, routes, API stubs; **v1.0.3**. |
