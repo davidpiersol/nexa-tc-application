@@ -1,0 +1,8 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">NEXA app icon</title>
+  <rect width="1024" height="1024" rx="240" fill="#0B1F3A"/>
+  <rect x="72" y="72" width="880" height="880" rx="196" fill="#1F6FEB" fill-opacity="0.15"/>
+  <path d="M289 742V282h122.5L632 581.82V282h114v460H623.5L403 442.18V742H289Z" fill="#F9FAFB"/>
+  <path d="M289 742h457" stroke="#14B8A6" stroke-width="64" stroke-linecap="round"/>
+  <path d="M724 190 832 298 724 406" stroke="#1F6FEB" stroke-width="54" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

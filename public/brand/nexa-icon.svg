@@ -1,0 +1,7 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">NEXA icon</title>
+  <rect width="64" height="64" rx="16" fill="#0B1F3A"/>
+  <path d="M18 46V18h7.5L39 36.25V18h7v28h-7.5L25 27.75V46h-7Z" fill="#F9FAFB"/>
+  <path d="M18 46h28" stroke="#14B8A6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M44.5 12.5 51 19l-6.5 6.5" stroke="#1F6FEB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

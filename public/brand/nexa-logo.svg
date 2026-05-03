@@ -1,0 +1,10 @@
+<svg width="280" height="72" viewBox="0 0 280 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">NEXA logo</title>
+  <rect x="0" y="4" width="56" height="56" rx="14" fill="#0B1F3A"/>
+  <path d="M15.75 44.25v-24.5h6.5625L34.125 35.7188V19.75h6.125v24.5h-6.5625L21.875 28.2812V44.25H15.75Z" fill="#F9FAFB"/>
+  <path d="M15.75 44.25h24.5" stroke="#14B8A6" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M38.9375 14.9375 44.625 20.625l-5.6875 5.6875" stroke="#1F6FEB" stroke-width="2.625" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="72" y="39" fill="#0B1F3A" font-family="Inter, system-ui, sans-serif" font-size="32" font-weight="700" letter-spacing="-0.5">NEXA</text>
+  <text x="168" y="39" fill="#1F6FEB" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700" letter-spacing="2">TC</text>
+  <text x="74" y="58" fill="#4B5563" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="0.12em">The Center of Every Deal.</text>
+</svg>
