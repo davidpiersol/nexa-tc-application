@@ -133,8 +133,11 @@ function moveCard(
 
 export interface TcPipelineKanbanProps {
   initialColumns: Record<PipelineColumnId, PipelineCard[]>;
-  /** TODO: replace with server mutation + optimistic UI */
-  onColumnsChange?: (next: Record<PipelineColumnId, PipelineCard[]>) => void;
+  /** Called after a successful drag when the card lands in a new column (server sync). */
+  onPipelineDrop?: (
+    cardId: string,
+    targetColumn: PipelineColumnId,
+  ) => Promise<void>;
 }
 
 /**
@@ -142,9 +145,11 @@ export interface TcPipelineKanbanProps {
  */
 export function TcPipelineKanban({
   initialColumns,
-  onColumnsChange,
+  onPipelineDrop,
 }: TcPipelineKanbanProps) {
   const [columns, setColumns] = React.useState(initialColumns);
+  const columnsRef = React.useRef(columns);
+  columnsRef.current = columns;
   const [activeId, setActiveId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -174,21 +179,25 @@ export function TcPipelineKanban({
     if (!over) return;
     const cardId = String(active.id);
     const overId = String(over.id);
-    setColumns((prev) => {
-      let targetCol = COLUMN_META.find((c) => c.id === overId)?.id;
-      if (!targetCol) {
-        for (const k of Object.keys(prev) as PipelineColumnId[]) {
-          if (prev[k].some((c) => c.id === overId)) {
-            targetCol = k;
-            break;
-          }
+    const prevSnapshot = columnsRef.current;
+    let targetCol = COLUMN_META.find((c) => c.id === overId)?.id;
+    if (!targetCol) {
+      for (const k of Object.keys(prevSnapshot) as PipelineColumnId[]) {
+        if (prevSnapshot[k].some((c) => c.id === overId)) {
+          targetCol = k;
+          break;
         }
       }
-      if (!targetCol) return prev;
-      const next = moveCard(prev, cardId, targetCol);
-      onColumnsChange?.(next);
-      return next;
-    });
+    }
+    if (!targetCol) return;
+    const next = moveCard(prevSnapshot, cardId, targetCol);
+    if (next === prevSnapshot) return;
+    setColumns(next);
+    if (onPipelineDrop) {
+      void onPipelineDrop(cardId, targetCol).catch(() => {
+        setColumns(prevSnapshot);
+      });
+    }
   }
 
   function onDragCancel() {

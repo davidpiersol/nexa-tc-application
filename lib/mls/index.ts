@@ -1,2 +1,3 @@
-/** MLS integration — listings / property data. */
-export {};
+/** MLS integration — RESO Web API / OAuth per tenant. */
+export * from "./client";
+

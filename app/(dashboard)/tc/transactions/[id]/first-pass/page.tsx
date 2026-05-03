@@ -1,42 +1,62 @@
-import { ChecklistPanel } from "@/components/ui/checklist-panel";
+import { Suspense } from "react";
 import { FirstPassReview } from "@/components/ui/first-pass-review";
-import { firstPassPlaceholder } from "@/lib/data/screen-placeholders";
+import { FirstPassChecklistClient } from "@/components/tc/first-pass-checklist-client";
+import { getFirstPassBundle } from "@/lib/queries/first-pass";
+import { listChecklistItemsForTransaction } from "@/lib/queries/transaction-detail";
 
 type Props = { params: { id: string } };
 
-/**
- * Figma: **First Pass Review/Default** → `/tc/transactions/[id]/first-pass`
- * TODO: AI engine output + persisted checklist from API.
- */
-export default function FirstPassPage({ params }: Props) {
-  const fp = firstPassPlaceholder;
+function FirstPassSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4 rounded-brand-lg border border-neutral-200 bg-neutral-50 p-6">
+      <div className="h-32 rounded bg-neutral-200" />
+      <div className="h-24 rounded bg-neutral-200" />
+    </div>
+  );
+}
+
+async function FirstPassBody({ transactionId }: { transactionId: string }) {
+  const bundle = await getFirstPassBundle(transactionId);
+  const checklistRows = await listChecklistItemsForTransaction(transactionId);
+
+  const items = checklistRows.map((row) => ({
+    id: row.id,
+    label: row.title,
+    checked: row.completed,
+  }));
 
   return (
-    <div className="flex flex-col gap-8">
-      <p className="font-sans text-sm text-neutral-600">
-        {/* TODO: breadcrumb + txn header */}
-        Transaction · <span className="font-medium text-brand-navy">{params.id}</span>
-      </p>
-
+    <>
       <FirstPassReview
-        confidence={fp.confidence}
-        summary={fp.summary}
+        confidence={bundle?.confidence ?? 0}
+        summary={bundle?.summary ?? "Loading first pass…"}
         findings={
           <p className="font-prose text-prose-body">
-            {/* TODO: markdown from model */}
-            Outstanding: HOA resale certificate not yet indexed.
+            {bundle?.firstPassStatus
+              ? `Review status: ${bundle.firstPassStatus}.`
+              : "Awaiting AI First Pass workflow output."}
           </p>
         }
       />
 
-      <ChecklistPanel
-        title="Verification checklist"
-        items={fp.checklist}
-        animateComplete
-        onItemChange={() => {
-          /* TODO: PATCH checklist item */
-        }}
-      />
+      <FirstPassChecklistClient items={items} />
+    </>
+  );
+}
+
+/**
+ * Figma: **First Pass Review/Default** → `/tc/transactions/[id]/first-pass`
+ */
+export default function FirstPassPage({ params }: Props) {
+  return (
+    <div className="flex flex-col gap-8">
+      <p className="font-sans text-sm text-neutral-600">
+        Transaction · <span className="font-medium text-brand-navy">{params.id}</span>
+      </p>
+
+      <Suspense fallback={<FirstPassSkeleton />}>
+        <FirstPassBody transactionId={params.id} />
+      </Suspense>
     </div>
   );
 }

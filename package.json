@@ -1,6 +1,6 @@
 {
   "name": "nexa-tc-application",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "smoke": "bash scripts/smoke-http.sh",
+    "integration:ten": "bash scripts/integration-ten-step.sh",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
@@ -39,6 +40,7 @@
     "next": "^14.2.21",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^4.10.38",
+    "plaid": "^42.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.5",

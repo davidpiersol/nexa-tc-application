@@ -8,10 +8,10 @@ import NexaLogo from "@/components/brand/NexaLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { nexaBrand } from "@/lib/brand/tokens";
-import { createClient } from "@/lib/supabase/client";
+import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
 /**
- * Login — Supabase `signInWithPassword`; MFA enforced in middleware for privileged roles.
+ * Login — `POST /api/auth/login` (rate-limited per IP) sets session cookies; MFA enforced in middleware.
  */
 export function LoginForm() {
   const router = useRouter();
@@ -27,16 +27,39 @@ export function LoginForm() {
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") ?? "");
     const password = String(form.get("password") ?? "");
-    const supabase = createClient();
-    const { error: signErr } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    setPending(false);
-    if (signErr) {
-      setError(signErr.message);
+
+    const csrfRes = await fetch("/api/csrf", { credentials: "include" });
+    const csrfJson = (await csrfRes.json()) as { csrfToken?: string };
+    const csrfToken = csrfJson.csrfToken;
+    if (!csrfToken) {
+      setPending(false);
+      setError("Security token missing. Refresh and try again.");
       return;
     }
+
+    const loginRes = await fetch("/api/auth/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        [CSRF_HEADER_NAME]: csrfToken,
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    setPending(false);
+
+    if (loginRes.status === 429) {
+      setError("Too many sign-in attempts from this network. Try again later.");
+      return;
+    }
+
+    if (!loginRes.ok) {
+      const body = (await loginRes.json().catch(() => ({}))) as { error?: string };
+      setError(body.error ?? "Sign in failed.");
+      return;
+    }
+
     router.replace(redirect);
     router.refresh();
   }
