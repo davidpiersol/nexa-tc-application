@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils/cn";
 export interface TopBarProps extends React.HTMLAttributes<HTMLElement> {
   /** Page title — Playfair 20px navy */
   title: string;
+  /** Optional mark before the title (e.g. **NexaLogo**) */
+  leading?: React.ReactNode;
   /** Right-aligned actions (buttons, menus) */
   actions?: React.ReactNode;
 }
@@ -11,7 +13,7 @@ export interface TopBarProps extends React.HTMLAttributes<HTMLElement> {
 /**
  * 64px top bar — white surface, gold bottom rule.
  */
-function TopBar({ className, title, actions, ...props }: TopBarProps) {
+function TopBar({ className, title, actions, leading, ...props }: TopBarProps) {
   return (
     <header
       className={cn(
@@ -20,9 +22,12 @@ function TopBar({ className, title, actions, ...props }: TopBarProps) {
       )}
       {...props}
     >
-      <h1 className="font-display text-xl text-brand-navy">{title}</h1>
+      <div className="flex min-w-0 flex-1 items-center gap-4">
+        {leading}
+        <h1 className="min-w-0 truncate font-display text-xl text-brand-navy">{title}</h1>
+      </div>
       {actions ? (
-        <div className="flex items-center gap-2">{actions}</div>
+        <div className="flex shrink-0 items-center gap-2">{actions}</div>
       ) : null}
     </header>
   );

@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import NexaIcon from "@/components/brand/NexaIcon";
+import NexaLogo from "@/components/brand/NexaLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { nexaBrand } from "@/lib/brand/tokens";
+import { createClient } from "@/lib/supabase/client";
 
 /**
  * Login — Supabase `signInWithPassword`; MFA enforced in middleware for privileged roles.
@@ -39,7 +42,18 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="relative flex flex-col gap-8">
+      <NexaIcon
+        className="pointer-events-none absolute -right-1 -top-2 size-14 opacity-[0.14]"
+        aria-hidden
+      />
+      <div className="flex flex-col gap-3">
+        <NexaLogo showTagline={false} className="max-w-[240px]" title="NEXA" />
+        <p className="font-sans text-sm font-semibold leading-snug text-brand-navy">
+          {nexaBrand.tagline}
+        </p>
+        <p className="font-sans text-sm text-neutral-600">{nexaBrand.actionLine}</p>
+      </div>
       <div>
         <h1 className="font-display text-heading-lg text-brand-navy">Sign in</h1>
         <p className="mt-2 font-sans text-ui-body text-neutral-600">

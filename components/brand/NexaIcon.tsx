@@ -1,47 +1,76 @@
+"use client";
+
 import * as React from "react";
 import { nexaBrand } from "@/lib/brand/tokens";
+import { cn } from "@/lib/utils/cn";
 
-export type NexaIconProps = React.SVGProps<SVGSVGElement> & {
+export type NexaIconProps = Omit<React.SVGProps<SVGSVGElement>, "children"> & {
+  /** Accessible short name (default **NEXA**). */
   title?: string;
 };
 
-export function NexaIcon({
-  title = "NEXA icon",
+/**
+ * Inline SVG app icon: circular nexus mark with center **N** and four outer connection nodes.
+ * Navy field and blue accents only — scales cleanly at 24–128px via `viewBox` (set size with `className`, e.g. `size-6`, `size-8`).
+ */
+function NexaIcon({
   className,
+  title = "NEXA",
   ...props
 }: NexaIconProps) {
   const titleId = React.useId();
   const c = nexaBrand.colors;
 
+  /* Logo N-glyph, scaled to sit inside the inner hub (readable at small px sizes). */
+  const nTransform = "translate(32 32) scale(0.52) translate(-29.25 -32)";
+
   return (
     <svg
       viewBox="0 0 64 64"
+      width="1em"
+      height="1em"
       role="img"
       aria-labelledby={titleId}
-      className={className}
       xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid meet"
+      shapeRendering="geometricPrecision"
+      className={cn("inline-block shrink-0 align-middle", className)}
       {...props}
     >
       <title id={titleId}>{title}</title>
-      <rect width="64" height="64" rx="16" fill={c.navy} />
-      <path
-        d="M18 46V18h7.5L39 36.25V18h7v28h-7.5L25 27.75V46h-7Z"
-        fill={c.offWhite}
-      />
-      <path
-        d="M18 46h28"
-        stroke={c.teal}
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
-      <path
-        d="M44.5 12.5 51 19l-6.5 6.5"
+
+      {/* Outer field */}
+      <circle cx="32" cy="32" r="30" fill={c.navy} />
+
+      {/* Spokes: center hub to nodes */}
+      <g
+        fill="none"
         stroke={c.blue}
-        strokeWidth="3"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        fill="none"
-      />
+      >
+        <line x1="32" y1="32" x2="32" y2="9.25" />
+        <line x1="32" y1="32" x2="54.75" y2="32" />
+        <line x1="32" y1="32" x2="32" y2="54.75" />
+        <line x1="32" y1="32" x2="9.25" y2="32" />
+      </g>
+
+      {/* Four outer connection nodes */}
+      <circle cx="32" cy="6" r="3.25" fill={c.blue} />
+      <circle cx="58" cy="32" r="3.25" fill={c.blue} />
+      <circle cx="32" cy="58" r="3.25" fill={c.blue} />
+      <circle cx="6" cy="32" r="3.25" fill={c.blue} />
+
+      {/* Center N (above spokes for a clean lockup) */}
+      <g transform={nTransform}>
+        <path
+          d="M18 44V20h6.5L34 36.5V20h6.5v24h-6.5L24.5 27.5V44H18Z"
+          fill={c.blue}
+        />
+      </g>
     </svg>
   );
 }
+
+export default NexaIcon;

@@ -15,8 +15,9 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Nexa TC",
-  description: "Transaction coordination platform",
+  title: "NEXA",
+  description:
+    "The Center of Every Deal. Connect. Coordinate. Close.",
 };
 
 export default function RootLayout({

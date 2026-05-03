@@ -27,6 +27,15 @@ const config: Config = {
           "brown-warm": "#8B5E3C",
           "brown-pale": "#F0E6D8",
         },
+        nexa: {
+          navy: "#0B1F3A",
+          blue: "#1F6FEB",
+          lightBlue: "#E8F0FE",
+          slate: "#4B5563",
+          gray: "#9CA3AF",
+          offWhite: "#F9FAFB",
+          teal: "#14B8A6",
+        },
         neutral: {
           DEFAULT: "#EDE9E3",
           50: "#F7F5F2",
