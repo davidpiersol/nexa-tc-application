@@ -8,8 +8,8 @@
 
 | Item | Value |
 |------|--------|
-| **Version** | See [`VERSION`](../VERSION) (last QA pass: **`v2.1.1`** verify hook + Supabase env fix). |
-| **Git remote** | `origin` — branch **`main`**, tags **`v2.1.x`**. |
+| **Version** | See [`VERSION`](../VERSION) — **`v3.0.0`** (NEXA branding / Tailwind `nexa.*` milestone; **graphics detour** — revisit against client sign-off before locking visuals). |
+| **Git remote** | `origin` — branch **`main`**, tag **`v3.0.0`** after release (prior tags **`v2.1.x`**, etc.). |
 | **Build guide position** | **Chapter 4 · Step 11** — *Build all external API integrations* ([`nexa_build_guide.md`](../nexa_build_guide.md)). |
 
 ---
@@ -40,7 +40,7 @@ npm run smoke      # with dev server: npm run smoke -- http://localhost:3000
 
 ## NEXT STEP (explicit)
 
-**Implement Step 11:** external integration clients (MLS, ATTOM/clerk typo in guide, DocuSign, Postmark inbound, Plaid) under `lib/` per build guide — then wire webhooks and audit paths.
+**You are clear to start Step 11:** no dependency on the **`v3.0.0`** branding detour for backend integration work. Implement external integration clients (MLS, ATTOM/clerk typo in guide, DocuSign, Postmark inbound, Plaid) under `lib/` per build guide — then wire webhooks and audit paths. Schedule a separate **graphics cleanup** milestone when client assets are final.
 
 ---
 

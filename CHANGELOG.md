@@ -2,6 +2,21 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v3.0.0] - 2026-05-03
+
+### Added
+
+- **NEXA brand surfaces:** [`NexaLogo`](components/brand/NexaLogo.tsx) / [`NexaIcon`](components/brand/NexaIcon.tsx) inline SVGs; [`dashboard-shell`](components/dashboard/dashboard-shell.tsx) header + collapsible sidebar rail; login + landing copy aligned with [`lib/brand/tokens.ts`](lib/brand/tokens.ts).
+- **Tailwind:** `theme.extend.colors.nexa.*` in [`tailwind.config.ts`](tailwind.config.ts) (alongside existing `brand`, `neutral`, shadcn semantic colors).
+
+### Changed
+
+- [`app/layout.tsx`](app/layout.tsx) metadata; [`TopBar`](components/ui/top-bar.tsx) optional `leading`; [`Sidebar`](components/ui/sidebar.tsx) default brand mark + optional `collapsed`.
+
+### Notes
+
+- **Graphics detour:** This milestone ships a first-pass NEXA UI pass **before** Chapter 4 · Step 11. Plan a **follow-up pass** to align lockups, colors, and layout with **final client-approved** brand guidance—do not treat this as the final signed-off graphic system.
+
 ## [v2.1.1] - 2026-05-02
 
 ### Added
@@ -152,6 +167,7 @@ Tokens are authored from **`nexa_build_guide.md`** Step 2 (same names as Figma p
 
 - Initial repository: Cursor rules layout (awesome-cursorrules–style), versioning policy (`v1.0.0`), `rules-new/` templates, baseline tag `v1.0.0`.
 
+[v3.0.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.1.1...v3.0.0
 [v2.1.1]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.1.0...v2.1.1
 [v2.1.0]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.2...v2.1.0
 [v2.0.2]: https://github.com/davidpiersol/nexa-tc-application/compare/v2.0.1...v2.0.2
