@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { TransactionEditorForm } from "@/components/tc/transaction-editor-form";
 import { Button } from "@/components/ui/button";
 import { getTransactionDetail } from "@/lib/queries/transaction-detail";
 
@@ -67,6 +68,31 @@ export default async function TransactionDetailPage({ params }: Props) {
           </p>
         </section>
       </div>
+
+      <section>
+        <h3 className="font-display text-heading-md text-brand-navy">Edit transaction</h3>
+        <p className="mt-2 font-sans text-ui-body text-neutral-600">
+          Update core details for this file.
+        </p>
+        <TransactionEditorForm
+          mode="edit"
+          initial={{
+            id: t.id,
+            status: t.status as
+              | "draft"
+              | "active"
+              | "under_contract"
+              | "pending_close"
+              | "closed"
+              | "cancelled",
+            property_address: t.property_address,
+            mls_number: t.mls_number,
+            close_date: t.close_date,
+            notes: t.notes,
+            intake_data: t.intake_data ?? {},
+          }}
+        />
+      </section>
     </div>
   );
 }

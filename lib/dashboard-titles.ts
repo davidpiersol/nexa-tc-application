@@ -13,6 +13,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.startsWith("/tc/transactions/") && pathname.includes("/documents")) {
     return "Document Manager";
   }
+  if (pathname === "/tc/transactions/new") return "New Transaction";
   if (pathname.match(/^\/tc\/transactions\/[^/]+$/)) {
     return "Transaction Detail";
   }

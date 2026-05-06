@@ -15,6 +15,7 @@ import {
 } from "@/lib/dashboard-nav";
 import { cn } from "@/lib/utils/cn";
 import { AccountMenu } from "@/components/dashboard/account-menu";
+import { Button } from "@/components/ui/button";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -122,7 +123,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
       </aside>
-      <div className="flex min-w-0 flex-1 flex-col">
+      {/* min-h-0 so nested flex children can shrink and establish overflow (avoid clipped / empty main) */}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {/* Header above main stacking so account dropdown (absolute) receives clicks over page body */}
         <header className="relative z-30 flex h-16 shrink-0 items-center gap-4 border-b-2 border-brand-gold bg-white px-4 sm:px-6">
           <Link
@@ -140,10 +142,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <h1 className="truncate font-display text-xl text-brand-navy">
               {title}
             </h1>
+            {role === "tc" ? (
+              <Button variant="gold" size="sm" type="button" asChild>
+                <Link href="/tc/transactions/new">Add transaction</Link>
+              </Button>
+            ) : null}
             <AccountMenu />
           </div>
         </header>
-        <main className="relative z-0 flex-1 p-4 sm:p-6">{children}</main>
+        <main className="relative z-0 min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );

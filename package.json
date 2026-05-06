@@ -1,9 +1,11 @@
 {
   "name": "nexa-tc-application",
-  "version": "4.1.4",
+  "version": "4.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:clean": "rm -rf .next && next dev",
+    "verify:with-clean-dev": "bash scripts/verify-with-clean-dev.sh",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
     property_address?: string | null;
     transaction_type?: string | null;
     close_date?: string | null;
+    intake_data?: unknown;
   };
   try {
     body = (await request.json()) as typeof body;
@@ -79,12 +80,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const intakeData =
+    body.intake_data && typeof body.intake_data === "object" && !Array.isArray(body.intake_data)
+      ? body.intake_data
+      : {};
+
   const insertPayload = {
     tenant_id: tenantRow.tenant_id,
     mls_number: body.mls_number?.trim() || null,
     property_address: body.property_address?.trim() || null,
     transaction_type: body.transaction_type?.trim() || null,
     close_date: body.close_date?.trim() || null,
+    intake_data: intakeData,
     created_by: user.id,
     status: "draft" as const,
   };

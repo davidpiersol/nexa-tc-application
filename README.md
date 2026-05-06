@@ -1,6 +1,6 @@
 # Nexa TC Application
 
-**Current version:** [v4.1.4](VERSION)
+**Current version:** [v4.4.0](VERSION)
 
 Application repository with Cursor AI rules structured after [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules).
 

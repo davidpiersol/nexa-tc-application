@@ -21,6 +21,8 @@ function columnKeyToStage(col: PipelineColumnKey): PipelineCard["stage"] {
 
 export type TcDeadlineRow = {
   id: string;
+  /** Opens `/tc/transactions/[transactionId]` */
+  transactionId: string;
   address: string;
   type: string;
   date: string;
@@ -29,6 +31,7 @@ export type TcDeadlineRow = {
 
 export type TcTaskRow = {
   id: string;
+  transactionId: string;
   name: string;
   completed: boolean;
   priority: "high" | "medium" | "low";
@@ -145,6 +148,7 @@ export async function getTcDashboardData(): Promise<{
       const t = txRows.find((x) => x.id === row.transaction_id);
       deadlineCandidates.push({
         id: `task-${row.id}`,
+        transactionId: row.transaction_id,
         address: t?.property_address ?? "Transaction",
         type: row.title,
         date: row.due_date,
@@ -196,6 +200,7 @@ export async function getTcDashboardData(): Promise<{
 
   const tasks: TcTaskRow[] = (tasksRows ?? []).slice(0, 12).map((row) => ({
     id: row.id,
+    transactionId: row.transaction_id,
     name: row.title,
     completed: Boolean(row.completed_at),
     priority: "medium",

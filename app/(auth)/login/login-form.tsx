@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import NexaIcon from "@/components/brand/NexaIcon";
 import NexaLogo from "@/components/brand/NexaLogo";
@@ -10,13 +10,17 @@ import { Input } from "@/components/ui/input";
 import { nexaBrand } from "@/lib/brand/tokens";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
+export type LoginFormProps = {
+  /** Post-login path from `?redirect=` (validated on submit). */
+  redirect?: string;
+};
+
 /**
  * Login — `POST /api/auth/login` (rate-limited per IP) sets session cookies; MFA enforced in middleware.
  */
-export function LoginForm() {
+export function LoginForm({ redirect: redirectProp = "/tc" }: LoginFormProps) {
   const router = useRouter();
-  const params = useSearchParams();
-  const redirect = params.get("redirect") ?? "/tc";
+  const redirect = redirectProp;
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 

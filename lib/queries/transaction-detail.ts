@@ -5,7 +5,7 @@ export async function getTransactionDetail(transactionId: string) {
   const { data: tx, error } = await supabase
     .from("transactions")
     .select(
-      "id, status, close_date, property_address, mls_number, notes, first_pass_status, created_at",
+      "id, status, close_date, property_address, mls_number, notes, first_pass_status, intake_data, created_at",
     )
     .eq("id", transactionId)
     .maybeSingle();

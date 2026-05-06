@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -75,21 +76,29 @@ export function TcTasksInteractive({ tasks: initial }: { tasks: TcTaskRow[] }) {
               {t.name}
             </span>
           </label>
-          <Badge
-            variant={
-              t.priority === "high"
-                ? "gold"
+          <div className="flex shrink-0 items-center gap-3">
+            <Badge
+              variant={
+                t.priority === "high"
+                  ? "gold"
+                  : t.priority === "medium"
+                    ? "navy"
+                    : "neutral"
+              }
+            >
+              {t.priority === "high"
+                ? "High"
                 : t.priority === "medium"
-                  ? "navy"
-                  : "neutral"
-            }
-          >
-            {t.priority === "high"
-              ? "High"
-              : t.priority === "medium"
-                ? "Medium"
-                : "Low"}
-          </Badge>
+                  ? "Medium"
+                  : "Low"}
+            </Badge>
+            <Link
+              href={`/tc/transactions/${t.transactionId}`}
+              className="font-sans text-sm font-medium text-brand-navy underline-offset-2 hover:underline"
+            >
+              Open
+            </Link>
+          </div>
         </li>
       ))}
     </ul>

@@ -86,6 +86,7 @@ export async function PATCH(request: NextRequest, ctx: Ctx) {
     "notes",
     "first_pass_status",
     "transaction_type",
+    "intake_data",
   ] as const;
   const update: Record<string, unknown> = {};
   for (const k of allowed) {

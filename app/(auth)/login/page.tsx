@@ -1,16 +1,21 @@
-import { Suspense } from "react";
 import { LoginForm } from "./login-form";
 
-export default function LoginPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="font-sans text-sm text-neutral-600" aria-live="polite">
-          Loading…
-        </div>
-      }
-    >
-      <LoginForm />
-    </Suspense>
-  );
+function firstParam(
+  raw: string | string[] | undefined,
+): string | undefined {
+  if (Array.isArray(raw)) return raw[0];
+  return raw;
+}
+
+/**
+ * Reads `?redirect=` on the server so the client form does not depend on `useSearchParams`
+ * (avoids Suspense / hydration edge cases that can render a blank login shell).
+ */
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
+  const redirect = firstParam(searchParams.redirect) ?? "/tc";
+  return <LoginForm redirect={redirect} />;
 }

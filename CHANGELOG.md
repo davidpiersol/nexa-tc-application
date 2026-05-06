@@ -2,6 +2,83 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.4.0] - 2026-05-06
+
+### Changed
+
+- **Sprint planning update** — added a final sprint section in [`first-pass-changes.md`](first-pass-changes.md) for client-led required/optional mapping and approval of intake field requirements.
+- **Sprint phase increment** — advanced to next sprint baseline `v4.4.0` (Y bump) per project versioning cadence.
+
+## [v4.3.2] - 2026-05-06
+
+### Added
+
+- **TC intake field dictionary artifact** — added [`docs/tc-intake-field-dictionary.md`](docs/tc-intake-field-dictionary.md) with deduped canonical keys grouped by provider and ordered as requested: **5, 1, 3, 2, 4**.
+- **Expanded TC transaction intake form sections** — [`TransactionEditorForm`](components/tc/transaction-editor-form.tsx) now captures the sectioned intake data for TC/internal, seller, seller brokers, buyer, and buyer brokers in that same order.
+- **Signature capture fields (blank at creation)** — buyer/seller signature capture tracking now uses explicit fields: `*_signature_captured` (boolean) and `*_signature_date` (date), defaulting to unchecked/blank for new transactions.
+- **Transactions intake persistence** — added `transactions.intake_data` JSONB column (migration [`20260506235900_add_transactions_intake_data.sql`](supabase/migrations/20260506235900_add_transactions_intake_data.sql)), wired through `POST /api/transactions`, `PATCH /api/transactions/[id]`, and transaction detail query hydration.
+
+## [v4.3.1] - 2026-05-06
+
+### Added
+
+- **TC add transaction controls** — added “Add transaction” CTA in the TC header (`dashboard-shell`) and on `/tc/transactions`, both routing to new page `/tc/transactions/new`.
+- **New transaction page + form** — created `/tc/transactions/new` and reusable [`TransactionEditorForm`](components/tc/transaction-editor-form.tsx) to POST `/api/transactions` with CSRF and redirect into the created transaction detail.
+- **Editable transaction detail** — `/tc/transactions/[id]` now includes an “Edit transaction” section using the same editor form to PATCH transaction fields (`status`, address, MLS, close date, notes).
+
+### Changed
+
+- **Dashboard title map** — `/tc/transactions/new` now resolves to “New Transaction” in [`dashboard-titles`](lib/dashboard-titles.ts).
+
+## [v4.3.0] - 2026-05-06
+
+### Added
+
+- **TC settings + preferences (Sprint 3 start)** — `/tc/settings` now loads real user-scoped settings and renders a save form for profile fields (`full_name`, `phone`) plus workspace preferences (`emailNotifications`, `timezone`, `dateFormat`) stored in auth `user_metadata.preferences`.
+- **Settings action + query layer** — added [`app/actions/tc-settings.ts`](app/actions/tc-settings.ts), [`lib/queries/tc-settings.ts`](lib/queries/tc-settings.ts), and shared option constants in [`lib/tc-settings-options.ts`](lib/tc-settings-options.ts).
+
+## [v4.2.4] - 2026-05-06
+
+### Added
+
+- **`verify:with-clean-dev` workflow script** — [`scripts/verify-with-clean-dev.sh`](scripts/verify-with-clean-dev.sh) and `package.json` script `verify:with-clean-dev` now stop any listener on `:3000`, clear `.next`, run full `npm run verify`, then start `npm run dev:clean` for immediate manual review. Includes `--verify-only` mode for CI/local non-interactive checks.
+
+## [v4.2.3] - 2026-05-06
+
+### Fixed
+
+- **Deadline click runtime crash** — [`useTransactionRealtimeRefresh`](hooks/use-transaction-realtime-refresh.ts) now guards Supabase realtime setup with `try/catch`; if websocket initialization fails (for example: `WebSocket not available: The operation is insecure`), transaction pages continue rendering and remain fully usable without live auto-refresh.
+
+### Added
+
+- **Cache-safe local dev command** — `package.json` adds `dev:clean` (`rm -rf .next && next dev`) to recover quickly from Next.js cache/chunk corruption that can cause blank pages.
+
+## [v4.2.2] - 2026-05-06
+
+### Fixed
+
+- **Dashboard main area blank** — [`dashboard-shell`](components/dashboard/dashboard-shell.tsx): added `min-h-0` on the content column and `min-h-0 overflow-y-auto` on `<main>` so nested flex layout cannot clip page body (Overview / Transactions / Settings looked empty while the header stayed visible).
+- **Authenticated dashboard rendering** — [`app/(dashboard)/layout.tsx`](app/(dashboard)/layout.tsx): `export const dynamic = "force-dynamic"` so TC routes always render on request with a live session (avoids stale or empty RSC shells for cookie-backed pages).
+
+## [v4.2.1] - 2026-05-06
+
+### Fixed
+
+- **Login blank shell** — [`app/(auth)/login/page.tsx`](app/(auth)/login/page.tsx) passes `?redirect=` from the server into [`LoginForm`](app/(auth)/login/login-form.tsx) so the client no longer uses `useSearchParams` (avoids Suspense / hydration edge cases). [`app/(auth)/layout.tsx`](app/(auth)/layout.tsx) sets explicit `text-neutral-900` on the auth canvas and card.
+
+### Added
+
+- **Agent empty state** — [`app/(dashboard)/agent/[id]/page.tsx`](app/(dashboard)/agent/[id]/page.tsx): when there are no RLS-visible transactions, show a centered empty message instead of an empty table.
+
+## [v4.2.0] - 2026-05-06
+
+### Added
+
+- **TC dashboard navigation (Sprint 2)** — KPI tiles link to filtered transaction lists (`?filter=active|due-week|pending-reviews|signatures`); deadline rows and task rows link to `/tc/transactions/[id]`; [`StatsCard`](components/ui/stats-card.tsx) supports optional `href`.
+- **All transactions** — [`app/(dashboard)/tc/transactions/page.tsx`](app/(dashboard)/tc/transactions/page.tsx) loads real tenant rows via [`getTcTransactionsList`](lib/queries/tc-transactions-list.ts) (replacing placeholder IDs that caused **Open → 404**).
+- **Agent overview** — [`app/(dashboard)/agent/[id]/page.tsx`](app/(dashboard)/agent/[id]/page.tsx) lists RLS-scoped transactions with links into the TC transaction workspace.
+- **Pure helpers** — [`lib/tc-transaction-list-filter.ts`](lib/tc-transaction-list-filter.ts) + unit tests in [`tests/unit/tc-transaction-list-filter.test.ts`](tests/unit/tc-transaction-list-filter.test.ts).
+
 ## [v4.1.4] - 2026-05-06
 
 ### Fixed
