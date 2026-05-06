@@ -21,6 +21,12 @@ function assertSeedSafetyGate() {
       "Refusing to run seed.ts. Set ALLOW_UAT_SEED=1 to explicitly allow UAT seeding.",
     );
   }
+
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_UAT_SEED_IN_PROD !== "1") {
+    throw new Error(
+      "Refusing to run seed.ts in NODE_ENV=production. Set ALLOW_UAT_SEED_IN_PROD=1 only in controlled CI/test environments.",
+    );
+  }
 }
 
 type PartyRole =
