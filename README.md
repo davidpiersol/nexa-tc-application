@@ -1,6 +1,6 @@
 # Nexa TC Application
 
-**Current version:** [v2.1.1](VERSION)
+**Current version:** [v4.0.0](VERSION)
 
 Application repository with Cursor AI rules structured after [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules).
 
@@ -16,6 +16,7 @@ Application repository with Cursor AI rules structured after [PatrickJS/awesome-
 | [`supabase/migrations/`](supabase/migrations/) | **Step 9** — Postgres schema, RLS, triggers · **Step 10** — auth/security (`middleware`, MFA, CSRF — **`v2.1.0`**) |
 | [`docs/supabase-configuration.md`](docs/supabase-configuration.md) | **Supabase** — keys, migrations, Auth URLs, MFA, local vs cloud |
 | [`docs/deployment-online-testing.md`](docs/deployment-online-testing.md) | **Deploy** — Vercel/Netlify notes, env checklist, **no Vercel/Netlify MCP in repo** |
+| [`docs/production-deploy.md`](docs/production-deploy.md) | **Production & demo** — `.env.local` vs Netlify env, seeding, CI, checklist |
 
 **Current build position:** Chapter 4 · Step 11 — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
 

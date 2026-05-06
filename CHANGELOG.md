@@ -2,6 +2,22 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.0.0] - 2026-05-06
+
+### Added
+
+- **[`docs/production-deploy.md`](docs/production-deploy.md)** — production vs local env vars (Netlify vs `.env.local`), minimum Supabase keys for hosted deploy, demo seeding cautions, CI secrets pointer, pre-flight checklist.
+- **Supabase local stack** — [`supabase/config.toml`](supabase/config.toml), [`supabase/.gitignore`](supabase/.gitignore), [`supabase/seed.sql`](supabase/seed.sql) for `supabase db reset` / CLI workflows.
+
+### Fixed
+
+- **Audit trigger** — migration [`20260506200000_fix_audit_row_change_no_cross_table_fields.sql`](supabase/migrations/20260506200000_fix_audit_row_change_no_cross_table_fields.sql) fixes `audit_row_change()` so inserts on `tenants` (and other tables without `transaction_id`) no longer error (`record "new" has no field "transaction_id"`).
+
+### Changed
+
+- **[`README.md`](README.md)** — current version badge and link to production deploy doc.
+- **[`docs/deployment-online-testing.md`](docs/deployment-online-testing.md)** — cross-link to [`production-deploy.md`](docs/production-deploy.md).
+
 ## [v3.0.0] - 2026-05-03
 
 ### Added

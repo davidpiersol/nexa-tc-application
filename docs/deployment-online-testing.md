@@ -2,6 +2,8 @@
 
 Use this when you want a **hosted URL** for QA beyond `localhost`.
 
+For **production vs local env vars**, **Netlify env setup**, **demo seeding**, and a **pre-flight checklist**, see **[`production-deploy.md`](production-deploy.md)**.
+
 ## MCP: Vercel / Netlify in Cursor?
 
 **This repository does not configure a Vercel or Netlify MCP server.** The Cursor MCP workspace for this project is focused on other integrations (e.g. design tooling)—not deployment platforms.
