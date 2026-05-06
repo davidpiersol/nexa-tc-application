@@ -14,6 +14,7 @@ import {
   routeBase,
 } from "@/lib/dashboard-nav";
 import { cn } from "@/lib/utils/cn";
+import { AccountMenu } from "@/components/dashboard/account-menu";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -138,13 +139,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <h1 className="truncate font-display text-xl text-brand-navy">
               {title}
             </h1>
-            {role ? (
-              <span className="ml-auto hidden items-center gap-2 font-sans text-xs uppercase tracking-wide text-neutral-600 sm:inline-flex">
-                <NexaIcon className="size-5 opacity-70" aria-hidden />
-                {/* TODO: role badge from session */}
-                Role · {role}
-              </span>
-            ) : null}
+            <AccountMenu />
           </div>
         </header>
         <main className="relative z-[1] flex-1 p-4 sm:p-6">{children}</main>

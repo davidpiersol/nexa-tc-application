@@ -18,6 +18,16 @@ All releases use **v.X.Y.Z** where **X**, **Y**, and **Z** are non-negative inte
 - **Z — Patch / iteration**  
   Increments for unit-test work, minor bugfixes, design and layout changes, and other small, non-milestone iterations.
 
+## Sprint / bug-fix cadence (Nexa)
+
+Use **`v4.Y.Z`** with this team rhythm (third digit **Z** = patch / bug-fix iteration; middle digit **Y** = sprint phase):
+
+- **Bump Z** after each **bug fix** or small iteration that is merged (login styling, logout edge case, nav tweak, etc.).
+- **Bump Y** (and reset Z to `0`) only when the **product owner certifies the current sprint finished** and you move to the next sprint phase.
+- **Bump X** only for milestone releases per the table above.
+
+Agents should update **VERSION** (repo root), **CHANGELOG.md**, and tag **`vX.Y.Z`** when cutting a release.
+
 ## Examples
 
 `v1.0.0` → `v1.0.1` (Z bump) → `v1.1.0` (Y bump) → `v2.0.0` (X bump).

@@ -40,6 +40,7 @@ export function allowedBeforeMfaComplete(pathname: string): boolean {
     pathname.startsWith("/auth/mfa") ||
     pathname.startsWith("/invite") ||
     pathname.startsWith("/api/auth/login") ||
+    pathname.startsWith("/api/auth/logout") ||
     pathname.startsWith("/api/auth/role-redirect") ||
     isPublicPath(pathname)
   );

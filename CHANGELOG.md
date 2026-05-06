@@ -2,6 +2,22 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.1.3] - 2026-05-06
+
+### Added
+
+- **Account menu & auth** — `POST /api/auth/logout`, header **`AccountMenu`** on all dashboard roles, **`ProfileBody`** + profile routes (`/tc/profile`, `/{role}/{id}/profile`), **`profileHrefFromPathname`** in [`lib/dashboard-nav.ts`](lib/dashboard-nav.ts).
+
+### Fixed
+
+- **Buyer profile** — buyers now get Profile + Log out like other party roles ([`/buyer/[id]/profile`](app/(dashboard)/buyer/[id]/profile/page.tsx)).
+- **Login field visibility** — WebKit autofill / readable ink in [`app/globals.css`](app/globals.css); reverted experimental **`scheme-light`** on auth layout and **`Input`** sizing tweaks that affected layout.
+- **Dev blank screen** — corrupt `.next` cache: clear `.next` and restart `npm run dev` when `_next/static` chunks 404.
+
+### Changed
+
+- **[`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc)** — documents bug-fix **Z** cadence and sprint-certification **Y** bump (see **Sprint / bug-fix cadence**).
+
 ## [v4.0.0] - 2026-05-06
 
 ### Added

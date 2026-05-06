@@ -104,3 +104,24 @@
       "calt" 1;
   }
 }
+
+/* Login / forms: WebKit autofill often sets a light yellow bg but leaves -webkit-text-fill-color
+   light-on-light or white — typed text looks invisible. Force readable ink + caret. */
+@layer components {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea {
+    color: rgb(28 25 23); /* neutral-900 */
+    caret-color: rgb(28 25 23);
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:focus {
+    -webkit-text-fill-color: rgb(28 25 23);
+    caret-color: rgb(28 25 23);
+    box-shadow: 0 0 0 1000px rgb(255 255 255) inset;
+    transition: background-color 99999s ease-out;
+  }
+}

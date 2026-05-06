@@ -44,3 +44,19 @@ export function navItemsForPath(pathname: string): NavItem[] {
 
   return [{ href: base, label: "Overview" }];
 }
+
+/**
+ * Profile route per role: TC uses `/tc/profile`; party dashboards use `/{role}/{transactionId}/profile`.
+ */
+export function profileHrefFromPathname(pathname: string): string | null {
+  const role = roleFromPathname(pathname);
+  if (!role) return null;
+  if (role === "tc") return "/tc/profile";
+
+  const parts = pathname.split("/").filter(Boolean);
+  const scopedId = parts[1];
+  if (!scopedId || scopedId === "profile") return null;
+
+  return `/${role}/${scopedId}/profile`;
+}
+
