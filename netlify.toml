@@ -1,0 +1,29 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[context.production.environment]
+  NEXT_PUBLIC_APP_URL = "https://your-nexa-domain.netlify.app"
+
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_APP_URL = "$DEPLOY_PRIME_URL"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

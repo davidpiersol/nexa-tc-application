@@ -23,6 +23,8 @@ describe("lib/auth/paths", () => {
     expect(allowedBeforeMfaComplete("/")).toBe(true);
     expect(allowedBeforeMfaComplete("/auth/mfa")).toBe(true);
     expect(allowedBeforeMfaComplete("/invite/token")).toBe(true);
+    expect(allowedBeforeMfaComplete("/api/auth/login")).toBe(true);
+    expect(allowedBeforeMfaComplete("/api/auth/role-redirect")).toBe(true);
     expect(allowedBeforeMfaComplete("/tc")).toBe(false);
   });
 });

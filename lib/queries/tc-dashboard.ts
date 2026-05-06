@@ -66,7 +66,7 @@ export async function getTcDashboardData(): Promise<{
   const supabase = await createClient();
   const pipeline = emptyPipelineColumns();
 
-  const { data: txRows } = await supabase
+  const { data: txRows, error: txErr } = await supabase
     .from("transactions")
     .select(
       "id, status, close_date, property_address, mls_number, created_by, first_pass_status",

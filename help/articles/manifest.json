@@ -1,0 +1,191 @@
+[
+  {
+    "slug": "workspace-overview",
+    "title": "Welcome to your NEXA workspace",
+    "route": "(workspace)",
+    "role": "all",
+    "file": "all/workspace-overview.md"
+  },
+  {
+    "slug": "tc-dashboard-overview",
+    "title": "Your TC Dashboard — At a Glance",
+    "route": "/tc",
+    "role": "tc",
+    "file": "tc/dashboard-overview.md"
+  },
+  {
+    "slug": "tc-opening-a-transaction",
+    "title": "Opening a New Transaction",
+    "route": "/tc/transactions · transaction file",
+    "role": "tc",
+    "file": "tc/opening-a-transaction.md"
+  },
+  {
+    "slug": "tc-document-manager",
+    "title": "Managing Transaction Documents",
+    "route": "/tc/transactions/[id]/documents",
+    "role": "tc",
+    "file": "tc/document-manager.md"
+  },
+  {
+    "slug": "tc-checklists",
+    "title": "Using the Transaction Checklist",
+    "route": "/tc/transactions/[id]/first-pass",
+    "role": "tc",
+    "file": "tc/checklists.md"
+  },
+  {
+    "slug": "tc-inviting-parties",
+    "title": "Inviting Parties to the Transaction",
+    "route": "(transaction · parties)",
+    "role": "tc",
+    "file": "tc/inviting-parties.md"
+  },
+  {
+    "slug": "tc-signature-workflow",
+    "title": "Sending Documents for Signature",
+    "route": "(DocuSign · workflow)",
+    "role": "tc",
+    "file": "tc/signature-workflow.md"
+  },
+  {
+    "slug": "tc-deadlines-and-tasks",
+    "title": "Tracking Deadlines and Tasks",
+    "route": "/tc/settings · deadlines",
+    "role": "tc",
+    "file": "tc/deadlines-and-tasks.md"
+  },
+  {
+    "slug": "agent-dashboard-overview",
+    "title": "Agent Workspace — Stay Ahead of the Next Question",
+    "route": "/agent/[id]",
+    "role": "agent",
+    "file": "agent/dashboard-overview.md"
+  },
+  {
+    "slug": "agent-uploading-documents",
+    "title": "Uploading Documents as an Agent",
+    "route": "/agent/[id] · documents",
+    "role": "agent",
+    "file": "agent/uploading-documents.md"
+  },
+  {
+    "slug": "agent-messaging",
+    "title": "Messaging on the Transaction File",
+    "route": "/agent/[id] · messages",
+    "role": "agent",
+    "file": "agent/messaging.md"
+  },
+  {
+    "slug": "buyer-welcome",
+    "title": "Welcome—we’re glad you’re here",
+    "route": "/buyer/[id]",
+    "role": "buyer",
+    "file": "buyer/welcome.md"
+  },
+  {
+    "slug": "buyer-signing-documents",
+    "title": "Signing documents online",
+    "route": "/buyer/[id] · signing",
+    "role": "buyer",
+    "file": "buyer/signing-documents.md"
+  },
+  {
+    "slug": "buyer-uploading-documents",
+    "title": "Uploading documents when asked",
+    "route": "/buyer/[id] · uploads",
+    "role": "buyer",
+    "file": "buyer/uploading-documents.md"
+  },
+  {
+    "slug": "buyer-understanding-timeline",
+    "title": "Understanding your timeline",
+    "route": "/buyer/[id] · timeline",
+    "role": "buyer",
+    "file": "buyer/understanding-timeline.md"
+  },
+  {
+    "slug": "buyer-important-dates",
+    "title": "Important dates to keep in view",
+    "route": "/buyer/[id] · dates",
+    "role": "buyer",
+    "file": "buyer/important-dates.md"
+  },
+  {
+    "slug": "seller-welcome",
+    "title": "Welcome—thank you for trusting this chapter",
+    "route": "/seller/[id]",
+    "role": "seller",
+    "file": "seller/welcome.md"
+  },
+  {
+    "slug": "seller-disclosures",
+    "title": "Disclosures—the honesty layer buyers deserve",
+    "route": "/seller/[id] · disclosures",
+    "role": "seller",
+    "file": "seller/disclosures.md"
+  },
+  {
+    "slug": "seller-signing-documents",
+    "title": "Signing as a seller",
+    "route": "/seller/[id] · signing",
+    "role": "seller",
+    "file": "seller/signing-documents.md"
+  },
+  {
+    "slug": "seller-timeline",
+    "title": "Your selling timeline—steady beats frantic",
+    "route": "/seller/[id] · timeline",
+    "role": "seller",
+    "file": "seller/timeline.md"
+  },
+  {
+    "slug": "mortgage-dashboard-overview",
+    "title": "Mortgage workspace — read the deal once",
+    "route": "/mortgage/[id]",
+    "role": "mortgage",
+    "file": "mortgage/dashboard-overview.md"
+  },
+  {
+    "slug": "mortgage-uploading-documents",
+    "title": "Uploading lender-critical documents",
+    "route": "/mortgage/[id] · uploads",
+    "role": "mortgage",
+    "file": "mortgage/uploading-documents.md"
+  },
+  {
+    "slug": "mortgage-milestones",
+    "title": "Loan milestones that partners actually notice",
+    "route": "/mortgage/[id] · milestones",
+    "role": "mortgage",
+    "file": "mortgage/milestones.md"
+  },
+  {
+    "slug": "title-dashboard-overview",
+    "title": "Title workspace — commitments before cocktails",
+    "route": "/title/[id]",
+    "role": "title",
+    "file": "title/dashboard-overview.md"
+  },
+  {
+    "slug": "title-checklist",
+    "title": "Title checklist discipline",
+    "route": "/title/[id] · checklist",
+    "role": "title",
+    "file": "title/checklist.md"
+  },
+  {
+    "slug": "title-uploading",
+    "title": "Uploading title-critical documents",
+    "route": "/title/[id] · uploads",
+    "role": "title",
+    "file": "title/uploading.md"
+  },
+  {
+    "slug": "title-closing-coordination",
+    "title": "Closing coordination — choreography worth rehearsing",
+    "route": "/title/[id] · closing",
+    "role": "title",
+    "file": "title/closing-coordination.md"
+  }
+]

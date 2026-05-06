@@ -14,6 +14,8 @@ Application repository with Cursor AI rules structured after [PatrickJS/awesome-
 | [`CHANGELOG.md`](CHANGELOG.md) | Version history |
 | [`docs/figma-sync.md`](docs/figma-sync.md) | **Figma Make** ↔ repo sync (`fileKey`, MCP refresh loop) |
 | [`supabase/migrations/`](supabase/migrations/) | **Step 9** — Postgres schema, RLS, triggers · **Step 10** — auth/security (`middleware`, MFA, CSRF — **`v2.1.0`**) |
+| [`docs/supabase-configuration.md`](docs/supabase-configuration.md) | **Supabase** — keys, migrations, Auth URLs, MFA, local vs cloud |
+| [`docs/deployment-online-testing.md`](docs/deployment-online-testing.md) | **Deploy** — Vercel/Netlify notes, env checklist, **no Vercel/Netlify MCP in repo** |
 
 **Current build position:** Chapter 4 · Step 11 — see [`docs/wiki/progress.md`](docs/wiki/progress.md).
 

@@ -15,10 +15,16 @@ build/
 out/
 *.tsbuildinfo
 *.log
+
+# Secrets & local overrides — never commit real credentials
 .env
 .env.*
 !.env.example
 .env.local
+
+# UAT / Playwright generated state (scripts/seed.ts)
+scripts/.uat-seed-state.json
+playwright/.auth/
 
 # Python
 __pycache__/

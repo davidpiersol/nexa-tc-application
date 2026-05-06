@@ -1,0 +1,99 @@
+# Required GitHub Secrets:
+#   NEXT_PUBLIC_SUPABASE_URL
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY
+#   SUPABASE_SERVICE_ROLE_KEY
+#   NEXT_PUBLIC_APP_URL          (CI uses http://127.0.0.1:3000 for UAT; set real URL for deploy previews if needed)
+#   NETLIFY_AUTH_TOKEN
+#   NETLIFY_SITE_ID
+# Optional: UPSTASH_*, INNGEST_*, ANTHROPIC_API_KEY, POSTMARK_*, …
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      NEXA_SKIP_MFA: "1"
+      ALLOW_UAT_SEED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - run: npx tsc --noEmit
+
+      - run: npm run build
+
+      - name: Write .env.local for scripts
+        run: |
+          cat > .env.local <<EOF
+          NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+          SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+          NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000
+          NEXA_SKIP_MFA=1
+          ALLOW_UAT_SEED=1
+          EOF
+
+      - name: Seed UAT + dev server + UAT script + Playwright
+        run: |
+          set -e
+          npx tsx --env-file=.env.local scripts/seed.ts
+          export NEXA_SKIP_MFA=1
+          export NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000
+          npm run dev &
+          DEV_PID=$!
+          trap 'kill $DEV_PID 2>/dev/null || true' EXIT
+          for i in $(seq 1 90); do
+            curl -sf http://127.0.0.1:3000 >/dev/null && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:3000 >/dev/null
+          npx tsx --env-file=.env.local scripts/uat.ts
+          npx playwright install chromium --with-deps
+          npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
+
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            test-results/playwright/**
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --prod --dir=.next
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

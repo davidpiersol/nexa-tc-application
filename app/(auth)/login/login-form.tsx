@@ -60,8 +60,18 @@ export function LoginForm() {
       return;
     }
 
-    router.replace(redirect);
-    router.refresh();
+    const allowExternal =
+      redirect &&
+      redirect.startsWith("/") &&
+      !redirect.startsWith("//") &&
+      redirect !== "/tc" &&
+      redirect !== "/";
+    if (allowExternal) {
+      router.replace(redirect);
+      router.refresh();
+      return;
+    }
+    window.location.assign(new URL("/api/auth/role-redirect", window.location.origin).toString());
   }
 
   return (

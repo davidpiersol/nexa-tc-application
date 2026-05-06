@@ -4,6 +4,7 @@ export const PUBLIC_PATH_PREFIXES = [
   "/signup",
   "/auth/mfa",
   "/invite",
+  "/forbidden",
   "/api/csrf",
   "/api/invite",
   "/api/inngest",
@@ -38,6 +39,8 @@ export function allowedBeforeMfaComplete(pathname: string): boolean {
     pathname.startsWith("/signup") ||
     pathname.startsWith("/auth/mfa") ||
     pathname.startsWith("/invite") ||
+    pathname.startsWith("/api/auth/login") ||
+    pathname.startsWith("/api/auth/role-redirect") ||
     isPublicPath(pathname)
   );
 }

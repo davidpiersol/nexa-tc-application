@@ -16,6 +16,11 @@ function tenantFromUser(user: {
   return "";
 }
 
+function nexaSkipMfa(): boolean {
+  const v = process.env.NEXA_SKIP_MFA;
+  return v === "1" || v === "true";
+}
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -41,7 +46,7 @@ export async function middleware(request: NextRequest) {
     const role = roleFromUser(user);
     if (role) requestHeaders.set("x-nexa-role", role);
 
-    if (roleRequiresMfa(role)) {
+    if (roleRequiresMfa(role) && !nexaSkipMfa()) {
       const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       const mfaOk = aal?.currentLevel === "aal2";
 
@@ -63,7 +68,27 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && (pathname === "/login" || pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/tc", request.url));
+    return NextResponse.redirect(new URL("/api/auth/role-redirect", request.url));
+  }
+
+  if (user) {
+    const role = roleFromUser(user) ?? "";
+    if (pathname.startsWith("/tc") && ["buyer", "seller", "mortgage", "title"].includes(role)) {
+      return new NextResponse(null, { status: 403 });
+    }
+    const buyerSeg = /^\/buyer\/([^/]+)/.exec(pathname);
+    if (buyerSeg && role === "tc") {
+      const txId = buyerSeg[1];
+      const { data: link } = await supabase
+        .from("transaction_parties")
+        .select("id")
+        .eq("transaction_id", txId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!link) {
+        return new NextResponse(null, { status: 403 });
+      }
+    }
   }
 
   return response;
