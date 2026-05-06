@@ -123,7 +123,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </nav>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="relative z-[1] flex h-16 shrink-0 items-center gap-4 border-b-2 border-brand-gold bg-white px-4 sm:px-6">
+        {/* Header above main stacking so account dropdown (absolute) receives clicks over page body */}
+        <header className="relative z-30 flex h-16 shrink-0 items-center gap-4 border-b-2 border-brand-gold bg-white px-4 sm:px-6">
           <Link
             href={homeHref}
             className="shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
@@ -142,7 +143,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <AccountMenu />
           </div>
         </header>
-        <main className="relative z-[1] flex-1 p-4 sm:p-6">{children}</main>
+        <main className="relative z-0 flex-1 p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );

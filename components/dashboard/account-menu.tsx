@@ -100,7 +100,7 @@ export function AccountMenu() {
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 z-50 mt-1 min-w-[12rem] rounded-md border border-neutral-200 bg-white py-1 shadow-lg"
+          className="absolute right-0 z-40 mt-1 min-w-[12rem] rounded-md border border-neutral-200 bg-white py-1 shadow-lg"
         >
           {profileHref ? (
             <Link

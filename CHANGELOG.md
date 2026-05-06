@@ -2,6 +2,12 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.1.4] - 2026-05-06
+
+### Fixed
+
+- **Account menu clicks** — [`dashboard-shell`](components/dashboard/dashboard-shell.tsx): header and `<main>` both used `z-[1]`, so `<main>` painted above the dropdown overhang and intercepted clicks. Raised header stacking (`z-30`) and set main to `z-0`.
+
 ## [v4.1.3] - 2026-05-06
 
 ### Added
