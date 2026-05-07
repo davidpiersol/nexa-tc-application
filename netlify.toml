@@ -23,7 +23,3 @@
     Referrer-Policy = "strict-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200

@@ -7,6 +7,7 @@ Related docs:
 - [`.env.example`](../.env.example) — full variable list and comments  
 - [`docs/supabase-configuration.md`](supabase-configuration.md) — Supabase keys, migrations, Auth URLs  
 - [`docs/deployment-online-testing.md`](deployment-online-testing.md) — hosted QA checklist, MCP note  
+- [`docs/pr-ci-cd-workflow.md`](pr-ci-cd-workflow.md) — branch/PR workflow, local review before production promotion  
 - [`netlify.toml`](../netlify.toml) — Netlify build + Next plugin  
 - [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) — CI test job + Netlify deploy  
 

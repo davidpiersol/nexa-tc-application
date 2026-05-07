@@ -5,6 +5,19 @@ import {
   isProtectedPath,
 } from "@/lib/auth/paths";
 import { roleFromUser, roleRequiresMfa } from "@/lib/auth/mfa";
+
+const ROLE_SCOPED_PREFIXES = new Set([
+  "agent",
+  "buyer",
+  "seller",
+  "mortgage",
+  "title",
+]);
+
+function firstPathSegments(pathname: string): { scope: string; id: string | null } {
+  const parts = pathname.split("/").filter(Boolean);
+  return { scope: parts[0] ?? "", id: parts[1] ?? null };
+}
 function tenantFromUser(user: {
   user_metadata?: Record<string, unknown>;
   app_metadata?: Record<string, unknown>;
@@ -73,20 +86,30 @@ export async function middleware(request: NextRequest) {
 
   if (user) {
     const role = roleFromUser(user) ?? "";
-    if (pathname.startsWith("/tc") && ["buyer", "seller", "mortgage", "title"].includes(role)) {
+    const { scope, id: scopedId } = firstPathSegments(pathname);
+
+    if (scope === "tc" && !["tc", "admin", "superadmin"].includes(role)) {
       return new NextResponse(null, { status: 403 });
     }
-    const buyerSeg = /^\/buyer\/([^/]+)/.exec(pathname);
-    if (buyerSeg && role === "tc") {
-      const txId = buyerSeg[1];
-      const { data: link } = await supabase
-        .from("transaction_parties")
-        .select("id")
-        .eq("transaction_id", txId)
-        .eq("user_id", user.id)
-        .maybeSingle();
-      if (!link) {
+
+    if (ROLE_SCOPED_PREFIXES.has(scope)) {
+      const sameRoleScope = role === scope;
+      const tcCrossRoleScope = role === "tc";
+
+      if (!sameRoleScope && !tcCrossRoleScope) {
         return new NextResponse(null, { status: 403 });
+      }
+
+      if (scopedId) {
+        const { data: link } = await supabase
+          .from("transaction_parties")
+          .select("id")
+          .eq("transaction_id", scopedId)
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (!link) {
+          return new NextResponse(null, { status: 403 });
+        }
       }
     }
   }

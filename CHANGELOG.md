@@ -2,6 +2,18 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.4.2] - 2026-05-07
+
+### Fixed
+
+- **Hosted CSRF token mismatch** — [`app/api/csrf/route.ts`](app/api/csrf/route.ts) now forces dynamic/no-store behavior (`dynamic = "force-dynamic"`, `revalidate = 0`, explicit `Cache-Control`) so Netlify/Next do not cache token responses. This keeps cookie token and JSON token in sync for login and mutation endpoints.
+
+## [v4.4.1] - 2026-05-07
+
+### Fixed
+
+- **Hosted API 404s on Netlify** — removed legacy `[[redirects]] /api/* -> /.netlify/functions/:splat` from [`netlify.toml`](netlify.toml). Next.js Runtime now serves App Router API routes directly, so `/api/csrf`, `/api/auth/login`, and related endpoints resolve correctly for hosted users.
+
 ## [v4.4.0] - 2026-05-06
 
 ### Changed

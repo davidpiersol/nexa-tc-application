@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { HeroGraphic } from "@/components/graphics/HeroGraphic";
 import { DocumentIcons } from "@/components/graphics/DocumentIcons";
 import { Button } from "@/components/ui/button";
@@ -61,11 +62,11 @@ export default function BuyerDashboardPage({ params }: Props) {
               <BadgePill>Under contract</BadgePill>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button variant="gold" type="button">
-                View documents
+              <Button variant="gold" type="button" asChild>
+                <Link href={`/buyer/${params.id}/documents`}>View documents</Link>
               </Button>
-              <Button variant="secondary" type="button">
-                Message TC
+              <Button variant="secondary" type="button" asChild>
+                <Link href={`/buyer/${params.id}/messages`}>Message TC</Link>
               </Button>
             </div>
           </div>
@@ -133,8 +134,10 @@ export default function BuyerDashboardPage({ params }: Props) {
           Review the seller disclosure package and acknowledge receipt.
         </p>
         <div className="mt-4">
-          <Button variant="gold" type="button">
-            Open disclosure
+          <Button variant="gold" type="button" asChild>
+            <Link href={`/buyer/${params.id}/documents?category=disclosure`}>
+              Open disclosure
+            </Link>
           </Button>
         </div>
       </section>
