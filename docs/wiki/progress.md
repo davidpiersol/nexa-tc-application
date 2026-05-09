@@ -2,7 +2,7 @@
 
 **Read next:** [`docs/session-next.md`](../../docs/session-next.md) — handoff, permissions checklist, **NEXT STEP**.
 
-**Last updated:** 2026-05-03  
+**Last updated:** 2026-05-09  
 **Guide:** [`nexa_build_guide.md`](../../nexa_build_guide.md)
 
 Update this file whenever you **finish a step**, **move to a new step**, or need to **correct** status. The AI assistant should treat this file as the source of truth for “where we are” in the build guide.
@@ -13,10 +13,10 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Chapter 4 — Step 11** (External API integrations) — use **Claude Code** per guide |
-| **Completed** | **Step 10** (`v2.1.0`): middleware session refresh + **`x-nexa-*` headers**, MFA gate for **tc/admin/superadmin**, login client, TOTP MFA page, CSRF (`/api/csrf` + validation), security headers (`next.config.mjs`), Upstash API rate limits on Route Handlers, invite JWT + Redis replay guard + redeem route, Postmark helper, audit helper — see [`CHANGELOG.md`](../../CHANGELOG.md). Earlier through **Step 9** **`v2.0.2`**, **`v2.0.1`**, **`v2.0.0`**. **Branding detour** shipped as **`v3.0.0`** (NEXA logo/icon shell + tokens); **follow-up** needed to match final client graphics. |
-| **Next** | **Chapter 4 · Step 11** — Build all external API integrations (**ready to start**). |
-| **After that** | Remaining **Chapter 4** steps after Step 11 (per [`nexa_build_guide.md`](../../nexa_build_guide.md)). |
+| **Current position** | **User review application 80** |
+| **Completed** | Sprint work through **`v4.4.2`** is in place, including TC intake enhancements, buyer documents/messages routes, hosted auth/API hardening, and role-based access guard fixes (see [`CHANGELOG.md`](../../CHANGELOG.md)). |
+| **Next** | **Final Sprint — Client Required/Optional Mapping** from [`first-pass-changes.md`](../../first-pass-changes.md): review intake fields with client, mark required/optional by packet + stage, and capture approval. |
+| **After that** | Resume **Chapter 4 · Step 11** (external API integrations) after client mapping decisions are finalized. |
 
 ---
 
