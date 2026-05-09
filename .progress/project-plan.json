@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "nexa-tc-application",
+    "name": "Nexa TC Application",
+    "type": "web-app",
+    "repoPathHint": "/Users/e25347/development/repos/nexa-tc-application",
+    "owner": "David Piersol",
+    "stakeholders": [
+      "Developer"
+    ],
+    "sourceOfTruth": "local-repo"
+  },
+  "visibility": {
+    "dashboard": true,
+    "jira": false,
+    "confluence": false,
+    "hidden": false
+  },
+  "syncPolicy": {
+    "mode": "dashboard_only",
+    "askBeforeEnablingExternalSync": true,
+    "reason": "Side project tracked locally in BuildTrack only; do not sync to Jira or Confluence."
+  },
+  "versioning": {
+    "scheme": "MSP",
+    "format": "vM.S.P[-label]",
+    "currentVersion": "v4.4.2",
+    "targetVersion": "v5.0.0",
+    "milestones": [
+      {
+        "id": "m1",
+        "name": "Side project",
+        "targetVersion": "v1.0.0",
+        "status": "in_progress",
+        "targetDate": "2026-05-08"
+      }
+    ]
+  },
+  "delivery": {
+    "status": "active",
+    "phase": "Chapter 4 Step 11 integrations",
+    "checkpointDate": "TBD",
+    "pilotTargetDate": "TBD",
+    "confidence": "medium"
+  },
+  "integrations": {
+    "jira": {
+      "enabled": false,
+      "projectKey": "",
+      "projectName": "",
+      "syncMode": "disabled"
+    },
+    "confluence": {
+      "enabled": false,
+      "spaceKey": "",
+      "pageId": "",
+      "generatedSectionMode": "replace-between-markers"
+    },
+    "dashboard": {
+      "enabled": true,
+      "syncMode": "local-scan"
+    }
+  },
+  "environments": [
+    {
+      "key": "local",
+      "label": "Local",
+      "status": "healthy",
+      "url": null,
+      "owner": "developer"
+    },
+    {
+      "key": "dev",
+      "label": "Development",
+      "status": "not_configured",
+      "url": null,
+      "owner": "team"
+    },
+    {
+      "key": "uat",
+      "label": "UAT",
+      "status": "not_configured",
+      "url": null,
+      "owner": "stakeholder"
+    },
+    {
+      "key": "prod",
+      "label": "Production",
+      "status": "not_configured",
+      "url": null,
+      "owner": "team"
+    }
+  ],
+  "promptSprints": [
+    {
+      "id": "P1",
+      "name": "BuildTrack retrofit and local-only gate",
+      "lane": "foundation",
+      "milestoneId": "m1",
+      "versionScope": "v4.4.2",
+      "status": "done",
+      "jiraKey": null,
+      "summary": "Track Nexa in BuildTrack as dashboard-only work.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Project plan exists.",
+        "Cursor rule exists.",
+        "Jira/Confluence sync remains disabled."
+      ],
+      "recommendedPrompt": "Review Nexa project status and keep it dashboard-only unless sponsorship changes."
+    },
+    {
+      "id": "P2",
+      "name": "External integration client layer",
+      "lane": "backend",
+      "milestoneId": "m1",
+      "versionScope": "v4.5.0-dev",
+      "status": "in_progress",
+      "jiraKey": null,
+      "summary": "Implement Step 11 external integration clients under lib/ for MLS, property, document, email, and finance providers.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Integration client boundaries exist.",
+        "Secrets remain environment-based.",
+        "Mock/test paths work without production credentials."
+      ],
+      "recommendedPrompt": "Implement Nexa Step 11 external integration clients with mock-safe adapters and documented credential requirements."
+    },
+    {
+      "id": "P3",
+      "name": "Webhook and audit paths",
+      "lane": "backend",
+      "milestoneId": "m1",
+      "versionScope": "v4.6.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Wire provider webhooks and audit trails after the client layer exists.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Webhook routes are defined.",
+        "Audit records capture inbound/outbound events.",
+        "Failure/retry behavior is documented."
+      ],
+      "recommendedPrompt": "Add Nexa webhook handlers and audit logging for the integration clients."
+    },
+    {
+      "id": "P4",
+      "name": "Graphics cleanup milestone",
+      "lane": "ui",
+      "milestoneId": "m1",
+      "versionScope": "v4.7.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Revisit graphics after client asset sign-off.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Final asset decision is captured.",
+        "UI graphics align with approved brand direction.",
+        "Visual smoke pass is complete."
+      ],
+      "recommendedPrompt": "Run the Nexa graphics cleanup milestone after client asset sign-off."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "B1",
+      "title": "Production credentials needed for Supabase, Upstash, Postmark, and third-party APIs",
+      "owner": "Developer / sponsor",
+      "eta": "TBD",
+      "status": "open"
+    }
+  ]
+}
