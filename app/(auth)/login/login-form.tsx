@@ -8,6 +8,7 @@ import NexaLogo from "@/components/brand/NexaLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { nexaBrand } from "@/lib/brand/tokens";
+import { OAuthProviderButtons } from "@/components/auth/oauth-provider-buttons";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
 export type LoginFormProps = {
@@ -122,6 +123,7 @@ export function LoginForm({ redirect: redirectProp = "/tc" }: LoginFormProps) {
           {pending ? "Signing in…" : "Continue"}
         </Button>
       </form>
+      <OAuthProviderButtons />
       <p className="text-center font-sans text-sm text-neutral-600">
         <Link href="/auth/mfa" className="text-brand-steel underline underline-offset-4">
           MFA setup

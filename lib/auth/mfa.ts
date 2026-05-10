@@ -1,9 +1,16 @@
+import { isPrivilegedRole } from "@/lib/auth/roles";
+
 /** Roles that must complete Supabase MFA (TOTP) before using the app. */
-export const MFA_REQUIRED_ROLES = new Set(["tc", "admin", "superadmin"]);
+export const MFA_REQUIRED_ROLES = new Set([
+  "tc",
+  "admin",
+  "superadmin",
+  "tenant_admin",
+  "global_admin",
+]);
 
 export function roleRequiresMfa(role: string | undefined | null): boolean {
-  if (!role) return false;
-  return MFA_REQUIRED_ROLES.has(role);
+  return isPrivilegedRole(role);
 }
 
 export function roleFromUser(user: {

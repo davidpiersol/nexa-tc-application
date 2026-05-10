@@ -5,6 +5,7 @@ import {
   isProtectedPath,
 } from "@/lib/auth/paths";
 import { roleFromUser, roleRequiresMfa } from "@/lib/auth/mfa";
+import { isGlobalAdminRole, isTenantAdminRole } from "@/lib/auth/roles";
 
 const ROLE_SCOPED_PREFIXES = new Set([
   "agent",
@@ -88,15 +89,28 @@ export async function middleware(request: NextRequest) {
     const role = roleFromUser(user) ?? "";
     const { scope, id: scopedId } = firstPathSegments(pathname);
 
-    if (scope === "tc" && !["tc", "admin", "superadmin"].includes(role)) {
+    if (scope === "tc" && !["tc", "admin", "superadmin", "tenant_admin"].includes(role)) {
       return new NextResponse(null, { status: 403 });
+    }
+
+    if (scope === "admin") {
+      if (scopedId === "global" && !isGlobalAdminRole(role)) {
+        return new NextResponse(null, { status: 403 });
+      }
+      if (scopedId === "tenant" && !isTenantAdminRole(role)) {
+        return new NextResponse(null, { status: 403 });
+      }
+      if (!scopedId) {
+        return NextResponse.redirect(new URL("/admin/tenant", request.url));
+      }
     }
 
     if (ROLE_SCOPED_PREFIXES.has(scope)) {
       const sameRoleScope = role === scope;
       const tcCrossRoleScope = role === "tc";
+      const brokerAgentScope = role === "broker" && scope === "agent";
 
-      if (!sameRoleScope && !tcCrossRoleScope) {
+      if (!sameRoleScope && !tcCrossRoleScope && !brokerAgentScope) {
         return new NextResponse(null, { status: 403 });
       }
 

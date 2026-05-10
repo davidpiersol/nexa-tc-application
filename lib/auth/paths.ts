@@ -2,7 +2,7 @@
 export const PUBLIC_PATH_PREFIXES = [
   "/login",
   "/signup",
-  "/auth/mfa",
+  "/auth",
   "/invite",
   "/forbidden",
   "/api/csrf",
@@ -15,6 +15,7 @@ export const PUBLIC_PATH_PREFIXES = [
 
 /** Dashboard segments — require auth + MFA rules in middleware. */
 export const PROTECTED_PREFIXES = [
+  "/admin",
   "/tc",
   "/agent",
   "/buyer",
@@ -37,10 +38,11 @@ export function allowedBeforeMfaComplete(pathname: string): boolean {
   return (
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||
-    pathname.startsWith("/auth/mfa") ||
+    pathname.startsWith("/auth") ||
     pathname.startsWith("/invite") ||
     pathname.startsWith("/api/auth/login") ||
     pathname.startsWith("/api/auth/logout") ||
+    pathname.startsWith("/api/auth/oauth") ||
     pathname.startsWith("/api/auth/role-redirect") ||
     isPublicPath(pathname)
   );

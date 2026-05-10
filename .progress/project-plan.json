@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "project": {
     "id": "nexa-tc-application",
-    "name": "Nexa TC Application",
+    "name": "Choral Point",
     "type": "web-app",
-    "repoPathHint": "/Users/e25347/development/repos/nexa-tc-application",
+    "repoPathHint": "/Users/e25347/Development/repos/nexa-tc-application",
     "owner": "David Piersol",
     "stakeholders": [
       "Developer"
@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.4.2",
+    "currentVersion": "v4.5.0-dev",
     "targetVersion": "v5.0.0",
     "milestones": [
       {
@@ -34,12 +34,19 @@
         "targetVersion": "v1.0.0",
         "status": "in_progress",
         "targetDate": "2026-05-08"
+      },
+      {
+        "id": "m-choral-point-roadmap",
+        "name": "Choral Point roadmap with tenant/global admin and hardening gates",
+        "targetVersion": "v4.33.0",
+        "status": "planned",
+        "targetDate": "TBD"
       }
     ]
   },
   "delivery": {
     "status": "active",
-    "phase": "Chapter 4 Step 11 integrations",
+    "phase": "Choral Point roadmap / TC workflow build",
     "checkpointDate": "TBD",
     "pilotTargetDate": "TBD",
     "confidence": "medium"
@@ -99,83 +106,1581 @@
       "lane": "foundation",
       "milestoneId": "m1",
       "versionScope": "v4.4.2",
-      "status": "done",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Track Nexa in BuildTrack as dashboard-only work.",
       "validation": {
         "build": "passed",
         "tests": "passed",
-        "approval": "pending"
+        "approval": "approved"
       },
       "acceptance": [
         "Project plan exists.",
         "Cursor rule exists.",
         "Jira/Confluence sync remains disabled."
       ],
-      "recommendedPrompt": "Review Nexa project status and keep it dashboard-only unless sponsorship changes."
+      "recommendedPrompt": "Review Nexa project status and keep it dashboard-only unless sponsorship changes.",
+      "updatedAt": "2026-05-10T08:52:53.811Z"
     },
     {
       "id": "P2",
-      "name": "External integration client layer",
+      "name": "Superseded: external integration client layer",
       "lane": "backend",
       "milestoneId": "m1",
       "versionScope": "v4.5.0-dev",
-      "status": "in_progress",
+      "status": "approved",
       "jiraKey": null,
-      "summary": "Implement Step 11 external integration clients under lib/ for MLS, property, document, email, and finance providers.",
+      "summary": "Original Nexa integration-client sprint is superseded by the Choral Point roadmap. Coverage continues in P20, P22, P23, P26, P27, P30 and hardening gates P24, P28, P31.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
-        "Integration client boundaries exist.",
-        "Secrets remain environment-based.",
-        "Mock/test paths work without production credentials."
+        "Original integration-client intent is preserved in later Choral Point integration sprints.",
+        "No implementation is required under this superseded Nexa sprint.",
+        "BuildTrack active work should continue from P5 onward."
       ],
-      "recommendedPrompt": "Implement Nexa Step 11 external integration clients with mock-safe adapters and documented credential requirements."
+      "recommendedPrompt": "No prompt needed. This older Nexa sprint is superseded by the Choral Point roadmap: P20, P22, P23, P26, P27, P30 and hardening gates P24, P28, P31.",
+      "updatedAt": "2026-05-10T08:52:55.725Z"
     },
     {
       "id": "P3",
-      "name": "Webhook and audit paths",
+      "name": "Superseded: webhook and audit paths",
       "lane": "backend",
       "milestoneId": "m1",
       "versionScope": "v4.6.0-dev",
-      "status": "todo",
+      "status": "approved",
       "jiraKey": null,
-      "summary": "Wire provider webhooks and audit trails after the client layer exists.",
+      "summary": "Original Nexa webhook/audit sprint is superseded by the Choral Point roadmap. Coverage continues in P20, P23, P26, P27 and hardening gates P24 and P28.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
-        "Webhook routes are defined.",
-        "Audit records capture inbound/outbound events.",
-        "Failure/retry behavior is documented."
+        "Original webhook/audit intent is preserved in later Choral Point integration and hardening sprints.",
+        "No implementation is required under this superseded Nexa sprint.",
+        "BuildTrack active work should continue from P5 onward."
       ],
-      "recommendedPrompt": "Add Nexa webhook handlers and audit logging for the integration clients."
+      "recommendedPrompt": "No prompt needed. This older Nexa sprint is superseded by the Choral Point roadmap: P20, P23, P26, P27 and hardening gates P24 and P28.",
+      "updatedAt": "2026-05-10T08:52:58.538Z"
     },
     {
       "id": "P4",
-      "name": "Graphics cleanup milestone",
+      "name": "Superseded: graphics cleanup milestone",
       "lane": "ui",
       "milestoneId": "m1",
       "versionScope": "v4.7.0-dev",
+      "status": "approved",
+      "jiraKey": null,
+      "summary": "Original Nexa graphics cleanup sprint is superseded by the Choral Point roadmap. Coverage continues in P29 UI/UX polish and P31 final pre-release UI/UX hardening.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
+      },
+      "acceptance": [
+        "Original graphics cleanup intent is preserved in Choral Point UI/UX sprints.",
+        "No implementation is required under this superseded Nexa sprint.",
+        "BuildTrack active work should continue from P5 onward."
+      ],
+      "recommendedPrompt": "No prompt needed. This older Nexa sprint is superseded by the Choral Point roadmap: P29 and P31.",
+      "updatedAt": "2026-05-10T08:53:01.042Z"
+    },
+    {
+      "id": "P5",
+      "name": "Cursor orientation and Choral Point roadmap handoff",
+      "lane": "planning",
+      "milestoneId": "m1",
+      "versionScope": "v4.5.0-dev",
+      "status": "approved",
+      "jiraKey": null,
+      "summary": "First Cursor handoff sprint: read the Choral Point roadmap directions, confirm BuildTrack wiring, and return the next implementation prompt without changing application code.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
+      },
+      "acceptance": [
+        "Cursor reads the Choral Point roadmap docs now stored in the repo.",
+        "Cursor confirms .progress/project-plan.json is valid and BuildTrack-visible.",
+        "Cursor confirms syncPolicy.mode remains dashboard_only.",
+        "Cursor identifies P6 as the first implementation sprint unless David chooses a different sprint.",
+        "Cursor returns the exact next prompt to run for P6 instead of starting code changes.",
+        "Discovery blockers are visible in BuildTrack: required fields, default document set, signing workflow, scorecard, title/mortgage packages, NMAR licensed copies, and statewide property-data source rules.",
+        "No application behavior, routes, migrations, or UI files are changed in this orientation pass."
+      ],
+      "recommendedPrompt": "Read the Choral Point BuildTrack directions and roadmap docs in this repo. Do not change application code. Confirm that the BuildTrack plan is wired correctly, summarize the current sprint order, and give me the exact next Cursor prompt for P6.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P5 is fully tested when Cursor confirms the roadmap is readable, .progress/project-plan.json is valid, BuildTrack can see P5-P33, and no application code was changed.",
+        "suggestedRollbackTag": "stable/choral-point-v4.5.0"
+      },
+      "reviewChecklist": [
+        "Verify .progress/project-plan.json remains valid JSON.",
+        "Confirm BuildTrack shows P5-P33 in order.",
+        "Confirm syncPolicy.mode remains dashboard_only.",
+        "Confirm docs/choral-point-roadmap exists and includes the prompt package.",
+        "Confirm Cursor did not change application behavior or UI files.",
+        "Confirm the next implementation prompt is P6 OAuth account creation and invite-aware signup unless David reprioritizes."
+      ],
+      "testChecklist": [
+        "JSON parse check for .progress/project-plan.json.",
+        "BuildTrack dashboard can discover the repo and display the appended prompt sprints.",
+        "No app build is required for P5 unless Cursor unexpectedly changes code."
+      ],
+      "fullQaPrompt": "Run full QA for P5 (Cursor orientation and Choral Point roadmap handoff). Verify the project plan JSON is valid, BuildTrack displays the roadmap sprints P5-P33, dashboard_only sync remains enabled, docs/choral-point-roadmap is present, blockers are visible, and no application behavior changed. If all checks pass, leave P5 ready for David review and provide the exact P6 prompt. Do not mark human approval.",
+      "updatedAt": "2026-05-10T10:34:35.568Z"
+    },
+    {
+      "id": "P6",
+      "name": "OAuth account creation and invite-aware signup",
+      "lane": "foundation",
+      "milestoneId": "m1",
+      "versionScope": "v4.6.0-dev",
+      "status": "approved",
+      "jiraKey": null,
+      "summary": "Add invite-aware social OAuth account creation using Supabase Auth so users can sign up or sign in with major identity providers while preserving tenant, role, MFA, and invite rules.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
+      },
+      "acceptance": [
+        "Supabase Auth remains the source of truth for authentication and sessions.",
+        "Login and signup UI offer configured social providers without removing email/password login.",
+        "Priority providers are Google, Microsoft/Azure, Apple, Facebook, and LinkedIn OIDC; Yahoo is tracked as custom OAuth/OIDC or identity-broker investigation rather than assumed built-in support.",
+        "OAuth callback flow maps authenticated users to public.users with tenant_id and role through invite redemption, admin approval, or a controlled onboarding path.",
+        "Open public self-signup cannot create privileged TC/admin/broker access without invite or admin approval.",
+        "Existing MFA enforcement for privileged roles still works after OAuth login.",
+        "OAuth provider secrets are environment-configured and never committed.",
+        "Redirect URLs are documented for local and deployed environments.",
+        "Role redirect behavior works for OAuth users and password users.",
+        "Provider account linking and duplicate email behavior are documented before production enablement."
+      ],
+      "recommendedPrompt": "Implement Choral Point OAuth account creation and invite-aware signup using Supabase Auth. Add configured social login/signup support for Google, Microsoft/Azure, Apple, Facebook, and LinkedIn OIDC; preserve email/password login; route Yahoo to custom OAuth/OIDC or identity-broker research; require invite/admin approval for privileged roles; preserve MFA enforcement; document env vars and redirect URLs; add focused tests and browser smoke coverage.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P6 is fully tested only after typecheck, unit tests, build, focused browser smoke, OAuth callback smoke or mocked provider tests, MFA regression, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.6.0"
+      },
+      "reviewChecklist": [
+        "Confirm OAuth implementation uses Supabase Auth rather than introducing a second session system.",
+        "Confirm email/password login still works.",
+        "Confirm signup cannot create privileged access without invite/admin approval.",
+        "Confirm OAuth-created users have correct tenant and role mapping before dashboard access.",
+        "Confirm MFA middleware still protects privileged roles.",
+        "Confirm provider secrets and callback URLs are documented but not committed.",
+        "Confirm Yahoo is represented as custom OAuth/OIDC research unless official support is configured.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test OAuth provider allowlist/config helper.",
+        "Unit test post-auth user provisioning and duplicate-email handling.",
+        "Unit test invite-required role assignment rules.",
+        "Unit test role redirect after OAuth callback.",
+        "Unit test MFA-required role behavior after OAuth login where feasible.",
+        "Browser smoke: login page renders OAuth buttons and existing password login still submits.",
+        "Browser smoke or mocked integration: OAuth callback redirects to role dashboard or onboarding state.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build."
+      ],
+      "fullQaPrompt": "Run full QA for P6 (OAuth account creation and invite-aware signup). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, password-login regression, OAuth callback behavior or mocks, MFA enforcement, role redirects, and no public privileged self-signup. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-10T10:34:46.598Z"
+    },
+    {
+      "id": "P7",
+      "name": "Tenant admin and global admin separation",
+      "lane": "security",
+      "milestoneId": "m1",
+      "versionScope": "v4.7.0-dev",
+      "status": "in_progress",
+      "jiraKey": null,
+      "summary": "Separate platform-level global admin responsibilities from tenant-level admin responsibilities, including tenant creation, tenant-admin appointment, license limits, invite approval, and global template/document governance.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Global admin can create, suspend, and manage tenant accounts.",
+        "Global admin can assign, remove, or change tenant admin users for a tenant.",
+        "Global admin can set tenant license/seat limits and see license usage.",
+        "Global admin controls global resources such as NMAR/global document templates, canonical template fields, global provider catalogs, statewide property-data source registry, and platform-level settings.",
+        "Tenant admin can invite users only within their own tenant and only within license limits.",
+        "Tenant admin can approve or revoke invited tenant users according to tenant policy, but cannot exceed licenses or grant global admin access.",
+        "Tenant admin can manage tenant-specific account settings, broker/client/user access, tenant integration credentials, signing preferences, and tenant package/default preferences where allowed.",
+        "Tenant admin cannot mutate global NMAR templates, global template versions, global provider catalogs, or other tenants.",
+        "OAuth-created users remain in a pending/onboarding state unless matched to an invite or approved by the correct tenant admin/global admin path.",
+        "Role and RLS model clearly distinguishes global_admin, tenant_admin, tc, broker, buyer, seller, title, mortgage, and any future tenant-scoped roles.",
+        "Audit events record tenant creation, tenant admin changes, license changes, invitations, approvals, revocations, and rejected over-license invites."
+      ],
+      "recommendedPrompt": "Implement Choral Point tenant-admin/global-admin separation after OAuth. Add or update the role, license, invite, approval, RLS, and admin UI/API scaffolding so global admins control tenants, tenant admins, licenses, and global resources, while tenant admins manage only their tenant users/accounts and invites within license limits. If the required changes would break existing auth or tenant behavior, stop and report risks plus recommendations before changing code.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "OAuth sprint has run; current product state should be reviewed before tenant/global admin changes begin.",
+        "stableWhen": "P7 is fully tested only after role/RLS tests, invite/license tests, OAuth onboarding regression, typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.7.0"
+      },
+      "reviewChecklist": [
+        "Confirm global admin and tenant admin responsibilities are separated in code and UI.",
+        "Confirm tenant admin cannot manage global resources or other tenants.",
+        "Confirm tenant admin cannot exceed license limits.",
+        "Confirm OAuth users without valid invite/approval cannot enter privileged dashboards.",
+        "Confirm tenant admin appointment/removal is global-admin controlled unless a delegated rule is explicitly documented.",
+        "Confirm RLS policies enforce tenant isolation and global-admin platform visibility.",
+        "Confirm reusable role/permission helpers are used instead of duplicated string checks.",
+        "Confirm audit logging captures admin, invite, approval, license, and tenant changes.",
+        "If any change risks breaking current auth or tenant behavior, stop and provide recommendations before implementation."
+      ],
+      "testChecklist": [
+        "Unit test role/permission helpers for global_admin, tenant_admin, and tenant-scoped roles.",
+        "Unit test tenant license limit enforcement for invites and approvals.",
+        "Unit test tenant admin cannot grant global admin or manage another tenant.",
+        "Unit test global admin can assign/remove tenant admins and set license limits.",
+        "Unit test OAuth-created users route to pending/onboarding unless invite/approval is valid.",
+        "RLS test global admin visibility versus tenant admin tenant-only visibility.",
+        "Browser smoke global admin tenant management path where implemented.",
+        "Browser smoke tenant admin invite/approval path where implemented.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build."
+      ],
+      "fullQaPrompt": "Run full QA for P7 (Tenant admin and global admin separation). Verify global admin tenant/license/template-governance responsibilities, tenant admin invite/user/account responsibilities, OAuth pending/approval behavior, RLS tenant isolation, audit events, license enforcement, role redirects, typecheck, tests, build, and browser smoke. If a change could break existing auth or tenant behavior, stop and report the risk plus recommendations before making it. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+    },
+    {
+      "id": "P8",
+      "name": "Hardening gate: auth, OAuth, tenant/global admin, MFA, and onboarding",
+      "lane": "hardening",
+      "milestoneId": "m1",
+      "versionScope": "v4.8.0-dev",
       "status": "todo",
       "jiraKey": null,
-      "summary": "Revisit graphics after client asset sign-off.",
+      "summary": "No-new-feature security, performance, and code-quality pass after OAuth/account creation and tenant/global admin separation before expanding transaction workflow work.",
       "validation": {
         "build": "not_run",
         "tests": "not_run",
         "approval": "pending"
       },
       "acceptance": [
-        "Final asset decision is captured.",
-        "UI graphics align with approved brand direction.",
-        "Visual smoke pass is complete."
+        "No new product features are added in this sprint.",
+        "Cursor reviews the preceding feature group for security risks, duplicated logic, reusable-code opportunities, performance bottlenecks, fragile abstractions, RLS/role-access risks, and missing tests.",
+        "If a cleanup or optimization is likely to break existing behavior, Cursor must stop before making that change, explain the risk, and provide recommendations for moving forward.",
+        "Low-risk cleanup is allowed only when behavior is covered by existing tests or new tests added before the refactor.",
+        "Performance improvements are scoped to measurable or clearly justified issues, not broad rewrites.",
+        "Public APIs, database contracts, RLS behavior, and user-visible workflows remain backward compatible unless David explicitly approves a breaking change.",
+        "Any deferred security, performance, or code-quality risks are documented with recommended next steps.",
+        "A rollback checkpoint is recommended only after all hardening QA passes and David reviews the result.",
+        "OAuth callback, redirect, account-linking, invite redemption, tenant assignment, role assignment, and MFA enforcement are reviewed.",
+        "Login/signup code is checked for reusable provider config and no duplicated provider-button logic.",
+        "Auth performance is checked for unnecessary client redirects or repeated session/user fetches.",
+        "Tenant/global admin boundaries, license enforcement, invite approval, and pending OAuth user states are reviewed.",
+        "Reusable permission helpers cover global_admin, tenant_admin, and tenant-scoped roles without duplicated string checks."
       ],
-      "recommendedPrompt": "Run the Nexa graphics cleanup milestone after client asset sign-off."
+      "recommendedPrompt": "Run a no-new-feature hardening gate for Choral Point auth/OAuth/tenant-global-admin/MFA/onboarding. Review security, tenant/role assignment, invite rules, license enforcement, duplicate code, reusable permission helpers, RLS, and performance. If any cleanup could break login, role access, tenant isolation, or license behavior, stop and explain the risk with recommendations before changing it.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
+        "stableWhen": "P8 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.8.0"
+      },
+      "reviewChecklist": [
+        "Confirm no new features were added.",
+        "Confirm pending OAuth users cannot bypass invite/approval workflow.",
+        "Confirm tenant admins cannot exceed license limits or manage global resources.",
+        "Confirm global admins and tenant admins have separate permissions.",
+        "Review changed files for duplicated logic and unnecessary abstractions.",
+        "Confirm reusable helpers were extracted only where they reduce real duplication and have tests.",
+        "Review auth, role, tenant, RLS, and storage access touched by the preceding feature group.",
+        "Review query patterns, data loading, client/server boundaries, and avoidable re-renders for performance issues.",
+        "Confirm any potentially breaking cleanup was stopped and reported before implementation.",
+        "Confirm recommendations are documented for any risky or deferred cleanup.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Regression test license limit enforcement and pending OAuth approval path.",
+        "Regression test tenant/global admin permission boundaries.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for touched helpers, validators, permissions, and RLS-sensitive paths.",
+        "Run browser smoke for the feature group completed immediately before this gate.",
+        "Run a quick performance sanity pass for the touched screens: no obvious repeated fetch loops, no large unnecessary client payloads, no avoidable N+1 query pattern.",
+        "Regression test email/password login.",
+        "Regression test OAuth provider config/callback mocks.",
+        "Regression test MFA-required role behavior.",
+        "Regression test role redirect and invite-required privileged access."
+      ],
+      "fullQaPrompt": "Run full QA for P8 (Hardening gate: auth, OAuth, tenant/global admin, MFA, and onboarding). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, tenant/global admin boundaries, license enforcement, pending OAuth approval, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P9",
+      "name": "TC transaction detail and intake cleanup",
+      "lane": "tc-workflow",
+      "milestoneId": "m1",
+      "versionScope": "v4.9.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Rework the transaction detail experience into a compact TC workspace with Parties, Documents, Activity, persistent actions, and cleaner intake placement.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Transaction detail shows a compact header summary.",
+        "Transaction detail shows three snapshot panels: Parties, Documents, Activity.",
+        "Edit transaction details no longer dominates the default detail page.",
+        "Persistent transaction actions include Documents, First Pass, Edit Transaction Details, and Assign Vendors placeholder.",
+        "Transaction list rows open by clicking the address/name without requiring the Open button.",
+        "Legal property description is visually grouped near property address and MLS number.",
+        "TC can designate whether they are working for seller/listing broker, buyer broker, or both.",
+        "Relevant broker association is visible on transaction overview surfaces where data exists."
+      ],
+      "recommendedPrompt": "Implement the Choral Point TC transaction detail and intake cleanup sprint, keeping edits scoped to transaction workspace behavior.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P9 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.9.0"
+      },
+      "reviewChecklist": [
+        "Verify transaction detail matches Parties/Documents/Activity layout.",
+        "Verify edit details are no longer the default dominant view.",
+        "Verify clicked transaction addresses route correctly.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test transaction-list link/filter behavior.",
+        "Browser smoke: create/open transaction, view detail, open documents, open first pass.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P9 (TC transaction detail and intake cleanup). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P10",
+      "name": "Pipeline close, archive, and intelligent search",
+      "lane": "tc-workflow",
+      "milestoneId": "m1",
+      "versionScope": "v4.10.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Add transaction search, close-date capture, manual archive, archive filtering, and TC archive timing settings.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Transactions can be searched by address, MLS number, notes, intake data, and party/broker text.",
+        "Moving a transaction to Closed captures or confirms the close date.",
+        "Closed transactions expose a manual archive action.",
+        "Archived transactions are hidden from default dashboard and transaction views.",
+        "Archive view is available from navigation or an appropriate TC route.",
+        "TC profile/settings include configurable auto-archive days.",
+        "Archive uses timestamp/state that preserves closed status history."
+      ],
+      "recommendedPrompt": "Implement Choral Point transaction search, close-date confirmation, and archive workflow.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P10 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.10.0"
+      },
+      "reviewChecklist": [
+        "Verify search covers address, MLS, notes, intake, and party/broker text.",
+        "Verify closed-date prompt cannot silently lose data.",
+        "Verify archived records are hidden by default but recoverable.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test search parser/filter helpers.",
+        "Unit test archive visibility rules.",
+        "Browser smoke: close transaction, archive it, find it in archive.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P10 (Pipeline close, archive, and intelligent search). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P11",
+      "name": "Contacts and broker profiles",
+      "lane": "crm",
+      "milestoneId": "m1",
+      "versionScope": "v4.11.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Create the shared contact model, contact categories, broker-client filtering, and broker profiles with signing preferences.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Contacts navigation exists for universal contacts.",
+        "Contacts support categories such as broker, vendor, lender, title, attorney, TC, SOI, and other.",
+        "Contacts can have more than one category.",
+        "Broker navigation shows contacts marked as broker clients.",
+        "Broker profile stores contact details and broker-specific preferences.",
+        "Broker profile stores signing platform preference.",
+        "Credential storage uses the existing encrypted credential pattern or a clearly scoped secure equivalent.",
+        "Transaction intake can look up contacts for listing client, seller broker, buyer client, and buyer broker."
+      ],
+      "recommendedPrompt": "Implement Choral Point contacts, broker-client filtering, and broker profile foundations.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P11 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.11.0"
+      },
+      "reviewChecklist": [
+        "Verify contacts are normalized and not duplicated in transaction intake.",
+        "Verify broker-client flag controls broker tab population.",
+        "Verify signing preference/credential fields are protected.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test contact category assignment.",
+        "Unit test broker-client filter.",
+        "Permission test: non-admin cannot see/update credential secrets.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P11 (Contacts and broker profiles). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P12",
+      "name": "Vendor assignment and transaction contacts",
+      "lane": "crm",
+      "milestoneId": "m1",
+      "versionScope": "v4.12.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Allow contacts such as inspectors, lenders, title contacts, and vendors to be assigned to a transaction without duplicating contact data.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Transaction contact assignment model exists.",
+        "Assign Vendors action is available from transaction workspace actions.",
+        "TC can pull service providers from Contacts into a transaction.",
+        "Assigned vendors/service providers appear on transaction detail.",
+        "Assigned transaction contacts do not duplicate canonical contact records.",
+        "Assignment supports role/category context for the transaction."
+      ],
+      "recommendedPrompt": "Implement Choral Point transaction contact assignment and Assign Vendors workflow.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P12 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.12.0"
+      },
+      "reviewChecklist": [
+        "Verify vendor assignment reuses Contacts.",
+        "Verify transaction contact role/category context is clear.",
+        "Verify assigned vendors render on detail.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test transaction contact joins.",
+        "Browser smoke: assign/remove vendor from transaction.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P12 (Vendor assignment and transaction contacts). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P13",
+      "name": "Document checklist and global template foundation",
+      "lane": "documents",
+      "milestoneId": "m1",
+      "versionScope": "v4.13.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Add global document template schema, transaction document selections, required/optional/default flags, and template availability states.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Global document template library schema exists.",
+        "Template PDFs use a private storage path under templates/global/{template_id}/{version_id}/{safe_filename}.pdf.",
+        "Transaction document selections can reference templates.",
+        "Templates can be required, optional, default, unavailable, or pending licensed copy.",
+        "Selected templates appear in transaction detail and document manager contexts.",
+        "Document list status is visible in both transaction detail and document manager.",
+        "Manual packet export placeholder exists."
+      ],
+      "recommendedPrompt": "Implement the Choral Point document checklist and global template foundation without building PDF autofill yet.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P13 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.13.0"
+      },
+      "reviewChecklist": [
+        "Verify template library is global, not tenant-scoped.",
+        "Verify template availability states are clear.",
+        "Verify selected templates appear in transaction contexts.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Migration/RLS tests for template read/write scope.",
+        "Unit test document selection state transitions.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P13 (Document checklist and global template foundation). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P14",
+      "name": "Hardening gate: transactions, contacts, brokers, and document checklist",
+      "lane": "hardening",
+      "milestoneId": "m1",
+      "versionScope": "v4.14.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "No-new-feature security, performance, and code-quality pass after transaction workspace, contacts/brokers, vendors, and document checklist foundations.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "No new product features are added in this sprint.",
+        "Cursor reviews the preceding feature group for security risks, duplicated logic, reusable-code opportunities, performance bottlenecks, fragile abstractions, RLS/role-access risks, and missing tests.",
+        "If a cleanup or optimization is likely to break existing behavior, Cursor must stop before making that change, explain the risk, and provide recommendations for moving forward.",
+        "Low-risk cleanup is allowed only when behavior is covered by existing tests or new tests added before the refactor.",
+        "Performance improvements are scoped to measurable or clearly justified issues, not broad rewrites.",
+        "Public APIs, database contracts, RLS behavior, and user-visible workflows remain backward compatible unless David explicitly approves a breaking change.",
+        "Any deferred security, performance, or code-quality risks are documented with recommended next steps.",
+        "A rollback checkpoint is recommended only after all hardening QA passes and David reviews the result.",
+        "Transaction, contact, broker, vendor, and checklist RLS/tenant isolation are reviewed.",
+        "Repeated transaction/contact query logic is consolidated where safe.",
+        "Dashboard and transaction list performance are reviewed for avoidable N+1 queries or oversized payloads."
+      ],
+      "recommendedPrompt": "Run a no-new-feature hardening gate for transactions, contacts, broker profiles, vendors, and document checklist work. Review RLS/tenant isolation, duplicated data-access logic, reusable helpers, query performance, and browser regressions. If cleanup risks breaking transaction/contact behavior, stop and provide recommendations first.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
+        "stableWhen": "P14 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.14.0"
+      },
+      "reviewChecklist": [
+        "Confirm no new features were added.",
+        "Review changed files for duplicated logic and unnecessary abstractions.",
+        "Confirm reusable helpers were extracted only where they reduce real duplication and have tests.",
+        "Review auth, role, tenant, RLS, and storage access touched by the preceding feature group.",
+        "Review query patterns, data loading, client/server boundaries, and avoidable re-renders for performance issues.",
+        "Confirm any potentially breaking cleanup was stopped and reported before implementation.",
+        "Confirm recommendations are documented for any risky or deferred cleanup.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for touched helpers, validators, permissions, and RLS-sensitive paths.",
+        "Run browser smoke for the feature group completed immediately before this gate.",
+        "Run a quick performance sanity pass for the touched screens: no obvious repeated fetch loops, no large unnecessary client payloads, no avoidable N+1 query pattern.",
+        "Regression test transaction create/edit/detail.",
+        "Regression test contacts/broker visibility.",
+        "Regression test document checklist selection and transaction document list.",
+        "Smoke test transaction search/pipeline screen performance."
+      ],
+      "fullQaPrompt": "Run full QA for P14 (Hardening gate: transactions, contacts, brokers, and document checklist). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P15",
+      "name": "Admin template upload and versioning",
+      "lane": "admin-ui",
+      "milestoneId": "m1",
+      "versionScope": "v4.15.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Build admin template upload, template versioning, current-version management, and fillable PDF field detection.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Admin can create a template record with form number, title, category, jurisdiction/state, and active status.",
+        "Admin can upload a new PDF template version.",
+        "Uploaded template versions are stored in the global templates path.",
+        "System detects fillable AcroForm field names when possible.",
+        "New versions start as needs_review until mappings are approved.",
+        "Admin can mark one version current/approved.",
+        "Non-admin users cannot upload, replace, approve, or delete templates."
+      ],
+      "recommendedPrompt": "Implement Choral Point admin template upload, versioning, and fillable field discovery.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P15 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.15.0"
+      },
+      "reviewChecklist": [
+        "Verify admin upload stores files under templates/global path.",
+        "Verify fillable field detection works on at least one PDF.",
+        "Verify non-admin upload is blocked.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test safe filename/path builder.",
+        "API test upload authorization.",
+        "PDF field detection test with sample fillable PDF.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P15 (Admin template upload and versioning). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P16",
+      "name": "Template field mapping and canonical field picker",
+      "lane": "admin-ui",
+      "milestoneId": "m1",
+      "versionScope": "v4.16.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Allow admins to map PDF fields to canonical Choral Point transaction and intake data fields.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Admin can map PDF fields to canonical fields such as property_address, mls_number, close_date, notes, and intake_data.* keys.",
+        "Mappings are stored per template version.",
+        "Admin can approve mappings.",
+        "A template version can become current only after mapping review is complete.",
+        "Only one current approved version is active per template.",
+        "Current version changes apply prospectively only."
+      ],
+      "recommendedPrompt": "Implement Choral Point template field mapping and canonical data field picker.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P16 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.16.0"
+      },
+      "reviewChecklist": [
+        "Verify canonical field picker avoids raw JSON guessing.",
+        "Verify one current approved version per template.",
+        "Verify version approval is explicit.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test mapping validation.",
+        "Unit test current-version exclusivity.",
+        "Permission test mapping approval.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P16 (Template field mapping and canonical field picker). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P17",
+      "name": "PDF generation and generated document history",
+      "lane": "documents",
+      "milestoneId": "m1",
+      "versionScope": "v4.17.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Generate filled PDFs from selected template mappings using transaction data and preserve version/data snapshot history.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Generation uses pdf-lib for fillable AcroForm PDFs.",
+        "TC can generate selected transaction documents from mapped template fields.",
+        "Missing mapped data is reported before generation.",
+        "Generated PDFs are stored under {tenant_id}/{transaction_id}/generated/{timestamp}_{form_number}.pdf.",
+        "Generated PDFs appear in transaction documents.",
+        "Generated document records store template version id and source data snapshot.",
+        "Updating templates does not mutate existing generated PDFs."
+      ],
+      "recommendedPrompt": "Implement Choral Point PDF autofill generation and generated document history.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P17 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.17.0"
+      },
+      "reviewChecklist": [
+        "Verify generated PDFs are transaction-scoped.",
+        "Verify missing data blocks generation with actionable messages.",
+        "Verify generated documents retain template version/data snapshot.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test data snapshot builder.",
+        "PDF fill test with known fields.",
+        "API test generated document insertion.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P17 (PDF generation and generated document history). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P18",
+      "name": "Seed NMAR template candidates and licensed-copy tracking",
+      "lane": "data",
+      "milestoneId": "m1",
+      "versionScope": "v4.18.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Seed NMAR form metadata and template candidates from the extracted inventory, including downloaded-public and licensed-copy-needed states.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "194 NMAR form entries are represented as template candidates or copy-needed records.",
+        "21 downloaded official public PDFs are attached as needs_review template versions only if licensing/authorization is acceptable.",
+        "173 forms are marked needs_copy_from_licensed_source.",
+        "Seed data does not imply production authorization for copyrighted NMAR forms.",
+        "Admin can later replace a copy-needed record with an uploaded licensed PDF."
+      ],
+      "recommendedPrompt": "Seed Choral Point NMAR template candidates and licensed-copy tracking from the generated inventory.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P18 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.18.0"
+      },
+      "reviewChecklist": [
+        "Verify NMAR seed import respects licensing notes.",
+        "Verify 21 public PDFs are needs_review, not automatically production-approved.",
+        "Verify 173 forms remain copy-needed.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test inventory parser/seed mapper.",
+        "Data integrity check: 194 records, 21 downloaded, 173 needs copy.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P18 (Seed NMAR template candidates and licensed-copy tracking). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P19",
+      "name": "Hardening gate: templates, storage, PDF mapping, and generated documents",
+      "lane": "hardening",
+      "milestoneId": "m1",
+      "versionScope": "v4.19.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "No-new-feature security, performance, and code-quality pass after global template storage, mapping, PDF generation, and NMAR candidate tracking.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "No new product features are added in this sprint.",
+        "Cursor reviews the preceding feature group for security risks, duplicated logic, reusable-code opportunities, performance bottlenecks, fragile abstractions, RLS/role-access risks, and missing tests.",
+        "If a cleanup or optimization is likely to break existing behavior, Cursor must stop before making that change, explain the risk, and provide recommendations for moving forward.",
+        "Low-risk cleanup is allowed only when behavior is covered by existing tests or new tests added before the refactor.",
+        "Performance improvements are scoped to measurable or clearly justified issues, not broad rewrites.",
+        "Public APIs, database contracts, RLS behavior, and user-visible workflows remain backward compatible unless David explicitly approves a breaking change.",
+        "Any deferred security, performance, or code-quality risks are documented with recommended next steps.",
+        "A rollback checkpoint is recommended only after all hardening QA passes and David reviews the result.",
+        "Template/admin permissions, private storage paths, generated document access, and historical version integrity are reviewed.",
+        "PDF mapping/generation helpers are checked for duplication and reusable abstractions.",
+        "Generation performance is reviewed for large PDFs, unnecessary memory use, and long-running request risks."
+      ],
+      "recommendedPrompt": "Run a no-new-feature hardening gate for templates, private storage, PDF mapping/generation, and NMAR candidate tracking. Review admin-only controls, storage access, generated document history, reusable PDF helpers, and performance. If cleanup risks breaking generated PDFs or historical version links, stop and recommend a path forward first.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
+        "stableWhen": "P19 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.19.0"
+      },
+      "reviewChecklist": [
+        "Confirm no new features were added.",
+        "Review changed files for duplicated logic and unnecessary abstractions.",
+        "Confirm reusable helpers were extracted only where they reduce real duplication and have tests.",
+        "Review auth, role, tenant, RLS, and storage access touched by the preceding feature group.",
+        "Review query patterns, data loading, client/server boundaries, and avoidable re-renders for performance issues.",
+        "Confirm any potentially breaking cleanup was stopped and reported before implementation.",
+        "Confirm recommendations are documented for any risky or deferred cleanup.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for touched helpers, validators, permissions, and RLS-sensitive paths.",
+        "Run browser smoke for the feature group completed immediately before this gate.",
+        "Run a quick performance sanity pass for the touched screens: no obvious repeated fetch loops, no large unnecessary client payloads, no avoidable N+1 query pattern.",
+        "Regression test admin template upload/versioning where implemented.",
+        "Regression test field mapping and missing-data warnings.",
+        "Regression test PDF generation and generated document history.",
+        "Verify non-admin users cannot mutate global templates."
+      ],
+      "fullQaPrompt": "Run full QA for P19 (Hardening gate: templates, storage, PDF mapping, and generated documents). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P20",
+      "name": "Package rules and AI-assisted mapping",
+      "lane": "documents",
+      "milestoneId": "m1",
+      "versionScope": "v4.20.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Add seller, buyer, and title package rule scaffolding plus AI-assisted mapping suggestions after manual mapping exists.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Package rule model supports seller package, buyer package, and title package.",
+        "Package rules can include template documents and broker/title-specific uploaded documents.",
+        "Rule builder UI scaffold exists.",
+        "AI can suggest mappings for uploaded templates without auto-approving them.",
+        "Admin can review, edit, approve, or reject AI mapping suggestions.",
+        "Manual deterministic mapping remains available when AI confidence is low."
+      ],
+      "recommendedPrompt": "Implement Choral Point package rule scaffolding and AI-assisted template mapping review.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P20 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.20.0"
+      },
+      "reviewChecklist": [
+        "Verify package rules do not bypass template approval.",
+        "Verify AI suggestions require admin review.",
+        "Verify seller/buyer/title rule types are distinct.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test package rule evaluation.",
+        "Unit test AI suggestion approval state.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P20 (Package rules and AI-assisted mapping). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P21",
+      "name": "Signing, packet export, and document sharing",
+      "lane": "documents",
+      "milestoneId": "m1",
+      "versionScope": "v4.21.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Add provider-neutral document sharing, manual packet export, and signing status workflow based on broker preferences.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Documents can be selected for packet export or signing workflow.",
+        "Broker signing platform preference is used to choose the default path.",
+        "Manual packet export exists as MVP fallback.",
+        "Document workflow can represent sent_for_signature or equivalent event/status.",
+        "Provider-neutral signing interface exists before provider-specific implementation.",
+        "DocuSign integration is reused only where it matches the selected MVP path."
+      ],
+      "recommendedPrompt": "Implement Choral Point document packet export and provider-neutral signing/share workflow.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P21 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.21.0"
+      },
+      "reviewChecklist": [
+        "Verify manual packet export works without provider credentials.",
+        "Verify signing preference chooses default path only.",
+        "Verify document status/event history is preserved.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test packet selection/order.",
+        "Unit test provider-neutral adapter interface.",
+        "Browser smoke: export packet from generated/uploaded docs.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P21 (Signing, packet export, and document sharing). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P22",
+      "name": "Broker dashboard and client/party visibility",
+      "lane": "dashboards",
+      "milestoneId": "m1",
+      "versionScope": "v4.22.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Define and implement broker dashboard MVP and adjust buyer/seller/title/mortgage visibility rules.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Broker dashboard shows assigned transactions relevant to that broker.",
+        "Broker can see relevant transaction status and document status.",
+        "Broker can self-service signing credential/preference fields if enabled.",
+        "Buyer and seller dashboards only expose appropriate client-facing information.",
+        "Title and mortgage visibility rules are explicit and conservative.",
+        "TC-only internal notes and workflow data are not exposed unintentionally."
+      ],
+      "recommendedPrompt": "Implement Choral Point broker dashboard MVP and tighten client/party visibility boundaries.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P22 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.22.0"
+      },
+      "reviewChecklist": [
+        "Verify broker dashboard does not expose TC-only internal data.",
+        "Verify buyer/seller/title/mortgage visibility remains conservative.",
+        "Verify broker sees only assigned transactions.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Permission tests for broker/client dashboards.",
+        "Browser smoke for broker, buyer, seller, title, mortgage role views.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P22 (Broker dashboard and client/party visibility). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P23",
+      "name": "MLS-only jobs and MLS write-access spike",
+      "lane": "mls",
+      "milestoneId": "m1",
+      "versionScope": "v4.23.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Create an MLS Entry workflow for jobs that are not full TC-to-close transactions and investigate SWMLS/GAAR/FlexMLS write capability.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "MLS Entry route/module exists separately from the main TC transaction pipeline.",
+        "MLS-only form captures requesting broker, listing broker, listing client, seller/property details, and general notes.",
+        "MLS-only work excludes buyer-side transaction fields by default.",
+        "MLS-only jobs can be tracked for billing.",
+        "Research notes document whether SWMLS/GAAR/FlexMLS supports write/API listing submission.",
+        "No MLS write integration is implemented unless write access is confirmed."
+      ],
+      "recommendedPrompt": "Implement Choral Point MLS-only job scaffolding and document the MLS write-access spike.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P23 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.23.0"
+      },
+      "reviewChecklist": [
+        "Verify MLS-only workflow is separate from full TC pipeline.",
+        "Verify requesting broker is captured for billing.",
+        "Verify no MLS write integration ships without confirmed write access.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test MLS job service type.",
+        "Browser smoke: create MLS-only job.",
+        "Document MLS API research outcome.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P23 (MLS-only jobs and MLS write-access spike). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P24",
+      "name": "Billing, invoicing, and accounting integration path",
+      "lane": "billing",
+      "milestoneId": "m1",
+      "versionScope": "v4.24.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Add billing scaffolding for standard transaction work and MLS-only jobs, with an accounting/payment integration path.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Service types can drive billing: full TC transaction and MLS-only job.",
+        "Invoices can be represented for broker-requested work.",
+        "Accounts receivable status can be tracked.",
+        "Monthly, quarterly, and yearly billing summaries are planned or scaffolded.",
+        "QuickBooks, Profit Power, or payment-provider integration path is documented before provider-specific implementation.",
+        "No tax filing automation is implemented without a separate approved plan."
+      ],
+      "recommendedPrompt": "Implement Choral Point billing and invoicing scaffolding with a documented accounting integration path.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P24 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.24.0"
+      },
+      "reviewChecklist": [
+        "Verify billing scaffolding does not pretend to file taxes.",
+        "Verify invoices link to service types and requesting broker.",
+        "Verify accounting provider sync remains optional.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test invoice totals/status.",
+        "Unit test service type fee mapping.",
+        "Browser smoke billing list/detail if UI exists.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P24 (Billing, invoicing, and accounting integration path). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P25",
+      "name": "Hardening gate: signing, integrations, billing, and workflow handoffs",
+      "lane": "hardening",
+      "milestoneId": "m1",
+      "versionScope": "v4.25.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "No-new-feature security, performance, and code-quality pass after signing/export, broker/client dashboards, MLS-only jobs, billing, and accounting integration planning.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "No new product features are added in this sprint.",
+        "Cursor reviews the preceding feature group for security risks, duplicated logic, reusable-code opportunities, performance bottlenecks, fragile abstractions, RLS/role-access risks, and missing tests.",
+        "If a cleanup or optimization is likely to break existing behavior, Cursor must stop before making that change, explain the risk, and provide recommendations for moving forward.",
+        "Low-risk cleanup is allowed only when behavior is covered by existing tests or new tests added before the refactor.",
+        "Performance improvements are scoped to measurable or clearly justified issues, not broad rewrites.",
+        "Public APIs, database contracts, RLS behavior, and user-visible workflows remain backward compatible unless David explicitly approves a breaking change.",
+        "Any deferred security, performance, or code-quality risks are documented with recommended next steps.",
+        "A rollback checkpoint is recommended only after all hardening QA passes and David reviews the result.",
+        "Integration credentials, packet export, signing provider boundaries, billing/invoice permissions, and audit logging are reviewed.",
+        "Integration adapter interfaces are checked for duplicated provider logic.",
+        "Long-running integration tasks are reviewed for retry, timeout, and user-feedback behavior."
+      ],
+      "recommendedPrompt": "Run a no-new-feature hardening gate for signing/export, integrations, broker/client dashboards, MLS-only jobs, billing, and accounting paths. Review credential security, adapter reuse, audit logs, permissions, performance, retries, and failure states. If cleanup risks breaking provider handoffs or billing history, stop and provide recommendations first.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
+        "stableWhen": "P25 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.25.0"
+      },
+      "reviewChecklist": [
+        "Confirm no new features were added.",
+        "Review changed files for duplicated logic and unnecessary abstractions.",
+        "Confirm reusable helpers were extracted only where they reduce real duplication and have tests.",
+        "Review auth, role, tenant, RLS, and storage access touched by the preceding feature group.",
+        "Review query patterns, data loading, client/server boundaries, and avoidable re-renders for performance issues.",
+        "Confirm any potentially breaking cleanup was stopped and reported before implementation.",
+        "Confirm recommendations are documented for any risky or deferred cleanup.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for touched helpers, validators, permissions, and RLS-sensitive paths.",
+        "Run browser smoke for the feature group completed immediately before this gate.",
+        "Run a quick performance sanity pass for the touched screens: no obvious repeated fetch loops, no large unnecessary client payloads, no avoidable N+1 query pattern.",
+        "Regression test document export/share/signing fallback paths.",
+        "Regression test broker/client dashboard visibility.",
+        "Regression test MLS-only job flow where implemented.",
+        "Regression test billing/invoice role access and audit behavior."
+      ],
+      "fullQaPrompt": "Run full QA for P25 (Hardening gate: signing, integrations, billing, and workflow handoffs). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P26",
+      "name": "Scorecard, notifications, calendar, and communication integrations",
+      "lane": "operations",
+      "milestoneId": "m1",
+      "versionScope": "v4.26.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Add operational workflow surfaces for scorecard, notifications, reminders, Slack/Outlook-style integrations, and dashboard task visibility.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Scorecard tab placeholder exists if detailed scorecard rules are still blocked.",
+        "Dashboard can show at-a-glance scorecard progress once task definitions are supplied.",
+        "Activity can distinguish AI pass and human pass events.",
+        "Notification center or reminder model is scaffolded.",
+        "Slack integration is treated as optional and provider-scoped.",
+        "Outlook/calendar integration is documented as a later provider integration unless credentials and organization model are confirmed."
+      ],
+      "recommendedPrompt": "Implement Choral Point operational workflow scaffolding for scorecard, notifications, and communication/calendar integration planning.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P26 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.26.0"
+      },
+      "reviewChecklist": [
+        "Verify scorecard remains placeholder if definitions are blocked.",
+        "Verify notification/reminder model does not spam external systems.",
+        "Verify AI/human activity distinction is visible.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test notification model.",
+        "Unit test scorecard placeholder state.",
+        "Browser smoke dashboard tasks/notifications.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P26 (Scorecard, notifications, calendar, and communication integrations). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P27",
+      "name": "AI insertion architecture and assistive workflows",
+      "lane": "ai",
+      "milestoneId": "m1",
+      "versionScope": "v4.27.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Design a provider-neutral AI layer for OpenAI, Anthropic, Google Gemini/Vertex AI, OpenRouter-style aggregators, and future providers, with cost controls and safe assistive workflows.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "AI provider abstraction supports at least OpenAI, Anthropic, Google Gemini/Vertex AI, and OpenRouter-compatible gateways as configurable providers.",
+        "Provider credentials are stored using the existing encrypted integration credential pattern or a secure equivalent.",
+        "Admins can choose default provider/model per feature, not one global hard-coded model.",
+        "Feature-level AI configuration exists for intake assist, smart search, template mapping suggestions, package review, summaries, task suggestions, and communication drafts.",
+        "Each AI call records provider, model, feature, user, transaction/template context, input tokens, output tokens, estimated cost, and success/failure state where provider usage data is available.",
+        "Budget controls are planned or scaffolded: per-feature enablement, monthly tenant cap, per-request max tokens, and expensive-model confirmation.",
+        "AI actions are audited with feature/source context.",
+        "AI does not auto-send signatures, change legal data, or approve mappings without human review.",
+        "High-value insertion points are documented: intake assist, property/legal description assist, smart search, document field mapping suggestions, missing-data explanation, package completeness review, activity summary, task/reminder suggestions, broker/client message drafts, help/copilot."
+      ],
+      "recommendedPrompt": "Implement Choral Point provider-neutral AI architecture and cost tracking for OpenAI, Anthropic, Google Gemini/Vertex AI, OpenRouter-compatible gateways, and future providers without automating legally sensitive actions.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P27 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.27.0"
+      },
+      "reviewChecklist": [
+        "Confirm no AI feature is hard-coded to Anthropic only.",
+        "Confirm provider/model can be selected per feature.",
+        "Confirm cost tracking stores feature, provider, model, token usage, and estimated cost where available.",
+        "Confirm expensive actions require admin/user confirmation or feature enablement.",
+        "Confirm AI outputs remain suggestions requiring human approval for legal/compliance-sensitive workflows.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P27 (AI insertion architecture and assistive workflows). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P28",
+      "name": "CRM module and external CRM integration assessment",
+      "lane": "crm",
+      "milestoneId": "m1",
+      "versionScope": "v4.28.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Decide and scaffold CRM-lite features inside Choral Point plus optional external CRM adapters for DeltaNET/Delta Media Group, Lofty, Follow Up Boss, MoxiWorks, or other broker tools.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "CRM-lite module boundaries are defined: contacts, SOI categories, lead temperature, touch history, follow-up tasks, broker/client relationships, notes, reminders, import/export.",
+        "External CRM adapter interface is documented before provider-specific sync.",
+        "DeltaNET / Delta Media Group is listed as the first broker-context CRM candidate because initial brokers work through Coldwell Banker tooling that uses Delta; public API availability is unconfirmed and must be investigated through broker/vendor support, partner docs, or export/import capabilities.",
+        "Lofty is treated as a viable candidate because it has Open API/OAuth/API-key paths, subject to approval/rate limits.",
+        "Follow Up Boss is treated as a viable candidate because it has a REST API, subject to broker credentials and API terms.",
+        "MoxiWorks is treated as a viable candidate because MoxiCloud exposes API documentation, subject to partner access.",
+        "No external CRM sync is enabled without credentials, consent, and field-mapping approval.",
+        "Separate-app option is documented if CRM grows beyond TC workflow scope."
+      ],
+      "recommendedPrompt": "Assess and scaffold the Choral Point CRM module and external CRM adapter strategy, prioritizing DeltaNET investigation for Coldwell Banker brokers while keeping provider sync disabled until approved.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P28 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.28.0"
+      },
+      "reviewChecklist": [
+        "Confirm DeltaNET is represented as investigate/private API or export/import until official API access is confirmed.",
+        "Confirm Lofty, Follow Up Boss, and MoxiWorks are represented as optional adapters, not hard dependencies.",
+        "Confirm CRM-lite features do not duplicate transaction party records unnecessarily.",
+        "Confirm no external CRM credentials are required for local app stability.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P28 (CRM module and external CRM integration assessment). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P29",
+      "name": "Hardening gate: AI, CRM, privacy, cost, and provider adapters",
+      "lane": "hardening",
+      "milestoneId": "m1",
+      "versionScope": "v4.29.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "No-new-feature security, privacy, performance, and code-quality pass after AI provider architecture and CRM module/integration assessment.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "No new product features are added in this sprint.",
+        "Cursor reviews the preceding feature group for security risks, duplicated logic, reusable-code opportunities, performance bottlenecks, fragile abstractions, RLS/role-access risks, and missing tests.",
+        "If a cleanup or optimization is likely to break existing behavior, Cursor must stop before making that change, explain the risk, and provide recommendations for moving forward.",
+        "Low-risk cleanup is allowed only when behavior is covered by existing tests or new tests added before the refactor.",
+        "Performance improvements are scoped to measurable or clearly justified issues, not broad rewrites.",
+        "Public APIs, database contracts, RLS behavior, and user-visible workflows remain backward compatible unless David explicitly approves a breaking change.",
+        "Any deferred security, performance, or code-quality risks are documented with recommended next steps.",
+        "A rollback checkpoint is recommended only after all hardening QA passes and David reviews the result.",
+        "AI provider adapters, API key storage, cost controls, prompt logging, PII handling, and audit trails are reviewed.",
+        "CRM adapter boundaries, external IDs, consent, and sync failure states are reviewed.",
+        "AI/CRM performance is reviewed for expensive calls, unbounded token usage, unnecessary sync loops, and background task behavior."
+      ],
+      "recommendedPrompt": "Run a no-new-feature hardening gate for AI, CRM, privacy, cost controls, and provider adapters. Review multi-provider AI wiring, token/cost limits, PII handling, CRM sync boundaries, reusable adapter code, and performance. If cleanup risks breaking provider behavior or data history, stop and recommend the safest path forward first.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
+        "stableWhen": "P29 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.29.0"
+      },
+      "reviewChecklist": [
+        "Confirm no new features were added.",
+        "Review changed files for duplicated logic and unnecessary abstractions.",
+        "Confirm reusable helpers were extracted only where they reduce real duplication and have tests.",
+        "Review auth, role, tenant, RLS, and storage access touched by the preceding feature group.",
+        "Review query patterns, data loading, client/server boundaries, and avoidable re-renders for performance issues.",
+        "Confirm any potentially breaking cleanup was stopped and reported before implementation.",
+        "Confirm recommendations are documented for any risky or deferred cleanup.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for touched helpers, validators, permissions, and RLS-sensitive paths.",
+        "Run browser smoke for the feature group completed immediately before this gate.",
+        "Run a quick performance sanity pass for the touched screens: no obvious repeated fetch loops, no large unnecessary client payloads, no avoidable N+1 query pattern.",
+        "Regression test AI provider selection/config mocks.",
+        "Regression test AI feature disabled/fallback states.",
+        "Regression test CRM-lite contact behavior and external sync disabled state.",
+        "Verify no AI or CRM provider credential is exposed to the client."
+      ],
+      "fullQaPrompt": "Run full QA for P29 (Hardening gate: AI, CRM, privacy, cost, and provider adapters). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P30",
+      "name": "UI/UX polish, graphics, and design system button-up",
+      "lane": "ui",
+      "milestoneId": "m1",
+      "versionScope": "v4.30.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Button up Choral Point visual design, graphics, navigation polish, responsive layouts, copy, and design-token consistency after core workflows stabilize.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Choral Point naming is reflected consistently in visible app copy and help content.",
+        "Approved graphics/design elements are incorporated.",
+        "Dashboard, transaction detail, documents, contacts, broker, and admin screens have consistent spacing, type scale, buttons, icons, empty states, and responsive behavior.",
+        "No text overlaps or overflows on mobile or desktop.",
+        "Visual smoke screenshots are captured for core routes.",
+        "Accessibility basics are checked: labels, keyboard navigation, focus states, contrast."
+      ],
+      "recommendedPrompt": "Polish Choral Point UI/UX and incorporate approved graphics/design elements after core workflow sprints are stable.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P30 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.30.0"
+      },
+      "reviewChecklist": [
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P30 (UI/UX polish, graphics, and design system button-up). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P31",
+      "name": "Statewide New Mexico property data lookup",
+      "lane": "integrations",
+      "milestoneId": "m1",
+      "versionScope": "v4.31.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Support property data lookup anywhere in New Mexico, not just Valencia County, using a provider-first statewide strategy with county-specific fallback connectors and manual/AI-assisted fallback where structured data is unavailable.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Property lookup supports any New Mexico county from transaction intake using address and, where available, parcel/account/APN identifiers.",
+        "ATTOM or another statewide/national property data provider is treated as the preferred structured-data source when licensed and configured.",
+        "County-specific sources are modeled through a county connector registry rather than hard-coded Valencia County logic.",
+        "County fallback records can store portal type, search URL, supported lookup keys, structured API availability, scrape/manual status, and notes.",
+        "The system can capture and normalize owner, parcel/account number, legal description, acreage/lot size, assessed/tax values, mailing address, GIS link, transfer/sale data, and source metadata when available.",
+        "If no structured provider exists for a county, the UI supports copy/paste/manual entry and optional AI extraction from pasted assessor/GIS text with human confirmation.",
+        "Every imported property field stores source provider/county, retrieval timestamp, and confidence/source notes.",
+        "No scraping or automated portal use is enabled where terms, robots, authentication, or reliability are unclear; those counties remain manual or licensed-provider only.",
+        "Valencia County/EagleWeb becomes one connector entry, not a special-case assumption."
+      ],
+      "recommendedPrompt": "Implement Choral Point statewide New Mexico property data lookup scaffolding with ATTOM/provider-first lookup, county connector registry, source tracking, and manual/AI-assisted fallback without assuming Valencia County only.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P31 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.31.0"
+      },
+      "reviewChecklist": [
+        "Confirm property lookup is statewide for New Mexico and not hard-coded to Valencia County.",
+        "Confirm ATTOM or equivalent provider remains optional/configured, not required for local stability.",
+        "Confirm county connector registry can represent counties with structured API, GIS portal, EagleWeb-style portal, or manual-only fallback.",
+        "Confirm imported legal/property fields retain source metadata and do not overwrite user-entered intake data without confirmation.",
+        "Confirm no prohibited scraping or credential sharing is introduced.",
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Unit test provider selection order: configured statewide provider, county connector, manual fallback.",
+        "Unit test county connector registry validation for all New Mexico counties or an explicit initial supported subset plus unsupported state.",
+        "Unit test property-data normalization into canonical fields and source metadata.",
+        "Unit test manual/AI extraction path does not persist values without confirmation.",
+        "Browser smoke: lookup property from intake by NM address, review imported data, accept/reject suggested fields.",
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P31 (Statewide New Mexico property data lookup). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, source metadata, provider fallback behavior, and regression flows. Test at least one configured-provider lookup path and one manual/county-fallback path. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P32",
+      "name": "Hardening gate: statewide property data, UI/UX, and final pre-release cleanup",
+      "lane": "hardening",
+      "milestoneId": "m1",
+      "versionScope": "v4.32.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "No-new-feature security, performance, UI/UX, and code-quality pass after statewide property lookup and UI polish before final release hardening.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "No new product features are added in this sprint.",
+        "Cursor reviews the preceding feature group for security risks, duplicated logic, reusable-code opportunities, performance bottlenecks, fragile abstractions, RLS/role-access risks, and missing tests.",
+        "If a cleanup or optimization is likely to break existing behavior, Cursor must stop before making that change, explain the risk, and provide recommendations for moving forward.",
+        "Low-risk cleanup is allowed only when behavior is covered by existing tests or new tests added before the refactor.",
+        "Performance improvements are scoped to measurable or clearly justified issues, not broad rewrites.",
+        "Public APIs, database contracts, RLS behavior, and user-visible workflows remain backward compatible unless David explicitly approves a breaking change.",
+        "Any deferred security, performance, or code-quality risks are documented with recommended next steps.",
+        "A rollback checkpoint is recommended only after all hardening QA passes and David reviews the result.",
+        "Statewide property provider/county registry, source metadata, manual/AI fallback, and no-scrape constraints are reviewed.",
+        "UI/UX polish is reviewed for accessibility, responsive behavior, visual consistency, and unnecessary component duplication.",
+        "Property lookup and polished screens are reviewed for slow queries, repeated fetches, large payloads, and poor loading states."
+      ],
+      "recommendedPrompt": "Run a no-new-feature hardening gate for statewide property data and final UI/UX cleanup before release hardening. Review source metadata, no-scrape rules, provider fallback, accessibility, responsive behavior, reusable UI components, and performance. If cleanup risks breaking property lookup or polished workflows, stop and provide recommendations first.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
+        "stableWhen": "P32 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.32.0"
+      },
+      "reviewChecklist": [
+        "Confirm no new features were added.",
+        "Review changed files for duplicated logic and unnecessary abstractions.",
+        "Confirm reusable helpers were extracted only where they reduce real duplication and have tests.",
+        "Review auth, role, tenant, RLS, and storage access touched by the preceding feature group.",
+        "Review query patterns, data loading, client/server boundaries, and avoidable re-renders for performance issues.",
+        "Confirm any potentially breaking cleanup was stopped and reported before implementation.",
+        "Confirm recommendations are documented for any risky or deferred cleanup.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for touched helpers, validators, permissions, and RLS-sensitive paths.",
+        "Run browser smoke for the feature group completed immediately before this gate.",
+        "Run a quick performance sanity pass for the touched screens: no obvious repeated fetch loops, no large unnecessary client payloads, no avoidable N+1 query pattern.",
+        "Regression test statewide provider/county/manual property lookup paths.",
+        "Regression test UI/UX touched screens on desktop and mobile widths.",
+        "Verify accessibility basics for changed controls and forms.",
+        "Smoke test final TC dashboard, transaction detail, document, AI, CRM, and property lookup flows."
+      ],
+      "fullQaPrompt": "Run full QA for P32 (Hardening gate: statewide property data, UI/UX, and final pre-release cleanup). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P33",
+      "name": "Release hardening and stable rollback checkpoint",
+      "lane": "release",
+      "milestoneId": "m1",
+      "versionScope": "v4.33.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Perform full regression, security/RLS review, migration verification, seed verification, and create a known-good rollback marker after the roadmap pass is fully tested.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "All prior done sprints have validation.build/tests passed and approval state intentionally pending or approved.",
+        "Full app regression passes across TC, admin, broker, buyer, seller, title, and mortgage routes.",
+        "Migrations apply cleanly from a fresh database.",
+        "RLS and role access tests pass.",
+        "Generated documents, template versions, contacts, archive, billing, dashboard, AI, CRM, and statewide property lookup flows have smoke coverage.",
+        "A git tag or release branch is created only after human approval as the rollback point."
+      ],
+      "recommendedPrompt": "Run Choral Point release hardening, full regression, and prepare a stable rollback checkpoint after human approval.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P33 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.33.0"
+      },
+      "reviewChecklist": [
+        "Confirm the sprint changed only the intended feature area.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Run at least one browser smoke pass for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P33 (Release hardening and stable rollback checkpoint). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     }
   ],
   "blockers": [
@@ -183,6 +1688,55 @@
       "id": "B1",
       "title": "Production credentials needed for Supabase, Upstash, Postmark, and third-party APIs",
       "owner": "Developer / sponsor",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B2",
+      "title": "Required transaction fields not identified yet",
+      "owner": "Client / TC",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B3",
+      "title": "Default document set not identified yet",
+      "owner": "Client / TC",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B4",
+      "title": "Scorecard details not provided yet",
+      "owner": "Client / TC",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B5",
+      "title": "Title and mortgage package requirements not provided yet",
+      "owner": "Client / TC",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B6",
+      "title": "173 NMAR forms still need licensed copies",
+      "owner": "Client / licensed NMAR source",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B7",
+      "title": "Statewide New Mexico property-data provider and county-source rules not finalized",
+      "owner": "David / Client / vendor research",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B8",
+      "title": "Signing workflow/provider decision needs plain-language clarification",
+      "owner": "Client / TC",
       "eta": "TBD",
       "status": "open"
     }

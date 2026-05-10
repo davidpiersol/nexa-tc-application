@@ -5,6 +5,8 @@ describe("lib/auth/mfa", () => {
   it("roleRequiresMfa matches privileged roles", () => {
     expect(roleRequiresMfa("tc")).toBe(true);
     expect(roleRequiresMfa("admin")).toBe(true);
+    expect(roleRequiresMfa("tenant_admin")).toBe(true);
+    expect(roleRequiresMfa("global_admin")).toBe(true);
     expect(roleRequiresMfa("superadmin")).toBe(true);
     expect(roleRequiresMfa("buyer")).toBe(false);
     expect(roleRequiresMfa(undefined)).toBe(false);

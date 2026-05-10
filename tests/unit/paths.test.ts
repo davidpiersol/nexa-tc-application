@@ -15,6 +15,7 @@ describe("lib/auth/paths", () => {
 
   it("detects protected dashboard prefixes", () => {
     expect(isProtectedPath("/tc")).toBe(true);
+    expect(isProtectedPath("/admin/global")).toBe(true);
     expect(isProtectedPath("/buyer/x")).toBe(true);
     expect(isProtectedPath("/")).toBe(false);
   });
@@ -22,9 +23,11 @@ describe("lib/auth/paths", () => {
   it("allows MFA completion routes before AAL2", () => {
     expect(allowedBeforeMfaComplete("/")).toBe(true);
     expect(allowedBeforeMfaComplete("/auth/mfa")).toBe(true);
+    expect(allowedBeforeMfaComplete("/auth/callback")).toBe(true);
     expect(allowedBeforeMfaComplete("/invite/token")).toBe(true);
     expect(allowedBeforeMfaComplete("/api/auth/login")).toBe(true);
     expect(allowedBeforeMfaComplete("/api/auth/logout")).toBe(true);
+    expect(allowedBeforeMfaComplete("/api/auth/oauth/start")).toBe(true);
     expect(allowedBeforeMfaComplete("/api/auth/role-redirect")).toBe(true);
     expect(allowedBeforeMfaComplete("/tc")).toBe(false);
   });

@@ -59,6 +59,9 @@ function partyRoleForAppRole(
 ): PartyRole {
   const m: Record<string, PartyRole> = {
     tc: "transaction_coordinator",
+    tenant_admin: "other",
+    global_admin: "other",
+    broker: "other",
     agent: "buyer_agent",
     buyer: "buyer",
     seller: "seller",

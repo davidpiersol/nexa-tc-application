@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { claimInviteJti, releaseInviteJti } from "@/lib/invite/redis";
 import { verifyInviteToken } from "@/lib/invite/jwt";
+import { inviteRoleAllowed } from "@/lib/auth/invite-role-policy";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { validateCsrf } from "@/lib/security/csrf-server";
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
@@ -37,6 +38,9 @@ export async function POST(request: NextRequest) {
   const payload = await verifyInviteToken(parsed.data.token);
   if (!payload) {
     return NextResponse.json({ error: "invalid_invite" }, { status: 400 });
+  }
+  if (!inviteRoleAllowed(payload.role)) {
+    return NextResponse.json({ error: "invite_role_not_allowed" }, { status: 403 });
   }
 
   const claimed = await claimInviteJti(payload.jti);

@@ -5,6 +5,8 @@ export const UAT_TRANSACTION_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 export const UAT_OTHER_TRANSACTION_ID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 
 export const UAT_USERS = {
+  g_admin: { email: "g_admin@nexa.test", role: "global_admin" as const },
+  t_admin: { email: "t_admin@nexa.test", role: "tenant_admin" as const },
   tc: { email: "tc@nexa.test", role: "tc" as const },
   agent: { email: "agent@nexa.test", role: "agent" as const },
   buyer: { email: "buyer@nexa.test", role: "buyer" as const },

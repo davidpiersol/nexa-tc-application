@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { profileHrefFromPathname } from "@/lib/dashboard-nav";
+import { profileHrefFromPathname, routeBase } from "@/lib/dashboard-nav";
 
 describe("lib/dashboard-nav profileHrefFromPathname", () => {
   it("returns TC profile for tc routes", () => {
@@ -20,5 +20,11 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
 
   it("returns null when scoped id is missing", () => {
     expect(profileHrefFromPathname("/agent")).toBeNull();
+  });
+
+  it("uses admin route bases and no profile link", () => {
+    expect(routeBase("/admin/global")).toBe("/admin/global");
+    expect(routeBase("/admin/tenant")).toBe("/admin/tenant");
+    expect(profileHrefFromPathname("/admin/global")).toBeNull();
   });
 });

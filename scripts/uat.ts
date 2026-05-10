@@ -104,6 +104,8 @@ async function main() {
   }
 
   const roles: (keyof typeof UAT_USERS)[] = [
+    "g_admin",
+    "t_admin",
     "tc",
     "agent",
     "buyer",
@@ -121,7 +123,9 @@ async function main() {
       });
       const loc = r.headers.get("location") ?? "";
       let okPath = false;
-      if (key === "tc" || key === "admin") okPath = loc.includes("/tc");
+      if (key === "g_admin") okPath = loc.includes("/admin/global");
+      else if (key === "t_admin" || key === "admin") okPath = loc.includes("/admin/tenant");
+      else if (key === "tc") okPath = loc.includes("/tc");
       else if (key === "agent") okPath = loc.includes("/agent/");
       else if (key === "buyer") okPath = loc.includes("/buyer/");
       else if (key === "seller") okPath = loc.includes("/seller/");

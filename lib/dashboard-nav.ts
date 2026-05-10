@@ -6,6 +6,7 @@ export function roleFromPathname(pathname: string): DashboardRole | null {
   const parts = pathname.split("/").filter(Boolean);
   const seg = parts[0];
   if (
+    seg === "admin" ||
     seg === "tc" ||
     seg === "agent" ||
     seg === "buyer" ||
@@ -22,6 +23,9 @@ export function roleFromPathname(pathname: string): DashboardRole | null {
 export function routeBase(pathname: string): string {
   const role = roleFromPathname(pathname);
   if (!role) return "/";
+  if (role === "admin") {
+    return pathname.startsWith("/admin/tenant") ? "/admin/tenant" : "/admin/global";
+  }
   if (role === "tc") return "/tc";
   const parts = pathname.split("/").filter(Boolean);
   const id = parts[1];
@@ -42,6 +46,13 @@ export function navItemsForPath(pathname: string): NavItem[] {
     ];
   }
 
+  if (role === "admin") {
+    return [
+      { href: "/admin/global", label: "Global" },
+      { href: "/admin/tenant", label: "Tenant" },
+    ];
+  }
+
   return [{ href: base, label: "Overview" }];
 }
 
@@ -51,6 +62,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
 export function profileHrefFromPathname(pathname: string): string | null {
   const role = roleFromPathname(pathname);
   if (!role) return null;
+  if (role === "admin") return null;
   if (role === "tc") return "/tc/profile";
 
   const parts = pathname.split("/").filter(Boolean);

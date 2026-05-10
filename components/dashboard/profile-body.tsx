@@ -53,12 +53,15 @@ export function formatRoleLabel(role: string | undefined): string {
   if (!role) return "—";
   const cap: Record<string, string> = {
     tc: "Transaction coordinator",
+    broker: "Broker",
     agent: "Agent",
     buyer: "Buyer",
     seller: "Seller",
     mortgage: "Mortgage",
     title: "Title",
     admin: "Administrator",
+    tenant_admin: "Tenant administrator",
+    global_admin: "Global administrator",
     superadmin: "Super administrator",
   };
   return cap[role] ?? role;

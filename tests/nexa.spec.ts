@@ -13,6 +13,11 @@ function attachConsoleCapture(page: Page): string[] {
 test.describe("Guest · login", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
+  test("signup page explains Yahoo is not a built-in OAuth provider", async ({ page }) => {
+    await page.goto("/signup");
+    await expect(page.getByText(/Yahoo Mail is not offered/i)).toBeVisible();
+  });
+
   test("login page renders and rejects bad password without crash", async ({ page }) => {
     const errs = attachConsoleCapture(page);
     await page.goto("/login");

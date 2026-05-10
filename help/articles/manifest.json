@@ -187,5 +187,12 @@
     "route": "/title/[id] · closing",
     "role": "title",
     "file": "title/closing-coordination.md"
+  },
+  {
+    "slug": "global-admin-supabase-oauth-setup",
+    "title": "Global Admin: Supabase OAuth Setup Checklist",
+    "route": "(global admin · auth setup)",
+    "role": "all",
+    "file": "all/global-admin-supabase-oauth-setup.md"
   }
 ]

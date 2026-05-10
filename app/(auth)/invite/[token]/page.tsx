@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { OAuthProviderButtons } from "@/components/auth/oauth-provider-buttons";
 import { verifyInviteToken } from "@/lib/invite/jwt";
 import { InviteAcceptForm } from "./invite-accept-form";
 
@@ -30,7 +31,8 @@ export default async function InviteAcceptPage({ params }: Props) {
       <div>
         <h1 className="font-display text-heading-lg text-brand-navy">Accept invitation</h1>
         <p className="mt-2 font-prose text-prose-body text-neutral-900">
-          You’ve been invited to Nexa. Set a password to finish creating your account.
+          You’ve been invited to Nexa. Use the same email shown below when signing in with a provider, or
+          set a password.
         </p>
       </div>
 
@@ -44,6 +46,14 @@ export default async function InviteAcceptPage({ params }: Props) {
           <dd className="text-neutral-900">{payload.role}</dd>
         </div>
       </dl>
+
+      <div className="flex flex-col gap-2">
+        <p className="font-sans text-sm text-neutral-600">
+          Accept with Google, Microsoft, Apple, Facebook, or LinkedIn if enabled for this deployment (you
+          must use the invited email).
+        </p>
+        <OAuthProviderButtons inviteToken={params.token} />
+      </div>
 
       <InviteAcceptForm jwtToken={params.token} />
 

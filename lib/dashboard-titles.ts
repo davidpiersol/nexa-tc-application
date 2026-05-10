@@ -26,5 +26,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/seller\/[^/]+$/)) return "Seller Dashboard";
   if (pathname.match(/^\/mortgage\/[^/]+$/)) return "Mortgage Dashboard";
   if (pathname.match(/^\/title\/[^/]+$/)) return "Title Dashboard";
+  if (pathname === "/admin/global") return "Global Admin";
+  if (pathname === "/admin/tenant") return "Tenant Admin";
   return "Nexa";
 }

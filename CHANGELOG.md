@@ -2,6 +2,20 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.4.3] - 2026-05-10
+
+### Added
+
+- **OAuth social login/signup scaffolding** — added Supabase-based OAuth provider support for Google, Microsoft/Azure, Apple, Facebook, and LinkedIn OIDC via [`app/api/auth/oauth/start/route.ts`](app/api/auth/oauth/start/route.ts), [`app/auth/callback/route.ts`](app/auth/callback/route.ts), and shared provider helpers in [`lib/auth/oauth-providers.ts`](lib/auth/oauth-providers.ts).
+- **Invite-aware OAuth provisioning + pending access gate** — added invite-cookie handoff and post-callback provisioning in [`lib/auth/oauth-invite-complete.ts`](lib/auth/oauth-invite-complete.ts) with pending/onboarding UX at [`app/auth/access-pending/page.tsx`](app/auth/access-pending/page.tsx) and error handling at [`app/auth/auth-code-error/page.tsx`](app/auth/auth-code-error/page.tsx).
+- **Global-admin auth setup help article** — added in-app help guidance for platform auth setup in [`help/articles/all/global-admin-supabase-oauth-setup.md`](help/articles/all/global-admin-supabase-oauth-setup.md), registered in [`help/articles/manifest.json`](help/articles/manifest.json), and regenerated [`lib/help/articles.generated.ts`](lib/help/articles.generated.ts).
+- **Tenant/global admin scaffold (P7 start)** — added role/permission helpers, admin dashboard pages (`/admin/global`, `/admin/tenant`), global/tenant admin API scaffolding under [`app/api/admin`](app/api/admin), and migration [`20260510031500_tenant_global_admin_scaffold.sql`](supabase/migrations/20260510031500_tenant_global_admin_scaffold.sql) for seat limits, tenant access requests, tenant-admin assignments, global resource registry, and additive RLS policies.
+
+### Changed
+
+- **Role redirect source of truth** — [`app/api/auth/role-redirect/route.ts`](app/api/auth/role-redirect/route.ts) now resolves role from `public.users` profile lookup helpers in [`lib/auth/profile-check.ts`](lib/auth/profile-check.ts) so OAuth and password users follow the same tenant/role mapping guard.
+- **Auth documentation and smoke coverage** — updated [`docs/supabase-configuration.md`](docs/supabase-configuration.md), [`.env.example`](.env.example), [`tests/unit/paths.test.ts`](tests/unit/paths.test.ts), [`tests/unit/oauth-providers.test.ts`](tests/unit/oauth-providers.test.ts), [`tests/nexa.spec.ts`](tests/nexa.spec.ts), and [`scripts/smoke-http.sh`](scripts/smoke-http.sh).
+
 ## [v4.4.2] - 2026-05-07
 
 ### Fixed

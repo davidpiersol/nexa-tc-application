@@ -21,6 +21,7 @@ check "/" "200"
 check "/login" "200"
 check "/signup" "200"
 check "/auth/mfa" "200"
+check "/auth/auth-code-error" "200"
 check "/api/csrf" "200"
 # Unauthenticated dashboard: middleware redirects to login
 code_tc=$(curl -sS -o /dev/null -w "%{http_code}" "$BASE/tc" || echo "000")

@@ -59,6 +59,22 @@ If you use document uploads or inbound email attachments:
 
 Without this, magic links and redirects after login can fail.
 
+### OAuth / social login
+
+1. **Dashboard → Authentication → Providers:** enable each identity provider you need (Google, Azure / Microsoft, Apple, Facebook, LinkedIn OIDC). Paste client IDs and secrets from each vendor console into Supabase—never commit secrets to git.
+
+2. **Redirect URLs:** allow your app callback route (the PKCE exchange endpoint):
+   - Local: `http://localhost:3000/auth/callback` (or use `http://localhost:3000/**`).
+   - Deployed: `https://<your-domain>/auth/callback` (and preview URLs if you use them).
+
+3. **`NEXT_PUBLIC_APP_URL`** should match the canonical browser origin used for OAuth redirects (same scheme/host as users see), especially behind proxies.
+
+4. **`NEXT_PUBLIC_OAUTH_PROVIDERS`** — comma-separated keys exposed as buttons in the UI: `google`, `azure`, `apple`, `facebook`, `linkedin_oidc`. Leave empty until providers are configured.
+
+5. **Invitations:** OAuth users still receive `tenant_id` and `role` only through the invite cookie flow (`/api/auth/oauth/start` + `/auth/callback`) or existing admin provisioning—not through anonymous IdP signup alone.
+
+6. **Yahoo / custom IdPs:** Supabase does not ship a Yahoo shortcut; use custom OAuth/OIDC or an identity broker per `docs/choral-point-roadmap/auth-oauth-account-strategy.md`.
+
 ## 6. MFA (TC / admin paths)
 
 Middleware may require **AAL2** for privileged roles. Enable MFA under Supabase Auth for test users and complete enrollment at `/auth/mfa` before restricted dashboard/API calls succeed.
