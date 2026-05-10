@@ -101,7 +101,10 @@ export async function middleware(request: NextRequest) {
         return new NextResponse(null, { status: 403 });
       }
       if (!scopedId) {
-        return NextResponse.redirect(new URL("/admin/tenant", request.url));
+        const target = isGlobalAdminRole(role)
+          ? "/admin/global/dashboard"
+          : "/admin/tenant/dashboard";
+        return NextResponse.redirect(new URL(target, request.url));
       }
     }
 

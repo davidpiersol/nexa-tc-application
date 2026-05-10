@@ -9,6 +9,7 @@ import { createServiceRoleClient } from "@/lib/supabase/admin";
 import {
   UAT_OTHER_TRANSACTION_ID,
   UAT_PASSWORD,
+  UAT_PLATFORM_TENANT_ID,
   UAT_TENANT_ID,
   UAT_TRANSACTION_ID,
   UAT_USERS,
@@ -54,6 +55,12 @@ type DocStatus =
 
 const BUCKET = process.env.SUPABASE_ATTACHMENTS_BUCKET?.trim() || "attachments";
 
+function tenantIdForUser(
+  u: (typeof UAT_USERS)[keyof typeof UAT_USERS],
+): string {
+  return u.tenant === "platform" ? UAT_PLATFORM_TENANT_ID : UAT_TENANT_ID;
+}
+
 function partyRoleForAppRole(
   r: (typeof UAT_USERS)[keyof typeof UAT_USERS]["role"],
 ): PartyRole {
@@ -61,7 +68,7 @@ function partyRoleForAppRole(
     tc: "transaction_coordinator",
     tenant_admin: "other",
     global_admin: "other",
-    broker: "other",
+    broker: "buyer_agent",
     agent: "buyer_agent",
     buyer: "buyer",
     seller: "seller",
@@ -109,6 +116,11 @@ async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
   for (const table of tenantScopedTables) {
     const { error } = await admin.from(table).delete().eq("tenant_id", UAT_TENANT_ID);
     if (error) console.warn(`[seed] ${table} delete:`, error.message);
+    const { error: platformErr } = await admin
+      .from(table)
+      .delete()
+      .eq("tenant_id", UAT_PLATFORM_TENANT_ID);
+    if (platformErr) console.warn(`[seed] ${table} platform delete:`, platformErr.message);
   }
 
   const emailSet = new Set<string>(Object.values(UAT_USERS).map((u) => u.email));
@@ -138,7 +150,7 @@ async function main() {
   const { error: tErr } = await admin.from("tenants").upsert(
     {
       id: UAT_TENANT_ID,
-      name: "Nexa Test Brokerage",
+      name: "CD Legacy Transitions",
       slug: "nexa-test",
       settings: {},
     },
@@ -146,26 +158,44 @@ async function main() {
   );
   if (tErr) throw new Error(`tenant insert: ${tErr.message}`);
 
+  const { error: platformTenantErr } = await admin.from("tenants").upsert(
+    {
+      id: UAT_PLATFORM_TENANT_ID,
+      name: "Choral Point Platform",
+      slug: "choral-point-platform",
+      settings: {},
+    },
+    { onConflict: "id" },
+  );
+  if (platformTenantErr) throw new Error(`platform tenant insert: ${platformTenantErr.message}`);
+
   const authIds: Record<string, string> = {};
 
   console.log("[seed] creating auth users + profiles…");
   for (const key of Object.keys(UAT_USERS) as (keyof typeof UAT_USERS)[]) {
     const { email, role } = UAT_USERS[key];
+    const tenantId = tenantIdForUser(UAT_USERS[key]);
     const dbRole =
-      role === "global_admin" ? "superadmin" : role === "tenant_admin" ? "admin" : role;
+      role === "global_admin"
+        ? "superadmin"
+        : role === "tenant_admin"
+          ? "admin"
+          : role === "broker"
+            ? "agent"
+            : role;
     const { data: created, error: cErr } = await admin.auth.admin.createUser({
       email,
       password: UAT_PASSWORD,
       email_confirm: true,
-      user_metadata: { tenant_id: UAT_TENANT_ID, role },
-      app_metadata: { tenant_id: UAT_TENANT_ID, role },
+      user_metadata: { tenant_id: tenantId, role },
+      app_metadata: { tenant_id: tenantId, role },
     });
     if (cErr || !created.user) throw new Error(`createUser ${email}: ${cErr?.message}`);
     authIds[key] = created.user.id;
 
     const { error: pErr } = await admin.from("users").insert({
       id: created.user.id,
-      tenant_id: UAT_TENANT_ID,
+      tenant_id: tenantId,
       email,
       role: dbRole,
       full_name: `UAT ${key}`,
@@ -202,6 +232,7 @@ async function main() {
 
   console.log("[seed] transaction parties (main)…");
   for (const key of Object.keys(UAT_USERS) as (keyof typeof UAT_USERS)[]) {
+    if (UAT_USERS[key].tenant !== "company") continue;
     const uid = authIds[key];
     const { role } = UAT_USERS[key];
     const { error: pErr } = await admin.from("transaction_parties").insert({
@@ -382,7 +413,7 @@ async function main() {
       status: "draft",
       property_address: "999 Isolation Test Lane, NM",
       mls_number: "TEST-ISO",
-      created_by: authIds.admin,
+      created_by: tcId,
     },
     { onConflict: "id" },
   );
@@ -445,6 +476,7 @@ async function main() {
   console.log("\n[seed] — summary (all targeted tables)");
   console.table([
     { record: "tenant", ok: true, id: UAT_TENANT_ID },
+    { record: "platform tenant", ok: true, id: UAT_PLATFORM_TENANT_ID },
     { record: "users/auth", ok: true, count: Object.keys(authIds).length },
     { record: "transaction main", ok: true, id: UAT_TRANSACTION_ID },
     { record: "transaction isolation", ok: true, id: UAT_OTHER_TRANSACTION_ID },

@@ -11,6 +11,10 @@ const patchSchema = z.object({
   suspended: z.boolean().optional(),
 });
 
+function missingColumn(message: string, column: string): boolean {
+  return message.toLowerCase().includes(`column tenants.${column} does not exist`);
+}
+
 export async function PATCH(request: NextRequest) {
   const limited = await enforceApiRateLimit(request);
   if (limited) return limited;
@@ -39,12 +43,37 @@ export async function PATCH(request: NextRequest) {
   }
 
   const admin = createServiceRoleClient();
-  const { data, error: updateErr } = await admin
+  let { data, error: updateErr } = await admin
     .from("tenants")
     .update(updates)
     .eq("id", parsed.data.tenantId)
     .select("id, name, slug, seat_limit, is_suspended")
     .single();
+  if (updateErr && missingColumn(updateErr.message, "is_suspended")) {
+    const reduced = { ...updates };
+    delete reduced.is_suspended;
+    const fallback = await admin
+      .from("tenants")
+      .update(reduced)
+      .eq("id", parsed.data.tenantId)
+      .select("id, name, slug, seat_limit")
+      .single();
+    data = fallback.data as typeof data;
+    updateErr = fallback.error;
+  }
+  if (updateErr && missingColumn(updateErr.message, "seat_limit")) {
+    const reduced = { ...updates };
+    delete reduced.is_suspended;
+    delete reduced.seat_limit;
+    const fallback = await admin
+      .from("tenants")
+      .update(reduced)
+      .eq("id", parsed.data.tenantId)
+      .select("id, name, slug")
+      .single();
+    data = fallback.data as typeof data;
+    updateErr = fallback.error;
+  }
   if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 400 });
 
   await admin.from("audit_log").insert({

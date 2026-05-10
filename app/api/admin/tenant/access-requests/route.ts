@@ -17,6 +17,14 @@ const patchSchema = z.object({
   notes: z.string().max(500).optional(),
 });
 
+function tableMissing(message: string, table: string): boolean {
+  const msg = message.toLowerCase();
+  return (
+    msg.includes(`could not find the table 'public.${table}'`) ||
+    msg.includes(`relation "public.${table}" does not exist`)
+  );
+}
+
 export async function GET(request: NextRequest) {
   const limited = await enforceApiRateLimit(request);
   if (limited) return limited;
@@ -33,7 +41,12 @@ export async function GET(request: NextRequest) {
 
   const scoped = isGlobalAdminRole(current.role) ? query : query.eq("tenant_id", current.tenantId);
   const { data, error: qErr } = await scoped;
-  if (qErr) return NextResponse.json({ error: qErr.message }, { status: 500 });
+  if (qErr) {
+    if (tableMissing(qErr.message, "tenant_access_requests")) {
+      return NextResponse.json({ requests: [], warning: "tenant_access_requests_unavailable" });
+    }
+    return NextResponse.json({ error: qErr.message }, { status: 500 });
+  }
   return NextResponse.json({ requests: data ?? [] });
 }
 
@@ -104,7 +117,12 @@ export async function POST(request: NextRequest) {
     })
     .select("id, email, desired_role, status")
     .single();
-  if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 400 });
+  if (insertErr) {
+    if (tableMissing(insertErr.message, "tenant_access_requests")) {
+      return NextResponse.json({ error: "tenant_access_requests_unavailable" }, { status: 503 });
+    }
+    return NextResponse.json({ error: insertErr.message }, { status: 400 });
+  }
 
   await admin.from("audit_log").insert({
     tenant_id: tenantId,
@@ -150,7 +168,12 @@ export async function PATCH(request: NextRequest) {
     .select("id, tenant_id, status, desired_role, requested_auth_user_id, email")
     .eq("id", parsed.data.id)
     .single();
-  if (existingErr || !existing) return NextResponse.json({ error: "request_not_found" }, { status: 404 });
+  if (existingErr || !existing) {
+    if (existingErr && tableMissing(existingErr.message, "tenant_access_requests")) {
+      return NextResponse.json({ error: "tenant_access_requests_unavailable" }, { status: 503 });
+    }
+    return NextResponse.json({ error: "request_not_found" }, { status: 404 });
+  }
 
   if (!isGlobalAdminRole(current.role) && existing.tenant_id !== current.tenantId) {
     return NextResponse.json({ error: "forbidden_cross_tenant" }, { status: 403 });

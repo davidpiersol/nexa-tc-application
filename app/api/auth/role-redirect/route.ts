@@ -25,11 +25,11 @@ export async function GET(request: Request) {
   const role = profile.role;
 
   if (isGlobalAdminRole(role)) {
-    return NextResponse.redirect(new URL("/admin/global", base));
+    return NextResponse.redirect(new URL("/admin/global/dashboard", base));
   }
 
   if (isTenantAdminRole(role)) {
-    return NextResponse.redirect(new URL("/admin/tenant", base));
+    return NextResponse.redirect(new URL("/admin/tenant/dashboard", base));
   }
 
   if (role === "tc") {

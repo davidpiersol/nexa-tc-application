@@ -24,7 +24,8 @@ export function routeBase(pathname: string): string {
   const role = roleFromPathname(pathname);
   if (!role) return "/";
   if (role === "admin") {
-    return pathname.startsWith("/admin/tenant") ? "/admin/tenant" : "/admin/global";
+    if (pathname.startsWith("/admin/tenant")) return "/admin/tenant/dashboard";
+    return "/admin/global/dashboard";
   }
   if (role === "tc") return "/tc";
   const parts = pathname.split("/").filter(Boolean);
@@ -47,9 +48,18 @@ export function navItemsForPath(pathname: string): NavItem[] {
   }
 
   if (role === "admin") {
+    if (pathname.startsWith("/admin/global")) {
+      return [
+        { href: "/admin/global/dashboard", label: "Dashboard" },
+        { href: "/admin/global/tenants", label: "Tenants" },
+        { href: "/admin/global/reports", label: "Reports" },
+      ];
+    }
     return [
-      { href: "/admin/global", label: "Global" },
-      { href: "/admin/tenant", label: "Tenant" },
+      { href: "/admin/tenant/dashboard", label: "Dashboard" },
+      { href: "/admin/tenant/users", label: "Users" },
+      { href: "/admin/tenant/groups", label: "Groups" },
+      { href: "/admin/tenant/reports", label: "Reports" },
     ];
   }
 

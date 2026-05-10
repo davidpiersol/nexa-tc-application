@@ -24,17 +24,23 @@ export function TenantAdminConsole() {
   const [items, setItems] = useState<AccessRequest[]>([]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   async function refresh() {
-    const res = await fetch("/api/admin/tenant/access-requests", { credentials: "include" });
-    const body = (await res.json().catch(() => ({}))) as { requests?: AccessRequest[]; error?: string };
-    if (res.ok && body.requests) setItems(body.requests);
-    else setMsg(body.error ?? "Could not load requests");
+    const reqRes = await fetch("/api/admin/tenant/access-requests", { credentials: "include" });
+    const reqBody = (await reqRes.json().catch(() => ({}))) as { requests?: AccessRequest[]; error?: string };
+    if (reqRes.ok && reqBody.requests) setItems(reqBody.requests);
+    else setMsg(reqBody.error ?? "Could not load requests");
   }
 
   useEffect(() => {
+    setMounted(true);
     void refresh();
   }, []);
+
+  if (!mounted) {
+    return <div className="rounded-brand-md border border-neutral-200 bg-white p-4" />;
+  }
 
   async function createRequest(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

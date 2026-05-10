@@ -1681,6 +1681,50 @@
         "Run at least one browser smoke pass for the changed workflow."
       ],
       "fullQaPrompt": "Run full QA for P33 (Release hardening and stable rollback checkpoint). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P34",
+      "name": "Admin dashboard implementation (global + tenant)",
+      "lane": "ui",
+      "milestoneId": "m1",
+      "versionScope": "v4.34.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Build production dashboard views and KPI cards for global and tenant admin surfaces.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Global Admin dashboard provides tenant health metrics and platform-level activity.",
+        "Tenant Admin dashboard provides tenant-scoped user and access metrics.",
+        "No cross-tenant data leaks are introduced.",
+        "Role and RLS behavior remain backward compatible."
+      ],
+      "recommendedPrompt": "Implement dashboard pages for /admin/global/dashboard and /admin/tenant/dashboard with production KPI data, preserving role isolation and RLS guarantees."
+    },
+    {
+      "id": "P35",
+      "name": "Admin reporting implementation (global + tenant)",
+      "lane": "reporting",
+      "milestoneId": "m1",
+      "versionScope": "v4.35.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Build global and tenant reporting views with exports and audit-ready filtering.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Global reports support tenant-level rollups and filtering.",
+        "Tenant reports remain strictly tenant-scoped.",
+        "Report output is export-ready and permission constrained.",
+        "Tests cover role boundaries and filter behavior."
+      ],
+      "recommendedPrompt": "Implement /admin/global/reports and /admin/tenant/reports with role-safe query filters, export options, and test coverage."
     }
   ],
   "blockers": [
