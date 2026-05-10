@@ -74,9 +74,9 @@ RETURNS boolean
 LANGUAGE sql
 STABLE
 AS $$
-  SELECT COALESCE(public.session_role() IN (
-    'global_admin'::public.user_role,
-    'superadmin'::public.user_role
+  SELECT COALESCE(public.session_role()::text IN (
+    'global_admin',
+    'superadmin'
   ), false);
 $$;
 
@@ -85,9 +85,9 @@ RETURNS boolean
 LANGUAGE sql
 STABLE
 AS $$
-  SELECT COALESCE(public.session_role() IN (
-    'tenant_admin'::public.user_role,
-    'admin'::public.user_role
+  SELECT COALESCE(public.session_role()::text IN (
+    'tenant_admin',
+    'admin'
   ), false);
 $$;
 
@@ -124,10 +124,10 @@ CREATE POLICY tenant_access_requests_insert ON public.tenant_access_requests
     (
       tenant_id = public.session_tenant_id()
       AND public.session_is_tenant_admin()
-      AND desired_role NOT IN (
-        'global_admin'::public.user_role,
-        'superadmin'::public.user_role,
-        'tenant_admin'::public.user_role
+      AND desired_role::text NOT IN (
+        'global_admin',
+        'superadmin',
+        'tenant_admin'
       )
     )
     OR public.session_is_global_admin()

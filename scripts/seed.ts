@@ -87,8 +87,29 @@ async function pdfBytes(label: string): Promise<Uint8Array> {
 }
 
 async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
-  const { error: delT } = await admin.from("tenants").delete().eq("id", UAT_TENANT_ID);
-  if (delT) console.warn("[seed] tenant delete:", delT.message);
+  // Tenant row is retained because audit_log is append-only and can block tenant cascade deletes.
+  // Instead, wipe tenant-scoped data rows directly.
+  const tenantScopedTables = [
+    "tenant_access_requests",
+    "tenant_admin_assignments",
+    "global_resource_registry",
+    "transactions",
+    "transaction_parties",
+    "documents",
+    "checklist_items",
+    "checklists",
+    "checklist_templates",
+    "messages",
+    "tasks",
+    "email_ingestion",
+    "api_integrations",
+    "users",
+  ] as const;
+
+  for (const table of tenantScopedTables) {
+    const { error } = await admin.from(table).delete().eq("tenant_id", UAT_TENANT_ID);
+    if (error) console.warn(`[seed] ${table} delete:`, error.message);
+  }
 
   const emailSet = new Set<string>(Object.values(UAT_USERS).map((u) => u.email));
   let page = 1;
@@ -114,12 +135,15 @@ async function main() {
   await wipe(admin);
 
   console.log("[seed] inserting tenant…");
-  const { error: tErr } = await admin.from("tenants").insert({
-    id: UAT_TENANT_ID,
-    name: "Nexa Test Brokerage",
-    slug: "nexa-test",
-    settings: {},
-  });
+  const { error: tErr } = await admin.from("tenants").upsert(
+    {
+      id: UAT_TENANT_ID,
+      name: "Nexa Test Brokerage",
+      slug: "nexa-test",
+      settings: {},
+    },
+    { onConflict: "id" },
+  );
   if (tErr) throw new Error(`tenant insert: ${tErr.message}`);
 
   const authIds: Record<string, string> = {};
@@ -127,6 +151,8 @@ async function main() {
   console.log("[seed] creating auth users + profiles…");
   for (const key of Object.keys(UAT_USERS) as (keyof typeof UAT_USERS)[]) {
     const { email, role } = UAT_USERS[key];
+    const dbRole =
+      role === "global_admin" ? "superadmin" : role === "tenant_admin" ? "admin" : role;
     const { data: created, error: cErr } = await admin.auth.admin.createUser({
       email,
       password: UAT_PASSWORD,
@@ -141,7 +167,7 @@ async function main() {
       id: created.user.id,
       tenant_id: UAT_TENANT_ID,
       email,
-      role,
+      role: dbRole,
       full_name: `UAT ${key}`,
     });
     if (pErr) throw new Error(`public.users ${email}: ${pErr.message}`);
@@ -156,19 +182,22 @@ async function main() {
   const tcId = authIds.tc;
 
   console.log("[seed] main transaction…");
-  const { error: txErr } = await admin.from("transactions").insert({
-    id: UAT_TRANSACTION_ID,
-    tenant_id: UAT_TENANT_ID,
-    status: "under_contract",
-    property_address: "1234 Desert Willow Drive, Albuquerque, NM 87120",
-    mls_number: "TEST-001",
-    purchase_price: 425000,
-    earnest_money: 8500,
-    contract_date: contractDate,
-    close_date: closeDate,
-    tc_id: tcId,
-    created_by: tcId,
-  });
+  const { error: txErr } = await admin.from("transactions").upsert(
+    {
+      id: UAT_TRANSACTION_ID,
+      tenant_id: UAT_TENANT_ID,
+      status: "under_contract",
+      property_address: "1234 Desert Willow Drive, Albuquerque, NM 87120",
+      mls_number: "TEST-001",
+      purchase_price: 425000,
+      earnest_money: 8500,
+      contract_date: contractDate,
+      close_date: closeDate,
+      tc_id: tcId,
+      created_by: tcId,
+    },
+    { onConflict: "id" },
+  );
   if (txErr) throw new Error(`transaction: ${txErr.message}`);
 
   console.log("[seed] transaction parties (main)…");
@@ -346,14 +375,17 @@ async function main() {
   }
 
   console.log("[seed] secondary transaction (TC not a party)…");
-  const { error: otxErr } = await admin.from("transactions").insert({
-    id: UAT_OTHER_TRANSACTION_ID,
-    tenant_id: UAT_TENANT_ID,
-    status: "draft",
-    property_address: "999 Isolation Test Lane, NM",
-    mls_number: "TEST-ISO",
-    created_by: authIds.admin,
-  });
+  const { error: otxErr } = await admin.from("transactions").upsert(
+    {
+      id: UAT_OTHER_TRANSACTION_ID,
+      tenant_id: UAT_TENANT_ID,
+      status: "draft",
+      property_address: "999 Isolation Test Lane, NM",
+      mls_number: "TEST-ISO",
+      created_by: authIds.admin,
+    },
+    { onConflict: "id" },
+  );
   if (otxErr) throw new Error(`other tx: ${otxErr.message}`);
 
   await admin.from("transaction_parties").insert({

@@ -2,6 +2,14 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.4.4] - 2026-05-10
+
+### Changed
+
+- **BuildTrack sprint validation sync** — updated `.progress/project-plan.json` so `P5` and `P6` explicitly record `validation.build = passed` and `validation.tests = passed`.
+- **UAT seed admin identities** — seeded tenant/global admin test identities in [`scripts/uat-constants.ts`](scripts/uat-constants.ts) (`t_admin@nexa.test`, `g_admin@nexa.test`) and aligned role redirect checks in [`scripts/uat.ts`](scripts/uat.ts).
+- **Seed idempotency hardening** — made tenant/transaction seeding tolerant of append-only audit constraints by using upserts and tenant-scoped cleanup updates in [`scripts/seed.ts`](scripts/seed.ts), enabling repeatable local seeding without manual teardown.
+
 ## [v4.4.3] - 2026-05-10
 
 ### Added
