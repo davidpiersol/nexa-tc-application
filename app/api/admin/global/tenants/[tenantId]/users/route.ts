@@ -20,11 +20,18 @@ export async function GET(request: NextRequest, { params }: Params) {
   if (error) return error;
 
   const admin = createServiceRoleClient();
-  const { data, error: qErr } = await admin
+  const candidatesOnly =
+    request.nextUrl.searchParams.get("candidates") === "1" ||
+    request.nextUrl.searchParams.get("candidates") === "true";
+
+  const base = admin
     .from("users")
     .select("id, email, role, full_name, created_at")
     .eq("tenant_id", params.tenantId)
     .order("created_at", { ascending: false });
+  const query = candidatesOnly ? base.eq("role", "admin") : base;
+
+  const { data, error: qErr } = await query;
   if (qErr) return NextResponse.json({ error: qErr.message }, { status: 500 });
   return NextResponse.json({ users: data ?? [] });
 }

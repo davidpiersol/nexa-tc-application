@@ -44,6 +44,7 @@ export function GlobalAdminConsole() {
   const [tenants, setTenants] = useState<TenantRow[]>([]);
   const [tenantDetail, setTenantDetail] = useState<TenantDetail | null>(null);
   const [tenantUsers, setTenantUsers] = useState<TenantUserRow[]>([]);
+  const [selectedCandidateUserId, setSelectedCandidateUserId] = useState("");
   const [selectedTenantId, setSelectedTenantId] = useState<string>("");
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<"name" | "assigned" | "limit">("name");
@@ -64,9 +65,15 @@ export function GlobalAdminConsole() {
   }
 
   async function refreshUsers(tenantId: string) {
-    const res = await fetch(`/api/admin/global/tenants/${tenantId}/users`, { credentials: "include" });
+    const res = await fetch(`/api/admin/global/tenants/${tenantId}/users?candidates=1`, {
+      credentials: "include",
+    });
     const body = (await res.json().catch(() => ({}))) as { users?: TenantUserRow[]; error?: string };
-    if (res.ok && body.users) setTenantUsers(body.users);
+    if (res.ok && body.users) {
+      const users = body.users;
+      setTenantUsers(users);
+      setSelectedCandidateUserId((prev) => prev || users[0]?.id || "");
+    }
     else setMsg(body.error ?? "Could not load tenant users");
   }
 
@@ -195,8 +202,8 @@ export function GlobalAdminConsole() {
       setMsg(body.error ?? "Assignment failed");
       return;
     }
-    e.currentTarget.reset();
     await refresh();
+    await refreshUsers(String(form.get("tenantId") ?? selectedTenantId));
     setMsg("Tenant admin assigned.");
   }
 
@@ -451,9 +458,26 @@ export function GlobalAdminConsole() {
           </div>
 
           <form onSubmit={assignTenantAdmin} className="grid gap-3 border border-neutral-200 rounded-brand-md p-3">
-            <h4 className="font-display text-base text-brand-navy">Assign initial tenant admin</h4>
-            <Input label="Tenant id" name="tenantId" defaultValue={selectedTenantId} required />
-            <Input label="User id" name="userId" required />
+            <h4 className="font-display text-base text-brand-navy">Assign tenant admin candidate</h4>
+            <input type="hidden" name="tenantId" value={selectedTenantId} />
+            <div className="flex w-full flex-col gap-1.5">
+              <label className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
+                Tenant Admin Candidate
+              </label>
+              <select
+                name="userId"
+                value={selectedCandidateUserId}
+                onChange={(e) => setSelectedCandidateUserId(e.target.value)}
+                className="flex w-full rounded-brand-md border border-neutral-300 bg-white px-3 py-2 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+                required
+              >
+                {tenantUsers.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.full_name ? `${u.full_name} — ${u.email}` : u.email}
+                  </option>
+                ))}
+              </select>
+            </div>
             <Button type="submit" variant="secondary" disabled={busy}>
               Assign tenant admin
             </Button>
@@ -472,12 +496,11 @@ export function GlobalAdminConsole() {
           </form>
 
           <div className="space-y-2">
+            <h4 className="font-display text-base text-brand-navy">Tenant admin candidates</h4>
             {tenantUsers.map((u) => (
               <div key={u.id} className="rounded-brand-md border border-neutral-200 p-3">
                 <p className="font-sans text-sm font-semibold text-brand-navy">{u.email}</p>
-                <p className="font-sans text-xs text-neutral-600">
-                  {u.full_name || "—"} · {u.role}
-                </p>
+                <p className="font-sans text-xs text-neutral-600">{u.full_name || "—"}</p>
                 <p className="font-mono text-xs text-neutral-500">{u.id}</p>
                 <div className="mt-2 flex gap-2">
                   <Input
