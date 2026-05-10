@@ -2,6 +2,16 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.9.1] - 2026-05-10
+
+### Changed
+
+- **P9 transaction workspace completion + approval tracking** — finalized TC transaction workspace navigation with persistent cross-page controls (Detail, Documents, First Pass, Edit, Assign Vendors placeholder) and updated BuildTrack status/validation for approved P9 release tracking.
+- **TC document operations hardening** — added document download, revised-file replacement, and delete actions with CSRF/rate-limit/audit coverage in document APIs and detail UI.
+- **Document workspace scale UX** — added card/list toggle, search, and sort controls for transaction documents to support larger document sets while preserving quick detail navigation.
+- **Transaction sub-detail navigation** — added dedicated party and document detail routes with back-navigation to transaction detail and transaction list.
+- **QA coverage expansion** — extended Playwright smoke to cover transaction workspace navigation, party/document detail click-through, and documents page filter/view behavior; full suite passing before release.
+
 ## [v4.4.4] - 2026-05-10
 
 ### Changed

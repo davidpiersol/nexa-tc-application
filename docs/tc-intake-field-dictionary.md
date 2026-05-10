@@ -14,6 +14,7 @@ TODO: Map each field below as **required vs optional** by transaction stage and 
 - `source_forms_received` — string
 - `follow_up_required` — boolean
 - `follow_up_notes` — string
+- `tc_representation_side` — enum (`seller_listing_broker`, `buyer_broker`, `both`)
 
 ## Seller / Listing Client
 

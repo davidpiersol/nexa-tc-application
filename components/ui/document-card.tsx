@@ -1,8 +1,6 @@
 import * as React from "react";
-import { MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 export interface DocumentCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Category shown as badge + thumbnail icon region */
@@ -47,18 +45,9 @@ function DocumentCard({
       </div>
       <div className="flex flex-col gap-2 p-3">
         <div className="flex items-start justify-between gap-2">
-          <Badge variant="navy" className="max-w-[70%] truncate normal-case">
+          <Badge variant="navy" className="max-w-[100%] truncate normal-case">
             {category}
           </Badge>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="size-8 min-h-0 min-w-0 p-0"
-          >
-            <MoreHorizontal className="size-4" aria-hidden />
-            <span className="sr-only">Actions</span>
-          </Button>
         </div>
         <p className="truncate font-sans font-semibold text-neutral-900">{fileName}</p>
         <div className="flex items-center justify-between gap-2">

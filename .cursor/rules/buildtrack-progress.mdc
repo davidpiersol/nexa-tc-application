@@ -36,6 +36,13 @@ vM.S.P[-label]
 
 Examples: `v0.4.0-dev`, `v1.0.0-rc.1`, `v1.0.0`.
 
+### Local vs deployed tracking (required)
+
+- Use `-dev` labels for local active work (example: `v4.4.5-dev`).
+- Use stable `vM.S.P` for deployed Netlify versions (example: `v4.4.5`).
+- Prompt history entries must indicate whether the entry is `dev` or `deployed` context.
+- When a deploy happens, append prompt history with the stable deployed version and deployment target.
+
 ## Prompt sprint workflow
 
 Before coding:

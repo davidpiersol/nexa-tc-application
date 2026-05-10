@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { DocumentCard } from "@/components/ui/document-card";
 import { Button } from "@/components/ui/button";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import { documentStatusToBadge } from "@/lib/ui/map-document-status";
+import { DocumentDownloadButton } from "@/components/tc/document-download-button";
 
 export type DocRow = {
   id: string;
@@ -14,10 +16,47 @@ export type DocRow = {
   created_at: string;
 };
 
+type ViewMode = "card" | "list";
+type SortMode = "newest" | "oldest" | "name_asc" | "name_desc" | "status";
+
 async function getCsrf(): Promise<string | undefined> {
   const res = await fetch("/api/csrf", { credentials: "include" });
   const json = (await res.json()) as { csrfToken?: string };
   return json.csrfToken;
+}
+
+function sortDocuments(rows: DocRow[], sort: SortMode): DocRow[] {
+  const out = [...rows];
+  if (sort === "newest") {
+    out.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+    return out;
+  }
+  if (sort === "oldest") {
+    out.sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
+    return out;
+  }
+  if (sort === "name_asc") {
+    out.sort((a, b) =>
+      (a.file_name ?? "Untitled").localeCompare(b.file_name ?? "Untitled", undefined, {
+        sensitivity: "base",
+      }),
+    );
+    return out;
+  }
+  if (sort === "name_desc") {
+    out.sort((a, b) =>
+      (b.file_name ?? "Untitled").localeCompare(a.file_name ?? "Untitled", undefined, {
+        sensitivity: "base",
+      }),
+    );
+    return out;
+  }
+  out.sort((a, b) => {
+    const byStatus = a.status.localeCompare(b.status, undefined, { sensitivity: "base" });
+    if (byStatus !== 0) return byStatus;
+    return +new Date(b.created_at) - +new Date(a.created_at);
+  });
+  return out;
 }
 
 export function TransactionDocumentsClient({
@@ -30,10 +69,26 @@ export function TransactionDocumentsClient({
   const [docs, setDocs] = React.useState(initialDocs);
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [viewMode, setViewMode] = React.useState<ViewMode>("card");
+  const [sortMode, setSortMode] = React.useState<SortMode>("newest");
+  const [query, setQuery] = React.useState("");
 
   React.useEffect(() => {
     setDocs(initialDocs);
   }, [initialDocs]);
+
+  const visibleDocs = React.useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const filtered = q.length
+      ? docs.filter((d) => {
+          const fileName = (d.file_name ?? "").toLowerCase();
+          const category = String(d.category).toLowerCase();
+          const status = String(d.status).toLowerCase();
+          return fileName.includes(q) || category.includes(q) || status.includes(q);
+        })
+      : docs;
+    return sortDocuments(filtered, sortMode);
+  }, [docs, query, sortMode]);
 
   async function onUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,14 +117,15 @@ export function TransactionDocumentsClient({
     const json = (await res.json()) as {
       document?: { id: string; category: string; status: string; file_name: string | null; created_at: string };
     };
-    if (json.document) {
+    const created = json.document;
+    if (created) {
       setDocs((prev) => [
         {
-          id: json.document!.id,
-          category: json.document!.category,
-          status: json.document!.status,
-          file_name: json.document!.file_name,
-          created_at: json.document!.created_at,
+          id: created.id,
+          category: created.category,
+          status: created.status,
+          file_name: created.file_name,
+          created_at: created.created_at,
         },
         ...prev,
       ]);
@@ -102,27 +158,145 @@ export function TransactionDocumentsClient({
           </Button>
         </form>
       </header>
+
+      <section className="rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant={viewMode === "card" ? "gold" : "secondary"}
+              onClick={() => setViewMode("card")}
+            >
+              Card view
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant={viewMode === "list" ? "gold" : "secondary"}
+              onClick={() => setViewMode("list")}
+            >
+              List view
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="sr-only" htmlFor="tc-doc-search">
+              Search documents
+            </label>
+            <input
+              id="tc-doc-search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search file, category, status"
+              className="h-9 w-[240px] rounded-brand-md border border-neutral-300 bg-white px-3 font-sans text-sm text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+            />
+
+            <label className="sr-only" htmlFor="tc-doc-sort">
+              Sort documents
+            </label>
+            <select
+              id="tc-doc-sort"
+              value={sortMode}
+              onChange={(e) => setSortMode(e.target.value as SortMode)}
+              className="h-9 rounded-brand-md border border-neutral-300 bg-white px-3 font-sans text-sm text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+            >
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="name_asc">File name A-Z</option>
+              <option value="name_desc">File name Z-A</option>
+              <option value="status">Status</option>
+            </select>
+          </div>
+        </div>
+
+        <p className="mt-3 font-sans text-xs text-neutral-600">
+          Showing {visibleDocs.length} of {docs.length} document{docs.length === 1 ? "" : "s"}
+        </p>
+      </section>
+
       {error ? (
         <p className="font-sans text-sm text-status-danger" role="alert">
           {error}
         </p>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {docs.map((d) => {
-          const badge = documentStatusToBadge(d.status);
-          return (
-            <DocumentCard
-              key={d.id}
-              category={d.category}
-              fileName={d.file_name ?? "Untitled"}
-              statusLabel={badge.label}
-              statusVariant={badge.variant}
-              dateLabel={new Date(d.created_at).toLocaleString()}
-            />
-          );
-        })}
-      </div>
+      {viewMode === "card" ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {visibleDocs.map((d) => {
+            const badge = documentStatusToBadge(d.status);
+            return (
+              <div key={d.id} className="flex flex-col gap-2">
+                <Link href={`/tc/transactions/${transactionId}/documents/${d.id}`} className="inline-block">
+                  <DocumentCard
+                    category={d.category}
+                    fileName={d.file_name ?? "Untitled"}
+                    statusLabel={badge.label}
+                    statusVariant={badge.variant}
+                    dateLabel={new Date(d.created_at).toLocaleString()}
+                  />
+                </Link>
+                <div className="flex items-center gap-2">
+                  <Button variant="secondary" size="sm" type="button" asChild>
+                    <Link href={`/tc/transactions/${transactionId}/documents/${d.id}`}>Open</Link>
+                  </Button>
+                  <DocumentDownloadButton documentId={d.id} size="sm" label="Download" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-brand-lg border border-neutral-300 bg-white shadow-brand-sm">
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr className="border-b border-neutral-200 bg-neutral-50 text-left">
+                <th className="px-3 py-2 font-sans text-xs uppercase tracking-wide text-neutral-600">File</th>
+                <th className="px-3 py-2 font-sans text-xs uppercase tracking-wide text-neutral-600">Category</th>
+                <th className="px-3 py-2 font-sans text-xs uppercase tracking-wide text-neutral-600">Status</th>
+                <th className="px-3 py-2 font-sans text-xs uppercase tracking-wide text-neutral-600">Uploaded</th>
+                <th className="px-3 py-2 font-sans text-xs uppercase tracking-wide text-neutral-600">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleDocs.map((d) => {
+                const badge = documentStatusToBadge(d.status);
+                return (
+                  <tr key={d.id} className="border-b border-neutral-200 last:border-b-0">
+                    <td className="px-3 py-2 font-sans text-sm text-brand-navy">
+                      <Link
+                        href={`/tc/transactions/${transactionId}/documents/${d.id}`}
+                        className="underline underline-offset-2"
+                      >
+                        {d.file_name ?? "Untitled"}
+                      </Link>
+                    </td>
+                    <td className="px-3 py-2 font-sans text-sm text-neutral-900">{d.category}</td>
+                    <td className="px-3 py-2 font-sans text-sm text-neutral-900">{badge.label}</td>
+                    <td className="px-3 py-2 font-sans text-sm text-neutral-600">
+                      {new Date(d.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Button variant="secondary" size="sm" type="button" asChild>
+                          <Link href={`/tc/transactions/${transactionId}/documents/${d.id}`}>Open</Link>
+                        </Button>
+                        <DocumentDownloadButton documentId={d.id} size="sm" label="Download" />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {visibleDocs.length === 0 ? (
+        <p className="rounded-brand-md border border-neutral-300 bg-white px-4 py-3 font-sans text-sm text-neutral-600">
+          No documents match your current filters.
+        </p>
+      ) : null}
     </div>
   );
 }

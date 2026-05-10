@@ -23,8 +23,8 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
   });
 
   it("uses admin route bases and no profile link", () => {
-    expect(routeBase("/admin/global")).toBe("/admin/global");
-    expect(routeBase("/admin/tenant")).toBe("/admin/tenant");
+    expect(routeBase("/admin/global")).toBe("/admin/global/dashboard");
+    expect(routeBase("/admin/tenant")).toBe("/admin/tenant/dashboard");
     expect(profileHrefFromPathname("/admin/global")).toBeNull();
   });
 });

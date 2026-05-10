@@ -25,7 +25,13 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.5.0-dev",
+    "currentVersion": "v4.9.1-dev",
+    "lastDeployedVersion": "v4.9.1",
+    "releaseChannelPolicy": {
+      "local": "vM.S.P-dev",
+      "netlify": "vM.S.P",
+      "tag": "vM.S.P"
+    },
     "targetVersion": "v5.0.0",
     "milestones": [
       {
@@ -296,13 +302,13 @@
       "lane": "security",
       "milestoneId": "m1",
       "versionScope": "v4.7.0-dev",
-      "status": "in_progress",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Separate platform-level global admin responsibilities from tenant-level admin responsibilities, including tenant creation, tenant-admin appointment, license limits, invite approval, and global template/document governance.",
       "validation": {
         "build": "passed",
         "tests": "passed",
-        "approval": "pending"
+        "approval": "approved"
       },
       "acceptance": [
         "Global admin can create, suspend, and manage tenant accounts.",
@@ -347,7 +353,8 @@
         "Run npm run test.",
         "Run npm run build."
       ],
-      "fullQaPrompt": "Run full QA for P7 (Tenant admin and global admin separation). Verify global admin tenant/license/template-governance responsibilities, tenant admin invite/user/account responsibilities, OAuth pending/approval behavior, RLS tenant isolation, audit events, license enforcement, role redirects, typecheck, tests, build, and browser smoke. If a change could break existing auth or tenant behavior, stop and report the risk plus recommendations before making it. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+      "fullQaPrompt": "Run full QA for P7 (Tenant admin and global admin separation). Verify global admin tenant/license/template-governance responsibilities, tenant admin invite/user/account responsibilities, OAuth pending/approval behavior, RLS tenant isolation, audit events, license enforcement, role redirects, typecheck, tests, build, and browser smoke. If a change could break existing auth or tenant behavior, stop and report the risk plus recommendations before making it. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves.",
+      "updatedAt": "2026-05-10T12:41:15.005Z"
     },
     {
       "id": "P8",
@@ -355,13 +362,13 @@
       "lane": "hardening",
       "milestoneId": "m1",
       "versionScope": "v4.8.0-dev",
-      "status": "todo",
+      "status": "approved",
       "jiraKey": null,
       "summary": "No-new-feature security, performance, and code-quality pass after OAuth/account creation and tenant/global admin separation before expanding transaction workflow work.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
         "No new product features are added in this sprint.",
@@ -412,7 +419,8 @@
         "Regression test MFA-required role behavior.",
         "Regression test role redirect and invite-required privileged access."
       ],
-      "fullQaPrompt": "Run full QA for P8 (Hardening gate: auth, OAuth, tenant/global admin, MFA, and onboarding). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, tenant/global admin boundaries, license enforcement, pending OAuth approval, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P8 (Hardening gate: auth, OAuth, tenant/global admin, MFA, and onboarding). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, tenant/global admin boundaries, license enforcement, pending OAuth approval, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-10T13:03:46.616Z"
     },
     {
       "id": "P9",
@@ -420,13 +428,13 @@
       "lane": "tc-workflow",
       "milestoneId": "m1",
       "versionScope": "v4.9.0-dev",
-      "status": "todo",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Rework the transaction detail experience into a compact TC workspace with Parties, Documents, Activity, persistent actions, and cleaner intake placement.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
         "Transaction detail shows a compact header summary.",
@@ -462,7 +470,9 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P9 (TC transaction detail and intake cleanup). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P9 (TC transaction detail and intake cleanup). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "notes": "Initial harness pass surfaced two TC pages rendering empty/404. Root cause was schema drift: the local Supabase stack was missing migrations 20260506235900_add_transactions_intake_data and 20260510031500_tenant_global_admin_scaffold, so SELECTs that referenced transactions.intake_data silently failed. After `supabase migration up --local` + reseed, manual TC QA passes 16/16 (login, dashboard, transactions list, address-link click-through to detail, Documents/First Pass actions, parties/activity panels, documents page with seeded PDFs, first-pass checklist, new-transaction form with TC representation field, settings). Playwright smoke now 9/9 in 20.6s with no fixme markers. Smoke harness improvements (tests/test-helpers.ts known-noise filter + API-driven first transaction id + gotoApp networkidle wait, hardened tests/global-setup.ts, tightened playwright.config.ts, npm run smoke:local) remain in place. B9 reclassified as resolved with a follow-up note to add a release-time check that local migrations match repo before declaring tests-passed.",
+      "updatedAt": "2026-05-10T23:27:00.000Z"
     },
     {
       "id": "P10",
@@ -1283,7 +1293,7 @@
       "versionScope": "v4.26.0-dev",
       "status": "todo",
       "jiraKey": null,
-      "summary": "Add operational workflow surfaces for scorecard, notifications, reminders, Slack/Outlook-style integrations, and dashboard task visibility.",
+      "summary": "Add operational workflow surfaces for scorecard, notifications, reminders, TC dashboard task/deadline management, and Slack/Outlook-style communication/calendar integrations.",
       "validation": {
         "build": "not_run",
         "tests": "not_run",
@@ -1295,9 +1305,11 @@
         "Activity can distinguish AI pass and human pass events.",
         "Notification center or reminder model is scaffolded.",
         "Slack integration is treated as optional and provider-scoped.",
-        "Outlook/calendar integration is documented as a later provider integration unless credentials and organization model are confirmed."
+        "Outlook/calendar integration is documented as a later provider integration unless credentials and organization model are confirmed.",
+        "TC dashboard supports creating and editing manual tasks and deadlines tied to transactions.",
+        "Dashboard deadlines/tasks can be promoted to reminder events and prepared for calendar sync once provider credentials are approved."
       ],
-      "recommendedPrompt": "Implement Choral Point operational workflow scaffolding for scorecard, notifications, and communication/calendar integration planning.",
+      "recommendedPrompt": "Implement Choral Point operational workflow scaffolding for scorecard, notifications, TC task/deadline management, and communication/calendar integration planning.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
         "stableWhen": "P26 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
@@ -1310,7 +1322,8 @@
         "Confirm the sprint changed only the intended feature area.",
         "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
         "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
-        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+        "Confirm BuildTrack status and validation fields were updated without marking human approval.",
+        "Verify TC can create/edit/delete task and deadline entries from the dashboard and transaction context."
       ],
       "testChecklist": [
         "Unit test notification model.",
@@ -1320,7 +1333,8 @@
         "Run npm run test.",
         "Run npm run build.",
         "Run focused unit tests for new helpers, validators, and permission logic.",
-        "Run at least one browser smoke pass for the changed workflow."
+        "Run at least one browser smoke pass for the changed workflow.",
+        "Browser smoke: create/edit/delete a dashboard task and deadline, then confirm counts/visibility update."
       ],
       "fullQaPrompt": "Run full QA for P26 (Scorecard, notifications, calendar, and communication integrations). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     },
@@ -1347,7 +1361,8 @@
         "Budget controls are planned or scaffolded: per-feature enablement, monthly tenant cap, per-request max tokens, and expensive-model confirmation.",
         "AI actions are audited with feature/source context.",
         "AI does not auto-send signatures, change legal data, or approve mappings without human review.",
-        "High-value insertion points are documented: intake assist, property/legal description assist, smart search, document field mapping suggestions, missing-data explanation, package completeness review, activity summary, task/reminder suggestions, broker/client message drafts, help/copilot."
+        "High-value insertion points are documented: intake assist, property/legal description assist, smart search, document field mapping suggestions, missing-data explanation, package completeness review, activity summary, task/reminder suggestions, broker/client message drafts, help/copilot.",
+        "First Pass AI workflow has a defined insertion path: confidence summary, missing-data explanation, and review recommendations remain assistive-only until human confirmation."
       ],
       "recommendedPrompt": "Implement Choral Point provider-neutral AI architecture and cost tracking for OpenAI, Anthropic, Google Gemini/Vertex AI, OpenRouter-compatible gateways, and future providers without automating legally sensitive actions.",
       "milestoneMarker": {
@@ -1783,6 +1798,13 @@
       "owner": "Client / TC",
       "eta": "TBD",
       "status": "open"
+    },
+    {
+      "id": "B9",
+      "title": "TC transaction list/detail returned empty under any session because two local migrations were unapplied (intake_data + tenant_global_admin_scaffold). Resolved by `supabase migration up --local` + reseed; QA passes 16/16. Add a release-step check that local Supabase migrations match repo before declaring a sprint test-ready.",
+      "owner": "Cursor agent / David",
+      "eta": "TBD",
+      "status": "resolved"
     }
   ]
 }

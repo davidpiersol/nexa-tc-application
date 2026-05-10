@@ -1,0 +1,31 @@
+# Release + deploy gate
+
+This rule applies to commits that change runtime behavior, auth, admin routes, middleware, API routes, migrations, or tenant/role logic.
+
+## Required release/versioning steps
+
+Before finalizing a release commit:
+
+1. Keep active local work tracked as `vX.Y.Z-dev` in BuildTrack/prompt history.
+2. Update `VERSION` to stable `vX.Y.Z` before a production deploy.
+2. Keep `package.json` `version` aligned with `VERSION` (without leading `v`).
+3. Add/update `CHANGELOG.md` entry for the new version.
+4. Do not mark release complete if these three are out of sync.
+5. Create matching git tag `vX.Y.Z` after successful deploy verification.
+
+## Required data/deploy steps
+
+For production-impacting changes, run in this order:
+
+1. `supabase db push --linked`
+2. `netlify deploy --build --prod`
+3. Focused smoke checks for critical routes changed in the sprint.
+
+If any step fails, report the failure and do not report deploy-ready status.
+
+## BuildTrack + prompt history
+
+- Update `.progress/project-plan.json` sprint status/validation fields.
+- Append summarized entry to `.progress/prompt-history.local.ndjson` (local history, not committed).
+- Prompt history entries must include version context (`-dev` local or stable deployed) and deployment target when applicable.
+

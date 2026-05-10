@@ -14,7 +14,7 @@ export async function getTransactionDetail(transactionId: string) {
 
   const { data: parties } = await supabase
     .from("transaction_parties")
-    .select("display_name, party_role, contact_email")
+    .select("id, user_id, display_name, party_role, contact_email, created_at")
     .eq("transaction_id", transactionId)
     .order("created_at", { ascending: true });
 
@@ -22,6 +22,22 @@ export async function getTransactionDetail(transactionId: string) {
     ...tx,
     parties: parties ?? [],
   };
+}
+
+export async function getTransactionPartyDetail(
+  transactionId: string,
+  partyId: string,
+) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("transaction_parties")
+    .select("id, user_id, transaction_id, display_name, party_role, contact_email, created_at")
+    .eq("transaction_id", transactionId)
+    .eq("id", partyId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data;
 }
 
 export async function listDocumentsForTransaction(transactionId: string) {
@@ -36,6 +52,24 @@ export async function listDocumentsForTransaction(transactionId: string) {
 
   if (error) return [];
   return data ?? [];
+}
+
+export async function getTransactionDocumentDetail(
+  transactionId: string,
+  documentId: string,
+) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("documents")
+    .select(
+      "id, transaction_id, category, status, file_name, mime_type, size_bytes, storage_path, visible_to_client, created_at, updated_at",
+    )
+    .eq("transaction_id", transactionId)
+    .eq("id", documentId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data;
 }
 
 export async function listChecklistItemsForTransaction(transactionId: string) {

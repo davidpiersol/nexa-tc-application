@@ -10,7 +10,7 @@ import { applyGroupToTenantSettings, groupForRole, groupMapFromTenantSettings, i
 const createSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.enum(["tc", "agent", "broker", "buyer", "seller", "mortgage", "title"]),
+  role: z.enum(["admin", "tc", "agent", "broker", "buyer", "seller", "mortgage", "title"]),
   fullName: z.string().min(1).max(120).optional(),
   phone: z.string().max(40).optional(),
   group: z.string().optional(),

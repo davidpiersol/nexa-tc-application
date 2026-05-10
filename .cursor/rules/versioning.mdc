@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Version numbering
 
-All releases use **v.X.Y.Z** where **X**, **Y**, and **Z** are non-negative integers. The canonical value lives in the repository **VERSION** file and must stay in sync with Git release tags.
+All releases use **v.X.Y.Z** where **X**, **Y**, and **Z** are non-negative integers. The canonical stable value lives in the repository **VERSION** file and must stay in sync with Git release tags.
 
 ## Components
 
@@ -26,7 +26,13 @@ Use **`v4.Y.Z`** with this team rhythm (third digit **Z** = patch / bug-fix iter
 - **Bump Y** (and reset Z to `0`) only when the **product owner certifies the current sprint finished** and you move to the next sprint phase.
 - **Bump X** only for milestone releases per the table above.
 
-Agents should update **VERSION** (repo root), **CHANGELOG.md**, and tag **`vX.Y.Z`** when cutting a release.
+## Dev vs deployed versions (required)
+
+- **Local/in-progress cycles** use `vX.Y.Z-dev` in BuildTrack and prompt-history summaries.
+- **Netlify/deployed cycles** must use stable `vX.Y.Z` (no suffix) in `VERSION`, `package.json`, `CHANGELOG.md`, and git tag.
+- Never deploy/tag a `-dev` version.
+
+Agents should update **VERSION** (repo root), **CHANGELOG.md**, and tag **`vX.Y.Z`** when cutting a deploy release.
 
 ## Examples
 

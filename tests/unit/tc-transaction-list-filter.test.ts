@@ -8,6 +8,7 @@ import {
 import {
   formatTransactionStatusLabel,
   formatTransactionNextLabel,
+  deriveOverviewFromIntake,
 } from "@/lib/queries/tc-transactions-list";
 
 describe("tc-transaction-list-filter", () => {
@@ -45,5 +46,18 @@ describe("tc-transactions-list format helpers", () => {
     const formatted = formatTransactionNextLabel("2026-04-20");
     expect(formatted).not.toBe("TBD");
     expect(formatted).toMatch(/\d/);
+  });
+
+  it("derives overview labels from intake_data", () => {
+    const overview = deriveOverviewFromIntake({
+      property_legal_description: "Lot 12 Block 4",
+      tc_representation_side: "both",
+      seller_broker_1_broker_name: "Seller Broker",
+      buyer_broker_1_brokerage_firm: "Buyer Firm",
+    });
+    expect(overview.legalDescription).toBe("Lot 12 Block 4");
+    expect(overview.representationSide).toBe("both");
+    expect(overview.sellerBrokerName).toBe("Seller Broker");
+    expect(overview.buyerBrokerName).toBe("Buyer Firm");
   });
 });

@@ -98,9 +98,24 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   if (parsed.data.email || parsed.data.role) {
+    const authRow = await admin.auth.admin.getUserById(params.userId);
+    const existingUserMeta = (authRow.data.user?.user_metadata ?? {}) as Record<string, unknown>;
+    const existingAppMeta = (authRow.data.user?.app_metadata ?? {}) as Record<string, unknown>;
+    const nextRole = parsed.data.role ?? (typeof existingUserMeta.role === "string" ? existingUserMeta.role : userRow.role);
+    const tenantId = userRow.tenant_id;
+
     await admin.auth.admin.updateUserById(params.userId, {
       ...(parsed.data.email ? { email: parsed.data.email.trim().toLowerCase() } : {}),
-      ...(parsed.data.role ? { user_metadata: { role: parsed.data.role }, app_metadata: { role: parsed.data.role } } : {}),
+      user_metadata: {
+        ...existingUserMeta,
+        role: nextRole,
+        tenant_id: tenantId,
+      },
+      app_metadata: {
+        ...existingAppMeta,
+        role: nextRole,
+        tenant_id: tenantId,
+      },
     });
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,7 +50,7 @@ export function TenantUserDetailConsole({ userId }: Props) {
     group: "TC" as GroupValue,
   });
 
-  async function refresh() {
+  const refresh = useCallback(async () => {
     const res = await fetch(`/api/admin/tenant/users/${userId}`, { credentials: "include" });
     const body = (await res.json().catch(() => ({}))) as { user?: UserDetail; error?: string };
     if (!res.ok || !body.user) {
@@ -64,11 +64,11 @@ export function TenantUserDetailConsole({ userId }: Props) {
       phone: body.user.phone ?? "",
       group: body.user.group as GroupValue,
     });
-  }
+  }, [userId]);
 
   useEffect(() => {
     void refresh();
-  }, [userId]);
+  }, [refresh]);
 
   async function save() {
     if (!user) return;

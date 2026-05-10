@@ -8,6 +8,10 @@ export type TcTransactionListRow = {
   mls_number: string | null;
   close_date: string | null;
   first_pass_status: string | null;
+  legal_description: string | null;
+  representation_side: string | null;
+  seller_broker_name: string | null;
+  buyer_broker_name: string | null;
 };
 
 /**
@@ -35,7 +39,7 @@ export async function getTcTransactionsList(
   const { data: txRows, error: txErr } = await supabase
     .from("transactions")
     .select(
-      "id, status, close_date, property_address, mls_number, first_pass_status",
+      "id, status, close_date, property_address, mls_number, first_pass_status, intake_data",
     )
     .eq("tenant_id", tenantId)
     .order("updated_at", { ascending: false })
@@ -108,7 +112,9 @@ function mapRow(t: {
   property_address: string | null;
   mls_number: string | null;
   first_pass_status: string | null;
+  intake_data?: Record<string, unknown> | null;
 }): TcTransactionListRow {
+  const overview = deriveOverviewFromIntake(t.intake_data);
   return {
     id: t.id,
     status: t.status,
@@ -116,6 +122,35 @@ function mapRow(t: {
     property_address: t.property_address,
     mls_number: t.mls_number,
     first_pass_status: t.first_pass_status,
+    legal_description: overview.legalDescription,
+    representation_side: overview.representationSide,
+    seller_broker_name: overview.sellerBrokerName,
+    buyer_broker_name: overview.buyerBrokerName,
+  };
+}
+
+export function deriveOverviewFromIntake(
+  intakeData: Record<string, unknown> | null | undefined,
+): {
+  legalDescription: string | null;
+  representationSide: string | null;
+  sellerBrokerName: string | null;
+  buyerBrokerName: string | null;
+} {
+  const intake = intakeData ?? {};
+  const asString = (key: string): string | null => {
+    const value = intake[key];
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : null;
+  };
+  return {
+    legalDescription: asString("property_legal_description"),
+    representationSide: asString("tc_representation_side"),
+    sellerBrokerName:
+      asString("seller_broker_1_broker_name") ?? asString("seller_broker_1_brokerage_firm"),
+    buyerBrokerName:
+      asString("buyer_broker_1_broker_name") ?? asString("buyer_broker_1_brokerage_firm"),
   };
 }
 

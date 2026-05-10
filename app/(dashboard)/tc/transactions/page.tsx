@@ -21,6 +21,14 @@ export default async function TcTransactionsIndexPage({ searchParams }: Props) {
   const rows = await getTcTransactionsList(filter);
   const filterTitle = tcTransactionListFilterTitle(filter);
 
+  const representationLabel = (value: string | null): string => {
+    if (!value) return "Not set";
+    if (value === "seller_listing_broker") return "Seller / Listing broker";
+    if (value === "buyer_broker") return "Buyer broker";
+    if (value === "both") return "Both sides";
+    return value.replace(/_/g, " ");
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <header>
@@ -58,9 +66,12 @@ export default async function TcTransactionsIndexPage({ searchParams }: Props) {
             className="flex flex-col gap-3 rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm sm:flex-row sm:items-center sm:justify-between"
           >
             <div>
-              <p className="font-sans font-semibold text-brand-navy">
+              <Link
+                href={`/tc/transactions/${r.id}`}
+                className="font-sans font-semibold text-brand-navy underline underline-offset-2"
+              >
                 {r.property_address?.trim() || "Property address TBD"}
-              </p>
+              </Link>
               <p className="mt-1 text-sm text-neutral-600">
                 {formatTransactionStatusLabel(r.status)}
                 {r.mls_number ? (
@@ -69,6 +80,14 @@ export default async function TcTransactionsIndexPage({ searchParams }: Props) {
                     · MLS #{r.mls_number}
                   </>
                 ) : null}
+              </p>
+              {r.legal_description ? (
+                <p className="mt-1 text-xs text-neutral-600">Legal: {r.legal_description}</p>
+              ) : null}
+              <p className="mt-1 text-xs text-neutral-600">
+                TC rep: {representationLabel(r.representation_side)}
+                {r.seller_broker_name ? ` · Seller broker: ${r.seller_broker_name}` : ""}
+                {r.buyer_broker_name ? ` · Buyer broker: ${r.buyer_broker_name}` : ""}
               </p>
             </div>
             <Button variant="secondary" type="button" size="sm" asChild>

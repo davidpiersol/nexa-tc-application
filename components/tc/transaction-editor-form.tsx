@@ -78,6 +78,7 @@ export function TransactionEditorForm({
       source_forms_received: readText("source_forms_received"),
       follow_up_required: readBool("follow_up_required"),
       follow_up_notes: readText("follow_up_notes"),
+      tc_representation_side: readText("tc_representation_side"),
 
       // 1) Seller / Listing Client
       sellers_names: readText("sellers_names"),
@@ -300,6 +301,21 @@ export function TransactionEditorForm({
             defaultValue={getString("source_forms_received")}
             placeholder="NMAR 1100, 2104, other disclosures"
           />
+          <label className="flex flex-col gap-1.5 lg:col-span-2">
+            <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
+              TC representation side
+            </span>
+            <select
+              name="tc_representation_side"
+              defaultValue={getString("tc_representation_side")}
+              className="h-10 rounded-brand-md border border-neutral-300 bg-white px-3 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+            >
+              <option value="">Select…</option>
+              <option value="seller_listing_broker">Seller / Listing broker</option>
+              <option value="buyer_broker">Buyer broker</option>
+              <option value="both">Both sides</option>
+            </select>
+          </label>
         </div>
         <label className="mt-4 flex flex-col gap-1.5">
           <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
