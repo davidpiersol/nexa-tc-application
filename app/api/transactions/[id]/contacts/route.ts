@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { loadActorContext } from "@/lib/auth/actor-context";
-import { canWriteContacts } from "@/lib/contacts/permissions";
+import { isPrivilegedRole } from "@/lib/auth/roles";
+import { canAccessContacts, canWriteContacts } from "@/lib/contacts/permissions";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
 import { validateCsrf } from "@/lib/security/csrf-server";
@@ -39,10 +40,23 @@ export async function GET(request: NextRequest, ctx: Ctx) {
 
   const actor = await loadActorContext();
   if (!actor) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!canAccessContacts(actor.role)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
 
   const txLoaded = await loadTransactionForActor(ctx.params.id, actor.tenantId);
   if (txLoaded.error) return txLoaded.error;
   const admin = createServiceRoleClient();
+
+  if (!isPrivilegedRole(actor.role)) {
+    const { data: linkedParty, error: linkErr } = await admin
+      .from("transaction_parties")
+      .select("id")
+      .eq("tenant_id", actor.tenantId)
+      .eq("transaction_id", ctx.params.id)
+      .eq("user_id", actor.userId)
+      .maybeSingle();
+    if (linkErr) return NextResponse.json({ error: linkErr.message }, { status: 500 });
+    if (!linkedParty) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
 
   const { data, error } = await admin
     .from("transaction_contact_assignments")

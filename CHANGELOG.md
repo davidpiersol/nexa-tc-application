@@ -2,6 +2,13 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.14.0] - 2026-05-11
+
+### Changed
+
+- **P14 hardening access controls** — tightened transaction contact assignment read access in both API and RLS so non-privileged users must be linked to the transaction, reducing cross-transaction exposure risk during contacts/vendor workflows.
+- **Hardening gate tracking** — updated BuildTrack sprint metadata for `P14` to `done` with build/tests marked passed and human approval still pending.
+
 ## [v4.11.2] - 2026-05-11
 
 ### Added

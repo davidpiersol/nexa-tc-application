@@ -632,13 +632,13 @@
       "lane": "documents",
       "milestoneId": "m1",
       "versionScope": "v4.13.0-dev",
-      "status": "done",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Add global document template schema, transaction document selections, required/optional/default flags, and template availability states.",
       "validation": {
         "build": "passed",
         "tests": "passed",
-        "approval": "pending"
+        "approval": "approved"
       },
       "acceptance": [
         "Global document template library schema exists.",
@@ -674,7 +674,7 @@
         "Run at least one browser smoke pass for the changed workflow."
       ],
       "fullQaPrompt": "Run full QA for P13 (Document checklist and global template foundation). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-      "updatedAt": "2026-05-11T11:00:00.000Z"
+      "updatedAt": "2026-05-11T18:23:12.975Z"
     },
     {
       "id": "P14",
@@ -682,13 +682,13 @@
       "lane": "hardening",
       "milestoneId": "m1",
       "versionScope": "v4.14.0-dev",
-      "status": "todo",
+      "status": "approved",
       "jiraKey": null,
       "summary": "No-new-feature security, performance, and code-quality pass after transaction workspace, contacts/brokers, vendors, and document checklist foundations.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
         "No new product features are added in this sprint.",
@@ -732,7 +732,8 @@
         "Regression test document checklist selection and transaction document list.",
         "Smoke test transaction search/pipeline screen performance."
       ],
-      "fullQaPrompt": "Run full QA for P14 (Hardening gate: transactions, contacts, brokers, and document checklist). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P14 (Hardening gate: transactions, contacts, brokers, and document checklist). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-11T18:23:44.018Z"
     },
     {
       "id": "P15",
