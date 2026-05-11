@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { TransactionEditorForm } from "@/components/tc/transaction-editor-form";
 import { Button } from "@/components/ui/button";
+import { getContactLookupOptions } from "@/lib/queries/contacts";
 
-export default function NewTransactionPage() {
+export default async function NewTransactionPage() {
+  const contacts = await getContactLookupOptions();
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 border-b border-neutral-300 pb-5 sm:flex-row sm:items-center sm:justify-between">
@@ -26,6 +28,7 @@ export default function NewTransactionPage() {
           close_date: "",
           notes: "",
         }}
+        contactLookup={contacts}
       />
     </div>
   );

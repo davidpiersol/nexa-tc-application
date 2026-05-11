@@ -26,18 +26,29 @@ export type TransactionEditorInitial = {
   intake_data?: Record<string, unknown> | null;
 };
 
+type ContactLookupOption = {
+  id: string;
+  fullName: string;
+  email: string | null;
+  company: string | null;
+  isBrokerClient: boolean;
+};
+
 export function TransactionEditorForm({
   mode,
   initial,
+  contactLookup = [],
 }: {
   mode: Mode;
   initial: TransactionEditorInitial;
+  contactLookup?: ContactLookupOption[];
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
   const intake = (initial.intake_data ?? {}) as Record<string, unknown>;
+  const brokerLookup = contactLookup.filter((contact) => contact.isBrokerClient);
 
   function getString(key: string): string {
     const v = intake[key];
@@ -363,6 +374,7 @@ export function TransactionEditorForm({
             label="Seller name(s)"
             name="sellers_names"
             defaultValue={getString("sellers_names")}
+            list="contact-options-all"
           />
           <Input
             label="Seller signature date"
@@ -534,6 +546,7 @@ export function TransactionEditorForm({
             label="Buyer name(s)"
             name="buyers_names"
             defaultValue={getString("buyers_names")}
+            list="contact-options-all"
           />
           <Input
             label="Buyer signature date"
@@ -609,6 +622,25 @@ export function TransactionEditorForm({
           {mode === "create" ? "Create transaction" : "Save changes"}
         </Button>
       </div>
+
+      <datalist id="contact-options-all">
+        {contactLookup.map((contact) => (
+          <option
+            key={contact.id}
+            value={contact.fullName}
+            label={contact.email ? `${contact.fullName} · ${contact.email}` : contact.fullName}
+          />
+        ))}
+      </datalist>
+      <datalist id="contact-options-broker">
+        {brokerLookup.map((contact) => (
+          <option
+            key={contact.id}
+            value={contact.fullName}
+            label={contact.company ? `${contact.fullName} · ${contact.company}` : contact.fullName}
+          />
+        ))}
+      </datalist>
     </form>
   );
 }
@@ -661,6 +693,7 @@ function BrokerSection({
           label="Broker name"
           name={`${prefix}_broker_name`}
           defaultValue={getString(`${prefix}_broker_name`)}
+          list="contact-options-broker"
         />
         <Input
           label="Team name"
@@ -708,6 +741,7 @@ function BrokerSection({
           <span className="font-sans text-ui-body text-neutral-900">Broker is REALTOR</span>
         </label>
       </div>
+
     </section>
   );
 }

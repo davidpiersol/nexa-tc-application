@@ -24,6 +24,14 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
     test: (p) => p === "/tc/transactions",
   },
   {
+    slug: "tc-contacts-directory",
+    test: (p) => p === "/tc/contacts" || p.startsWith("/tc/contacts/"),
+  },
+  {
+    slug: "tc-broker-profiles",
+    test: (p) => p === "/tc/brokers" || p.startsWith("/tc/brokers/"),
+  },
+  {
     slug: "tc-deadlines-and-tasks",
     test: (p) => p === "/tc/settings" || p.startsWith("/tc/settings/"),
   },
@@ -50,6 +58,10 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
   {
     slug: "title-dashboard-overview",
     test: (p) => /^\/title\/[^/]+$/.test(p),
+  },
+  {
+    slug: "global-admin-wiki",
+    test: (p) => p === "/admin/global/wiki",
   },
 ];
 

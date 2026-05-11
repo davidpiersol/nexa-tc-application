@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 import { TransactionEditorForm } from "@/components/tc/transaction-editor-form";
+import { getContactLookupOptions } from "@/lib/queries/contacts";
 import { getTransactionDetail } from "@/lib/queries/transaction-detail";
 
 type Props = { params: { id: string } };
 
 export default async function TransactionEditPage({ params }: Props) {
-  const transaction = await getTransactionDetail(params.id);
+  const [transaction, contacts] = await Promise.all([
+    getTransactionDetail(params.id),
+    getContactLookupOptions(),
+  ]);
   if (!transaction) notFound();
 
   return (
@@ -37,6 +41,7 @@ export default async function TransactionEditPage({ params }: Props) {
           notes: transaction.notes,
           intake_data: transaction.intake_data ?? {},
         }}
+        contactLookup={contacts}
       />
     </div>
   );

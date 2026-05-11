@@ -2,6 +2,20 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.11.1] - 2026-05-10
+
+### Added
+
+- **CRM company scaffolding for broker normalization** — added `companies` and `contact_company_links` with additive RLS policies in `supabase/migrations/20260511060000_company_scaffolding.sql` so broker/company modeling can evolve without breaking existing contact flows.
+- **Global-admin wiki surface** — added `/admin/global/wiki` plus nav/title wiring to provide a role-indexed in-app documentation hub for operations and onboarding.
+- **Contacts/brokers guide coverage** — added and indexed new help articles for contacts directory, broker profiles, and global admin wiki in `help/articles/**` and regenerated `lib/help/articles.generated.ts`.
+
+### Changed
+
+- **P11 contacts/brokers completion hardening** — finalized dedicated contacts and brokers list/create/detail routes with edit/delete, sorted categories, broker-only profile fields, and transaction lookup integration through updated contact queries.
+- **Seed depth and repeatability** — expanded `scripts/seed.ts` to seed 5-sample CRM/company data and additional transaction fixtures while keeping deterministic IDs for repeatable reruns.
+- **QA/security gate pass** — executed lint, unit tests, production build, local migration apply, linked Supabase migration push, and full Playwright smoke coverage for guest, TC, and buyer paths.
+
 ## [v4.10.0] - 2026-05-10
 
 ### Added

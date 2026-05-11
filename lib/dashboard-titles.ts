@@ -25,6 +25,12 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/tc\/transactions\/[^/]+$/)) {
     return "Transaction Detail";
   }
+  if (pathname === "/tc/contacts/new") return "Add Contacts";
+  if (pathname === "/tc/brokers/new") return "Add Broker";
+  if (pathname.match(/^\/tc\/brokers\/[^/]+$/)) return "Broker Profile";
+  if (pathname.match(/^\/tc\/contacts\/[^/]+$/)) return "Contact Profile";
+  if (pathname === "/tc/contacts") return "Contacts";
+  if (pathname === "/tc/brokers") return "Brokers";
   if (pathname === "/tc/archive") return "Archive";
   if (pathname === "/tc/transactions") return "Transactions";
   if (pathname === "/tc/settings") return "Settings";
@@ -35,6 +41,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/title\/[^/]+$/)) return "Title Dashboard";
   if (pathname === "/admin/global" || pathname === "/admin/global/dashboard") return "Global Admin";
   if (pathname === "/admin/global/tenants") return "Tenants";
+  if (pathname === "/admin/global/wiki") return "Wiki";
   if (pathname === "/admin/global/reports") return "Reports";
   if (pathname === "/admin/tenant" || pathname === "/admin/tenant/dashboard") return "Admin Console";
   if (pathname === "/admin/tenant/users") return "Users";

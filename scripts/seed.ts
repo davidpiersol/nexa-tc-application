@@ -7,13 +7,20 @@ import { join } from "node:path";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import {
-  UAT_OTHER_TRANSACTION_ID,
   UAT_PASSWORD,
   UAT_PLATFORM_TENANT_ID,
   UAT_TENANT_ID,
   UAT_TRANSACTION_ID,
+  UAT_OTHER_TRANSACTION_ID,
   UAT_USERS,
 } from "./uat-constants";
+
+const EXTRA_TRANSACTION_IDS = [
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc1",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc2",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc3",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc4",
+] as const;
 
 function assertSeedSafetyGate() {
   const allowed = process.env.ALLOW_UAT_SEED;
@@ -97,9 +104,14 @@ async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
   // Tenant row is retained because audit_log is append-only and can block tenant cascade deletes.
   // Instead, wipe tenant-scoped data rows directly.
   const tenantScopedTables = [
+    "contact_company_links",
+    "broker_profile_credentials",
+    "broker_profiles",
+    "contact_category_assignments",
+    "contacts",
+    "companies",
     "tenant_access_requests",
     "tenant_admin_assignments",
-    "global_resource_registry",
     "transactions",
     "transaction_parties",
     "documents",
@@ -121,6 +133,11 @@ async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
       .delete()
       .eq("tenant_id", UAT_PLATFORM_TENANT_ID);
     if (platformErr) console.warn(`[seed] ${table} platform delete:`, platformErr.message);
+  }
+
+  const { error: globalRegistryErr } = await admin.from("global_resource_registry").delete().neq("id", "");
+  if (globalRegistryErr) {
+    console.warn("[seed] global_resource_registry delete:", globalRegistryErr.message);
   }
 
   const emailSet = new Set<string>(Object.values(UAT_USERS).map((u) => u.email));
@@ -210,6 +227,7 @@ async function main() {
   const closeDate = close.toISOString().slice(0, 10);
 
   const tcId = authIds.tc;
+  const SAMPLE_COUNT = 5;
 
   console.log("[seed] main transaction…");
   const { error: txErr } = await admin.from("transactions").upsert(
@@ -229,6 +247,30 @@ async function main() {
     { onConflict: "id" },
   );
   if (txErr) throw new Error(`transaction: ${txErr.message}`);
+
+  console.log("[seed] additional transactions…");
+  const extraTransactionIds: string[] = [];
+  for (let i = 0; i < SAMPLE_COUNT - 1; i++) {
+    const extraClose = new Date(today);
+    extraClose.setDate(extraClose.getDate() + 15 + i * 7);
+    const { data: tx, error } = await admin
+      .from("transactions")
+      .upsert({
+        id: EXTRA_TRANSACTION_IDS[i],
+        tenant_id: UAT_TENANT_ID,
+        status: i % 2 === 0 ? "active" : "under_contract",
+        property_address: `${1200 + i} Sample Vista Road, Albuquerque, NM 8712${i}`,
+        mls_number: `TEST-X${i + 1}`,
+        contract_date: contractDate,
+        close_date: extraClose.toISOString().slice(0, 10),
+        created_by: tcId,
+        notes: `Seeded sample transaction ${i + 1}`,
+      }, { onConflict: "id" })
+      .select("id")
+      .single();
+    if (error || !tx) throw new Error(`extra transaction ${i + 1}: ${error?.message}`);
+    extraTransactionIds.push(tx.id);
+  }
 
   console.log("[seed] transaction parties (main)…");
   for (const key of Object.keys(UAT_USERS) as (keyof typeof UAT_USERS)[]) {
@@ -405,6 +447,156 @@ async function main() {
     if (mErr) throw new Error(`message: ${mErr.message}`);
   }
 
+  for (const txId of extraTransactionIds) {
+    for (let i = 0; i < SAMPLE_COUNT; i++) {
+      const { error: taskErr } = await admin.from("tasks").insert({
+        tenant_id: UAT_TENANT_ID,
+        transaction_id: txId,
+        assigned_to: tcId,
+        title: `Sample task ${i + 1} for ${txId.slice(0, 8)}`,
+        due_date: new Date(Date.now() + (i + 2) * 86400000).toISOString().slice(0, 10),
+        priority: i % 2 === 0 ? "medium" : "high",
+      });
+      if (taskErr) throw new Error(`extra task: ${taskErr.message}`);
+    }
+    for (let i = 0; i < SAMPLE_COUNT; i++) {
+      const { error: mErr } = await admin.from("messages").insert({
+        tenant_id: UAT_TENANT_ID,
+        transaction_id: txId,
+        sender_user_id: tcId,
+        body: `Sample message ${i + 1} for ${txId.slice(0, 8)}`,
+        is_internal: i % 2 === 0,
+      });
+      if (mErr) throw new Error(`extra message: ${mErr.message}`);
+    }
+    for (let i = 0; i < SAMPLE_COUNT; i++) {
+      const label = `extra-${txId.slice(0, 4)}-${i + 1}`;
+      const buf = await pdfBytes(label);
+      const path = `${UAT_TENANT_ID}/${txId}/${Date.now()}_${i}_extra.pdf`;
+      const { error: upErr } = await admin.storage.from(BUCKET).upload(path, buf, {
+        contentType: "application/pdf",
+        upsert: true,
+      });
+      if (upErr) throw new Error(`extra storage upload: ${upErr.message}`);
+      const { error: dErr } = await admin.from("documents").insert({
+        tenant_id: UAT_TENANT_ID,
+        transaction_id: txId,
+        uploaded_by: tcId,
+        category: "other",
+        status: "uploaded",
+        file_name: `${label}.pdf`,
+        storage_path: path,
+        mime_type: "application/pdf",
+        size_bytes: buf.byteLength,
+      });
+      if (dErr) throw new Error(`extra document row: ${dErr.message}`);
+    }
+  }
+
+  console.log("[seed] contacts, broker profiles, and companies…");
+  const companyRows: { id: string; name: string }[] = [];
+  const companyNames = ["ReMax", "Coldwell Banker", "Keller Williams", "eXp Realty", "Compass"];
+  for (const [idx, name] of companyNames.entries()) {
+    const { data, error } = await admin
+      .from("companies")
+      .insert({
+        tenant_id: UAT_TENANT_ID,
+        name,
+        company_type: "brokerage",
+        created_by: tcId,
+        updated_by: tcId,
+        phone: `505-555-10${idx}`,
+      })
+      .select("id, name")
+      .single();
+    if (error || !data) throw new Error(`company ${name}: ${error?.message}`);
+    companyRows.push(data);
+  }
+
+  const contactCategories = ["broker", "client", "lead", "seller", "buyer"] as const;
+  const contactIds: string[] = [];
+  for (let i = 0; i < SAMPLE_COUNT; i++) {
+    const firstName = `Sample${i + 1}`;
+    const lastName = `Contact${i + 1}`;
+    const isBroker = i < 3;
+    const categories = [contactCategories[i], ...(isBroker ? (["broker"] as const) : [])];
+    const dedupedCategories = Array.from(new Set(categories));
+    const { data: contact, error: cErr } = await admin
+      .from("contacts")
+      .insert({
+        tenant_id: UAT_TENANT_ID,
+        salutation: i % 2 === 0 ? "Mr." : "Ms.",
+        first_name: firstName,
+        middle_name: i % 2 === 0 ? "A." : null,
+        last_name: lastName,
+        suffix: i === 4 ? "Jr." : null,
+        full_name: `${firstName} ${lastName}`,
+        email: `sample.contact${i + 1}@nexa.test`,
+        phone: `505-555-20${i}`,
+        company: isBroker ? companyRows[i % companyRows.length]?.name : "Nexa Client Group",
+        address_line_1: `${500 + i} Copper Ave`,
+        city: "Albuquerque",
+        state: "NM",
+        postal_code: `8710${i}`,
+        country: "USA",
+        notes: `Seeded contact ${i + 1}`,
+        created_by: tcId,
+        updated_by: tcId,
+      })
+      .select("id")
+      .single();
+    if (cErr || !contact) throw new Error(`contact ${i + 1}: ${cErr?.message}`);
+    contactIds.push(contact.id);
+
+    const { error: catErr } = await admin.from("contact_category_assignments").insert(
+      dedupedCategories.map((category) => ({
+        contact_id: contact.id,
+        tenant_id: UAT_TENANT_ID,
+        category,
+      })),
+    );
+    if (catErr) throw new Error(`contact categories ${i + 1}: ${catErr.message}`);
+
+    if (isBroker) {
+      const { data: profile, error: pErr } = await admin
+        .from("broker_profiles")
+        .insert({
+          tenant_id: UAT_TENANT_ID,
+          contact_id: contact.id,
+          signing_platform: "docusign",
+          signing_preferences: { mode: "email_link" },
+          settings: { brokerage: companyRows[i % companyRows.length]?.name },
+          created_by: tcId,
+          updated_by: tcId,
+        })
+        .select("id")
+        .single();
+      if (pErr || !profile) throw new Error(`broker profile ${i + 1}: ${pErr?.message}`);
+
+      const { error: credErr } = await admin.from("broker_profile_credentials").insert({
+        broker_profile_id: profile.id,
+        tenant_id: UAT_TENANT_ID,
+        provider: "docusign",
+        credentials_json: {
+          v: 1,
+          cipher: "aes-256-gcm",
+          blob: "seed-placeholder",
+        },
+        updated_by: tcId,
+      });
+      if (credErr) throw new Error(`broker creds ${i + 1}: ${credErr.message}`);
+    }
+
+    const { error: linkErr } = await admin.from("contact_company_links").insert({
+      tenant_id: UAT_TENANT_ID,
+      contact_id: contact.id,
+      company_id: companyRows[i % companyRows.length]?.id,
+      relationship: "employee",
+      is_primary: true,
+    });
+    if (linkErr) throw new Error(`contact company link ${i + 1}: ${linkErr.message}`);
+  }
+
   console.log("[seed] secondary transaction (TC not a party)…");
   const { error: otxErr } = await admin.from("transactions").upsert(
     {
@@ -484,6 +676,9 @@ async function main() {
     { record: "checklist items", ok: true, count: itemRows.length },
     { record: "tasks", ok: true, count: taskSpecs.length },
     { record: "messages", ok: true, count: bodies.length },
+    { record: "extra transactions", ok: true, count: extraTransactionIds.length },
+    { record: "contacts", ok: true, count: contactIds.length },
+    { record: "companies", ok: true, count: companyRows.length },
     { record: "iso document", ok: true, id: isoDoc.id },
   ]);
 }

@@ -25,6 +25,16 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const homeHref = role ? routeBase(pathname) : "/";
+  const tcPrimaryAction = (() => {
+    if (!pathname.startsWith("/tc")) return null;
+    if (pathname.startsWith("/tc/brokers")) {
+      return { href: "/tc/brokers/new", label: "Add broker" };
+    }
+    if (pathname.startsWith("/tc/contacts")) {
+      return { href: "/tc/contacts/new", label: "Add contacts" };
+    }
+    return { href: "/tc/transactions/new", label: "Add transaction" };
+  })();
 
   return (
     <div className="relative flex min-h-screen bg-neutral-50">
@@ -142,9 +152,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <h1 className="truncate font-display text-xl text-brand-navy">
               {title}
             </h1>
-            {role === "tc" ? (
+            {role === "tc" && tcPrimaryAction ? (
               <Button variant="gold" size="sm" type="button" asChild>
-                <Link href="/tc/transactions/new">Add transaction</Link>
+                <Link href={tcPrimaryAction.href}>{tcPrimaryAction.label}</Link>
               </Button>
             ) : null}
             <AccountMenu />

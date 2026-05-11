@@ -56,6 +56,20 @@
     "file": "tc/deadlines-and-tasks.md"
   },
   {
+    "slug": "tc-contacts-directory",
+    "title": "Contacts Directory",
+    "route": "/tc/contacts",
+    "role": "tc",
+    "file": "tc/contacts-directory.md"
+  },
+  {
+    "slug": "tc-broker-profiles",
+    "title": "Broker Profiles",
+    "route": "/tc/brokers",
+    "role": "tc",
+    "file": "tc/broker-profiles.md"
+  },
+  {
     "slug": "agent-dashboard-overview",
     "title": "Agent Workspace — Stay Ahead of the Next Question",
     "route": "/agent/[id]",
@@ -194,5 +208,12 @@
     "route": "(global admin · auth setup)",
     "role": "all",
     "file": "all/global-admin-supabase-oauth-setup.md"
+  },
+  {
+    "slug": "global-admin-wiki",
+    "title": "Global Admin: Application Wiki",
+    "route": "/admin/global/wiki",
+    "role": "all",
+    "file": "all/global-admin-wiki.md"
   }
 ]

@@ -43,6 +43,8 @@ export function navItemsForPath(pathname: string): NavItem[] {
     return [
       { href: "/tc", label: "Overview" },
       { href: "/tc/transactions", label: "Transactions" },
+      { href: "/tc/contacts", label: "Contacts" },
+      { href: "/tc/brokers", label: "Brokers" },
       { href: "/tc/archive", label: "Archive" },
       { href: "/tc/settings", label: "Settings" },
     ];
@@ -53,6 +55,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
       return [
         { href: "/admin/global/dashboard", label: "Dashboard" },
         { href: "/admin/global/tenants", label: "Tenants" },
+        { href: "/admin/global/wiki", label: "Wiki" },
         { href: "/admin/global/reports", label: "Reports" },
       ];
     }

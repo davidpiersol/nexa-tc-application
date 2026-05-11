@@ -146,6 +146,59 @@ test.describe("TC dashboard", () => {
     await expect(page).toHaveURL(/\/tc\/transactions$/);
   });
 
+  test("contacts and brokers foundation pages render", async ({ page }) => {
+    await gotoApp(page, "/tc/contacts");
+    await expect(page).toHaveURL(/\/tc\/contacts$/);
+    await expect(page.getByRole("heading", { level: 2, name: "Contacts" })).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByRole("link", { name: "Add contacts" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Search" })).toBeVisible();
+
+    await gotoApp(page, "/tc/brokers");
+    await expect(page).toHaveURL(/\/tc\/brokers$/);
+    await expect(page.getByRole("heading", { level: 2, name: "Brokers" })).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByRole("link", { name: "Add broker" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Search" })).toBeVisible();
+  });
+
+  test("contact create, edit, and delete flow works", async ({ page }) => {
+    const marker = `QA Contact ${Date.now()}`;
+    await gotoApp(page, "/tc/contacts/new");
+    await page.getByLabel("First name").fill("QA");
+    await page.getByLabel("Last name").fill(marker);
+    await page.getByLabel("Email").fill(`qa.contact.${Date.now()}@nexa.test`);
+    await page.getByLabel("City").fill("Albuquerque");
+    await page.getByRole("checkbox", { name: "Client" }).check();
+    await page.getByRole("button", { name: "Create contact" }).click();
+    await expect(page).toHaveURL(/\/tc\/contacts\/[a-f0-9-]+$/);
+
+    await page.getByRole("button", { name: "Edit" }).click();
+    await page.getByLabel("City").fill("Santa Fe");
+    await page.getByRole("button", { name: "Save" }).click();
+    await expect(page.getByRole("button", { name: "Edit" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("Santa Fe")).toBeVisible();
+
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.getByRole("button", { name: "Delete" }).click();
+    await expect(page).toHaveURL(/\/tc\/contacts$/);
+    await expect(page.getByText(marker)).toHaveCount(0);
+  });
+
+  test("broker create flow works", async ({ page }) => {
+    await gotoApp(page, "/tc/brokers/new");
+    await page.getByLabel("First name").fill("Broker");
+    await page.getByLabel("Last name").fill(`QA ${Date.now()}`);
+    await page.getByLabel("Signing platform").fill("docusign");
+    await page.getByRole("combobox", { name: "Brokerage" }).selectOption("Other");
+    await page.getByLabel("Brokerage (other)").fill("QA Brokerage");
+    await page.getByRole("button", { name: "Create broker" }).click();
+    await expect(page).toHaveURL(/\/tc\/brokers\/[a-f0-9-]+$/);
+    await expect(page.getByRole("heading", { level: 2, name: "Broker Profile" })).toBeVisible();
+  });
+
   test("close + archive workflow hides transaction from default list", async ({ page }) => {
     const marker = `Archive QA ${Date.now()}`;
     await gotoApp(page, "/tc/transactions/new");
