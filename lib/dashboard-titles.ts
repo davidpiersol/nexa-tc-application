@@ -25,6 +25,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/tc\/transactions\/[^/]+$/)) {
     return "Transaction Detail";
   }
+  if (pathname === "/tc/archive") return "Archive";
   if (pathname === "/tc/transactions") return "Transactions";
   if (pathname === "/tc/settings") return "Settings";
   if (pathname.match(/^\/agent\/[^/]+$/)) return "Agent Dashboard";

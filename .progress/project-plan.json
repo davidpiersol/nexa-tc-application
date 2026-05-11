@@ -25,8 +25,8 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.9.1-dev",
-    "lastDeployedVersion": "v4.9.1",
+    "currentVersion": "v4.10.0-dev",
+    "lastDeployedVersion": "v4.10.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
       "netlify": "vM.S.P",
@@ -480,12 +480,12 @@
       "lane": "tc-workflow",
       "milestoneId": "m1",
       "versionScope": "v4.10.0-dev",
-      "status": "todo",
+      "status": "done",
       "jiraKey": null,
       "summary": "Add transaction search, close-date capture, manual archive, archive filtering, and TC archive timing settings.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
+        "build": "passed",
+        "tests": "passed",
         "approval": "pending"
       },
       "acceptance": [
@@ -522,7 +522,8 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P10 (Pipeline close, archive, and intelligent search). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P10 (Pipeline close, archive, and intelligent search). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-11T03:42:11.183Z"
     },
     {
       "id": "P11",

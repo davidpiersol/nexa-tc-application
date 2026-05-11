@@ -179,6 +179,30 @@ export function TransactionEditorForm({
       intake_data: intakeData,
     };
 
+    const movingToClosed = payload.status === "closed" && initial.status !== "closed";
+    if (movingToClosed) {
+      if (!payload.close_date) {
+        const useToday = window.confirm(
+          "Closing this transaction requires a close date. Use today as the close date?",
+        );
+        if (!useToday) {
+          setError("Set a close date before moving this transaction to Closed.");
+          setPending(false);
+          return;
+        }
+        payload.close_date = new Date().toISOString().slice(0, 10);
+      } else {
+        const confirmed = window.confirm(
+          `Confirm this transaction is closed on ${payload.close_date}?`,
+        );
+        if (!confirmed) {
+          setError("Close status change cancelled.");
+          setPending(false);
+          return;
+        }
+      }
+    }
+
     const endpoint =
       mode === "create" ? "/api/transactions" : `/api/transactions/${initial.id}`;
     const method = mode === "create" ? "POST" : "PATCH";

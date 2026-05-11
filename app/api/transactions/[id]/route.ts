@@ -95,6 +95,37 @@ export async function PATCH(request: NextRequest, ctx: Ctx) {
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: "no_allowed_fields" }, { status: 400 });
   }
+
+  const { data: existing, error: existingErr } = await supabase
+    .from("transactions")
+    .select("id, status, close_date, archived_at")
+    .eq("id", id)
+    .eq("tenant_id", tenantRow.tenant_id)
+    .maybeSingle();
+  if (existingErr) {
+    return NextResponse.json({ error: existingErr.message }, { status: 500 });
+  }
+  if (!existing) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+
+  if (existing.archived_at) {
+    return NextResponse.json({ error: "archived_transaction_read_only" }, { status: 400 });
+  }
+
+  const incomingStatus =
+    typeof update.status === "string" ? update.status : String(existing.status);
+  const isClosingNow = existing.status !== "closed" && incomingStatus === "closed";
+  if (isClosingNow) {
+    const closeDateFromPatch =
+      typeof update.close_date === "string" ? update.close_date.trim() : "";
+    const nextCloseDate = closeDateFromPatch || existing.close_date || new Date().toISOString().slice(0, 10);
+    update.close_date = nextCloseDate;
+    update.closed_at = new Date().toISOString();
+  } else if (incomingStatus !== "closed") {
+    update.closed_at = null;
+  }
+
   update.updated_at = new Date().toISOString();
 
   const { data, error } = await supabase

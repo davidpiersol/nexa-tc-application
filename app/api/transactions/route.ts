@@ -29,9 +29,10 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from("transactions")
     .select(
-      "id, status, close_date, property_address, mls_number, first_pass_status, updated_at",
+      "id, status, close_date, closed_at, archived_at, property_address, mls_number, notes, intake_data, first_pass_status, updated_at",
     )
     .eq("tenant_id", tenantRow.tenant_id)
+    .is("archived_at", null)
     .order("updated_at", { ascending: false })
     .limit(500);
 

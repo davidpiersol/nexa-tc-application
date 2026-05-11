@@ -43,6 +43,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
     return [
       { href: "/tc", label: "Overview" },
       { href: "/tc/transactions", label: "Transactions" },
+      { href: "/tc/archive", label: "Archive" },
       { href: "/tc/settings", label: "Settings" },
     ];
   }

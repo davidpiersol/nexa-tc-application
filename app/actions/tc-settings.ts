@@ -13,6 +13,7 @@ const updateTcSettingsSchema = z.object({
   emailNotifications: z.boolean(),
   timezone: z.enum(TC_TIMEZONE_OPTIONS),
   dateFormat: z.enum(TC_DATE_FORMAT_OPTIONS),
+  autoArchiveDays: z.number().int().min(0).max(3650),
 });
 
 export type UpdateTcSettingsInput = z.infer<typeof updateTcSettingsSchema>;
@@ -50,6 +51,7 @@ export async function updateTcSettings(
       emailNotifications: parsed.data.emailNotifications,
       timezone: parsed.data.timezone,
       dateFormat: parsed.data.dateFormat,
+      autoArchiveDays: parsed.data.autoArchiveDays,
     },
   };
 

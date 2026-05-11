@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.10.0] - 2026-05-10
+
+### Added
+
+- **Transaction archive workflow** — added archive metadata migration (`closed_at`, `archived_at`, `archived_by`) plus archive/restore API route at `app/api/transactions/[id]/archive/route.ts` and TC archive page at `/tc/archive`.
+- **Targeted archive/search helpers and tests** — added `lib/transactions/archive.ts`, `lib/transactions/search.ts`, and focused unit coverage in `tests/unit/transaction-search-and-archive.test.ts`.
+
+### Changed
+
+- **Transactions search coverage** — `/tc/transactions` now supports query search across address, MLS, notes, intake data, and party/broker text while keeping archived records out of default views.
+- **Close-date confirmation hardening** — transaction edit flow now confirms close-date handling when moving to `closed`, and API patch logic enforces close-date + `closed_at` capture and archived read-only protection.
+- **TC settings archive timing** — TC settings now include configurable `autoArchiveDays` preference stored in auth metadata.
+- **P10 validation tracking** — updated BuildTrack sprint metadata to `status=done` with `build/tests=passed` and approval pending for human sign-off.
 ## [v4.9.1] - 2026-05-10
 
 ### Changed

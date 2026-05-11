@@ -146,6 +146,35 @@ test.describe("TC dashboard", () => {
     await expect(page).toHaveURL(/\/tc\/transactions$/);
   });
 
+  test("close + archive workflow hides transaction from default list", async ({ page }) => {
+    const marker = `Archive QA ${Date.now()}`;
+    await gotoApp(page, "/tc/transactions/new");
+    await page.getByLabel("Property address").fill(marker);
+    await page.getByRole("button", { name: "Create transaction" }).click();
+    await expect(page).toHaveURL(/\/tc\/transactions\/[a-f0-9-]+$/);
+    const detailUrl = page.url();
+    const id = detailUrl.split("/").at(-1);
+    expect(id).toBeTruthy();
+
+    await page.getByRole("link", { name: "Edit transaction details" }).first().click();
+    await expect(page).toHaveURL(new RegExp(`/tc/transactions/${id}/edit$`));
+    await page.locator('select[name="status"]').selectOption("closed");
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.getByRole("button", { name: "Save changes" }).click();
+    await expect(page.getByText(/Saved\./i)).toBeVisible({ timeout: 15_000 });
+
+    await page.getByRole("link", { name: "Transaction detail", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Archive transaction" })).toBeVisible();
+    await page.getByRole("button", { name: "Archive transaction" }).click();
+    await expect(page).toHaveURL(/\/tc\/archive$/);
+
+    await gotoApp(page, "/tc/transactions");
+    await expect(page.getByText(marker)).toHaveCount(0);
+
+    await gotoApp(page, "/tc/archive");
+    await expect(page.getByText(marker)).toBeVisible({ timeout: 15_000 });
+  });
+
   test("no broken http(s) images on TC overview", async ({ page }) => {
     await gotoApp(page, "/tc");
     const srcs = await page.locator("img[src]").evaluateAll((els) =>

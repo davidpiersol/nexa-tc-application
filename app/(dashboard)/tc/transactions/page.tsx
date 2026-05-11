@@ -18,7 +18,15 @@ type Props = {
  */
 export default async function TcTransactionsIndexPage({ searchParams }: Props) {
   const filter = parseTcTransactionListFilter(searchParams?.filter);
-  const rows = await getTcTransactionsList(filter);
+  const queryValue = Array.isArray(searchParams?.q)
+    ? searchParams?.q[0]
+    : searchParams?.q;
+  const query = typeof queryValue === "string" ? queryValue.trim() : "";
+  const rows = await getTcTransactionsList({
+    filter,
+    query,
+    archiveView: "default",
+  });
   const filterTitle = tcTransactionListFilterTitle(filter);
 
   const representationLabel = (value: string | null): string => {
@@ -44,6 +52,34 @@ export default async function TcTransactionsIndexPage({ searchParams }: Props) {
             <Link href="/tc/transactions/new">Add transaction</Link>
           </Button>
         </div>
+        <form method="get" className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end">
+          {filter ? <input type="hidden" name="filter" value={filter} /> : null}
+          <label className="flex w-full flex-col gap-1.5 sm:max-w-xl">
+            <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
+              Search transactions
+            </span>
+            <input
+              type="search"
+              name="q"
+              defaultValue={query}
+              placeholder="Address, MLS, notes, intake, party, broker"
+              className="h-10 rounded-brand-md border border-neutral-300 bg-white px-3 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+            />
+          </label>
+          <div className="flex gap-2">
+            <Button type="submit" variant="secondary" size="sm">
+              Search
+            </Button>
+            <Button type="button" variant="ghost" size="sm" asChild>
+              <Link href={filter ? `/tc/transactions?filter=${filter}` : "/tc/transactions"}>
+                Clear
+              </Link>
+            </Button>
+            <Button type="button" variant="ghost" size="sm" asChild>
+              <Link href="/tc/archive">Archive</Link>
+            </Button>
+          </div>
+        </form>
         {filterTitle ? (
           <p className="mt-3 rounded-brand-md border border-brand-gold/40 bg-brand-gold/10 px-4 py-2 font-sans text-sm text-brand-navy">
             Showing: <span className="font-semibold">{filterTitle}</span>
@@ -51,6 +87,11 @@ export default async function TcTransactionsIndexPage({ searchParams }: Props) {
             <Link href="/tc/transactions" className="underline underline-offset-2">
               Clear filter
             </Link>
+          </p>
+        ) : null}
+        {query ? (
+          <p className="mt-2 font-sans text-sm text-neutral-600">
+            Search query: <span className="font-semibold text-neutral-900">{query}</span>
           </p>
         ) : null}
       </header>

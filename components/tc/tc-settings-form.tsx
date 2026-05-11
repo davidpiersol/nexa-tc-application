@@ -27,6 +27,8 @@ export function TcSettingsForm({ initial }: { initial: TcSettingsData }) {
       String(formData.get("emailNotifications") ?? "") === "on";
     const timezone = String(formData.get("timezone") ?? "");
     const dateFormat = String(formData.get("dateFormat") ?? "");
+    const autoArchiveDaysRaw = String(formData.get("autoArchiveDays") ?? "");
+    const autoArchiveDays = Number.parseInt(autoArchiveDaysRaw, 10);
 
     const res = await updateTcSettings({
       fullName,
@@ -34,6 +36,7 @@ export function TcSettingsForm({ initial }: { initial: TcSettingsData }) {
       emailNotifications,
       timezone: timezone as (typeof TC_TIMEZONE_OPTIONS)[number],
       dateFormat: dateFormat as (typeof TC_DATE_FORMAT_OPTIONS)[number],
+      autoArchiveDays: Number.isFinite(autoArchiveDays) ? autoArchiveDays : 30,
     });
 
     if (!res.ok) {
@@ -104,6 +107,15 @@ export function TcSettingsForm({ initial }: { initial: TcSettingsData }) {
             ))}
           </select>
         </label>
+
+        <Input
+          label="Auto-archive closed transactions after (days)"
+          name="autoArchiveDays"
+          type="number"
+          min={0}
+          max={3650}
+          defaultValue={String(initial.autoArchiveDays)}
+        />
       </div>
 
       <label className="flex items-center gap-3 rounded-brand-md border border-neutral-200 bg-neutral-50 px-3 py-2">

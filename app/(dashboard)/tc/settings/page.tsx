@@ -21,7 +21,7 @@ export default async function TcSettingsPage() {
     <div>
       <h2 className="font-display text-heading-md text-brand-navy">TC settings</h2>
       <p className="mt-2 font-sans text-ui-body text-neutral-600">
-        Manage your profile and workspace preferences.
+        Manage your profile, workspace preferences, and archive timing defaults.
       </p>
       <TcSettingsForm initial={settings} />
     </div>

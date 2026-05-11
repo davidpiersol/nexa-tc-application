@@ -72,8 +72,9 @@ export async function getTcDashboardData(): Promise<{
   const { data: txRows, error: txErr } = await supabase
     .from("transactions")
     .select(
-      "id, status, close_date, property_address, mls_number, created_by, first_pass_status",
+      "id, status, close_date, archived_at, property_address, mls_number, created_by, first_pass_status",
     )
+    .is("archived_at", null)
     .order("updated_at", { ascending: false })
     .limit(200);
 

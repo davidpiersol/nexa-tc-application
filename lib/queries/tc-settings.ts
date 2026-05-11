@@ -11,6 +11,7 @@ export type TcSettingsData = {
   emailNotifications: boolean;
   timezone: string;
   dateFormat: string;
+  autoArchiveDays: number;
 };
 
 /**
@@ -37,6 +38,8 @@ export async function getTcSettingsForCurrentUser(): Promise<TcSettingsData | nu
   const timezoneRaw = typeof prefs.timezone === "string" ? prefs.timezone : "";
   const dateFormatRaw =
     typeof prefs.dateFormat === "string" ? prefs.dateFormat : "";
+  const autoArchiveDaysRaw =
+    typeof prefs.autoArchiveDays === "number" ? prefs.autoArchiveDays : Number.NaN;
 
   return {
     email: user.email ?? "",
@@ -52,5 +55,9 @@ export async function getTcSettingsForCurrentUser(): Promise<TcSettingsData | nu
     dateFormat: isTcDateFormatOption(dateFormatRaw)
       ? dateFormatRaw
       : "MM/DD/YYYY",
+    autoArchiveDays:
+      Number.isFinite(autoArchiveDaysRaw) && autoArchiveDaysRaw >= 0 && autoArchiveDaysRaw <= 3650
+        ? Math.trunc(autoArchiveDaysRaw)
+        : 30,
   };
 }

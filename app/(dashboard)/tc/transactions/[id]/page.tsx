@@ -4,6 +4,7 @@ import {
   getTransactionDetail,
   listDocumentsForTransaction,
 } from "@/lib/queries/transaction-detail";
+import { TransactionArchiveActions } from "@/components/tc/transaction-archive-actions";
 
 type Props = { params: { id: string } };
 
@@ -49,6 +50,8 @@ export default async function TransactionDetailPage({ params }: Props) {
     { total: 0, review: 0, signatures: 0 },
   );
   const recentDocs = docs.slice(0, 3);
+  const isClosed = String(t.status) === "closed";
+  const isArchived = Boolean(t.archived_at);
 
   return (
     <div className="flex flex-col gap-8">
@@ -79,6 +82,16 @@ export default async function TransactionDetailPage({ params }: Props) {
             {sellerBroker ? ` · Seller broker · ${sellerBroker}` : ""}
             {buyerBroker ? ` · Buyer broker · ${buyerBroker}` : ""}
           </p>
+          {isArchived ? (
+            <p className="mt-2 inline-flex w-fit rounded-full bg-neutral-200 px-2 py-1 font-sans text-xs text-neutral-700">
+              Archived
+            </p>
+          ) : null}
+          <TransactionArchiveActions
+            transactionId={params.id}
+            canArchive={isClosed}
+            isArchived={isArchived}
+          />
         </div>
       </div>
 
