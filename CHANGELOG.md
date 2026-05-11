@@ -2,6 +2,19 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.15.0] - 2026-05-11
+
+### Added
+
+- **Global admin templates workspace** — added `/admin/global/templates` UI and API endpoints for creating template records, uploading template versions, and version lifecycle actions (approve/set current/deactivate).
+- **Template safety + fillable metadata helpers** — added safe filename/path builder (`templates/global/{template_id}/{version_id}/{safe_filename}.pdf`) and AcroForm field-name extraction for uploaded PDFs.
+- **P15 validation coverage** — added focused unit tests for template storage path building, fillable field detection, and admin-only API authorization.
+
+### Changed
+
+- **Template version lifecycle defaults** — added migration support for template version review status (`needs_review` by default) and persisted fillable field names.
+- **BuildTrack sprint progression** — marked `P15` done with build/tests passed while leaving approval pending.
+
 ## [v4.14.0] - 2026-05-11
 
 ### Changed

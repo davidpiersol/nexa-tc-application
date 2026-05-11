@@ -55,6 +55,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
       return [
         { href: "/admin/global/dashboard", label: "Dashboard" },
         { href: "/admin/global/tenants", label: "Tenants" },
+        { href: "/admin/global/templates", label: "Templates" },
         { href: "/admin/global/wiki", label: "Wiki" },
         { href: "/admin/global/reports", label: "Reports" },
       ];

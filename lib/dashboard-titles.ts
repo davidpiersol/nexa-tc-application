@@ -44,6 +44,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/title\/[^/]+$/)) return "Title Dashboard";
   if (pathname === "/admin/global" || pathname === "/admin/global/dashboard") return "Global Admin";
   if (pathname === "/admin/global/tenants") return "Tenants";
+  if (pathname === "/admin/global/templates") return "Templates";
   if (pathname === "/admin/global/wiki") return "Wiki";
   if (pathname === "/admin/global/reports") return "Reports";
   if (pathname === "/admin/tenant" || pathname === "/admin/tenant/dashboard") return "Admin Console";
