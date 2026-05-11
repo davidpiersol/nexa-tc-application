@@ -3,13 +3,17 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CANONICAL_FIELD_PICKER_OPTIONS } from "@/lib/documents/template-field-mapping";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
 type TemplateVersion = {
   id: string;
   version_label: string;
   review_status: string;
+  mapping_review_status?: string;
   is_current: boolean;
+  fillable_field_names?: string[] | null;
+  field_mappings?: Record<string, string> | null;
   created_at: string;
 };
 
@@ -34,6 +38,8 @@ async function csrfHeader(): Promise<Record<string, string> | null> {
 export function GlobalTemplateConsole() {
   const [templates, setTemplates] = useState<TemplateRow[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+  const [selectedVersionId, setSelectedVersionId] = useState<string>("");
+  const [mappingDraft, setMappingDraft] = useState<Record<string, string>>({});
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -60,6 +66,25 @@ export function GlobalTemplateConsole() {
 
   const selected = templates.find((t) => t.id === selectedTemplateId) ?? null;
   const versions = selected?.global_document_template_versions ?? [];
+  const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? null;
+
+  useEffect(() => {
+    if (!versions.length) {
+      setSelectedVersionId("");
+      return;
+    }
+    if (!versions.some((version) => version.id === selectedVersionId)) {
+      setSelectedVersionId(versions[0]?.id ?? "");
+    }
+  }, [selectedVersionId, versions]);
+
+  useEffect(() => {
+    if (!selectedVersion) {
+      setMappingDraft({});
+      return;
+    }
+    setMappingDraft(selectedVersion.field_mappings ?? {});
+  }, [selectedVersion]);
 
   async function createTemplate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -130,7 +155,15 @@ export function GlobalTemplateConsole() {
     setMsg("Version uploaded (needs_review).");
   }
 
-  async function updateVersion(versionId: string, action: string) {
+  async function updateVersion(
+    versionId: string,
+    action:
+      | "save_mappings"
+      | "approve_mappings"
+      | "approve_and_make_current"
+      | "set_current"
+      | "deactivate",
+  ) {
     if (!selectedTemplateId) return;
     setBusy(true);
     setMsg("");
@@ -149,7 +182,9 @@ export function GlobalTemplateConsole() {
           "Content-Type": "application/json",
           ...headers,
         },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify(
+          action === "save_mappings" ? { action, mappings: mappingDraft } : { action },
+        ),
       },
     );
     const body = (await res.json().catch(() => ({}))) as { error?: string };
@@ -160,6 +195,17 @@ export function GlobalTemplateConsole() {
     }
     await refresh();
     setMsg("Version updated.");
+  }
+
+  function onMappingChange(pdfField: string, canonicalField: string) {
+    setMappingDraft((prev) => {
+      if (!canonicalField) {
+        const next = { ...prev };
+        delete next[pdfField];
+        return next;
+      }
+      return { ...prev, [pdfField]: canonicalField };
+    });
   }
 
   return (
@@ -252,13 +298,28 @@ export function GlobalTemplateConsole() {
 
           <div className="space-y-2">
             {versions.map((version) => (
-              <div key={version.id} className="rounded-brand-md border border-neutral-200 p-3">
-                <p className="font-sans text-sm font-semibold text-brand-navy">
-                  {version.version_label}
-                </p>
-                <p className="font-sans text-xs text-neutral-600">
-                  {version.review_status} {version.is_current ? "· current" : ""}
-                </p>
+              <div
+                key={version.id}
+                className={`rounded-brand-md border p-3 ${
+                  version.id === selectedVersionId
+                    ? "border-brand-gold bg-brand-brown-pale"
+                    : "border-neutral-200"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSelectedVersionId(version.id)}
+                  className="w-full text-left"
+                >
+                  <p className="font-sans text-sm font-semibold text-brand-navy">
+                    {version.version_label}
+                  </p>
+                  <p className="font-sans text-xs text-neutral-600">
+                    review: {version.review_status} · mapping:{" "}
+                    {version.mapping_review_status ?? "needs_review"}{" "}
+                    {version.is_current ? "· current" : ""}
+                  </p>
+                </button>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Button
                     type="button"
@@ -268,6 +329,15 @@ export function GlobalTemplateConsole() {
                     onClick={() => void updateVersion(version.id, "approve_and_make_current")}
                   >
                     Approve + make current
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={busy}
+                    onClick={() => void updateVersion(version.id, "approve_mappings")}
+                  >
+                    Approve mappings
                   </Button>
                   <Button
                     type="button"
@@ -296,6 +366,69 @@ export function GlobalTemplateConsole() {
               </p>
             ) : null}
           </div>
+
+          {selectedVersion ? (
+            <div className="rounded-brand-md border border-neutral-200 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-sans text-sm font-semibold text-brand-navy">
+                  Field mapping · {selectedVersion.version_label}
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="gold"
+                  disabled={busy}
+                  onClick={() => void updateVersion(selectedVersion.id, "save_mappings")}
+                >
+                  Save mappings
+                </Button>
+              </div>
+              <p className="mt-1 font-sans text-xs text-neutral-600">
+                Map each PDF field to a canonical transaction field.
+              </p>
+
+              <div className="mt-3 space-y-2">
+                {(selectedVersion.fillable_field_names ?? []).map((pdfField) => (
+                  <label
+                    key={pdfField}
+                    className="grid gap-1 rounded-brand-md border border-neutral-200 p-2"
+                  >
+                    <span className="font-mono text-xs text-neutral-700">{pdfField}</span>
+                    <select
+                      value={mappingDraft[pdfField] ?? ""}
+                      onChange={(e) => onMappingChange(pdfField, e.target.value)}
+                      className="h-10 rounded-brand-md border border-neutral-300 bg-white px-3 font-sans text-sm text-neutral-900 shadow-brand-sm"
+                    >
+                      <option value="">Not mapped</option>
+                      <optgroup label="Transaction fields">
+                        {CANONICAL_FIELD_PICKER_OPTIONS.filter(
+                          (option) => option.group === "transaction",
+                        ).map((option) => (
+                          <option key={option.key} value={option.key}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Intake data fields">
+                        {CANONICAL_FIELD_PICKER_OPTIONS.filter(
+                          (option) => option.group === "intake_data",
+                        ).map((option) => (
+                          <option key={option.key} value={option.key}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </optgroup>
+                    </select>
+                  </label>
+                ))}
+                {(selectedVersion.fillable_field_names ?? []).length === 0 ? (
+                  <p className="font-sans text-sm text-neutral-600">
+                    No fillable fields detected for this template version.
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </section>
       </div>
 

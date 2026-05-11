@@ -73,14 +73,16 @@ export async function POST(request: NextRequest, ctx: Ctx) {
       source_file_name: file.name,
       storage_path: storagePath,
       fillable_field_names: fieldNames,
+      field_mappings: {},
       review_status: "needs_review",
+      mapping_review_status: "needs_review",
       is_current: false,
       is_active: true,
       created_by: current.userId,
       updated_by: current.userId,
     })
     .select(
-      "id, template_id, version_label, review_status, is_current, source_file_name, storage_path, fillable_field_names, created_at",
+      "id, template_id, version_label, review_status, mapping_review_status, is_current, source_file_name, storage_path, fillable_field_names, field_mappings, created_at",
     )
     .single();
 

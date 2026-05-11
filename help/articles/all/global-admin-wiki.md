@@ -13,3 +13,4 @@ Global Admins can open **/admin/global/wiki** to view a centralized index of in-
 1. Use wiki entries during onboarding.
 2. Click an article row to open that guide in the Help panel.
 3. Keep article content current whenever workflow behavior changes.
+4. Reference the template mapping guide for `/admin/global/templates` when reviewing Choral Point canonical field setup.

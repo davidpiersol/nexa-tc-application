@@ -224,6 +224,13 @@
     "file": "all/global-admin-supabase-oauth-setup.md"
   },
   {
+    "slug": "global-admin-template-mappings",
+    "title": "Global Admin: Template Mapping and Canonical Field Picker",
+    "route": "/admin/global/templates",
+    "role": "all",
+    "file": "all/global-admin-template-mappings.md"
+  },
+  {
     "slug": "global-admin-overview",
     "title": "Global Admin: Overview",
     "route": "/admin/global",

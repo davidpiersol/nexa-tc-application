@@ -11,5 +11,6 @@ The Global Admin workspace is for platform-level operations across tenants.
 ### Related pages
 
 - **Tenants** manages tenant records and tenant-admin assignment.
+- **Templates** manages global form versions, field mappings, and canonical picker approvals.
 - **Wiki** opens the searchable application documentation index.
 - **Reports** is reserved for platform-wide operational reporting.

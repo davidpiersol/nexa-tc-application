@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const { data, error: qErr } = await admin
     .from("global_document_templates")
     .select(
-      "id, form_number, title, category, jurisdiction_state, availability_status, is_active, updated_at, global_document_template_versions(id, version_label, review_status, is_current, created_at)",
+      "id, form_number, title, category, jurisdiction_state, availability_status, is_active, updated_at, global_document_template_versions(id, version_label, review_status, mapping_review_status, is_current, fillable_field_names, field_mappings, created_at)",
     )
     .order("updated_at", { ascending: false });
   if (qErr) return NextResponse.json({ error: qErr.message }, { status: 500 });

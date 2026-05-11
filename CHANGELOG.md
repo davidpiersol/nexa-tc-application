@@ -2,6 +2,22 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [Unreleased]
+
+## [v4.16.0] - 2026-05-11
+
+### Added
+
+- **Template field mapping canonical model** — added canonical field picker helpers and mapping validation in `lib/documents/template-field-mapping.ts` for transaction fields and approved `intake_data.*` keys.
+- **Template mapping persistence schema** — added migration `20260511130000_template_field_mapping.sql` with per-version `field_mappings`, mapping review status, and reviewer metadata on `global_document_template_versions`.
+- **P16 validation coverage** — added focused unit tests in `tests/unit/template-field-mapping.test.ts` and expanded admin auth coverage for mapping approval route protection.
+
+### Changed
+
+- **Global admin template console mapping workflow** — `/admin/global/templates` now supports per-version field mapping edit, canonical picker selection, mapping save/approve actions, and mapping-review visibility.
+- **Template version lifecycle gate hardening** — version PATCH actions now enforce mapping approval before `set_current`, and mapping saves reset review/current state to prevent unreviewed promotion.
+- **Global admin help/wiki coverage for P16 mapping flow** — added a dedicated `/admin/global/templates` guide (`help/articles/all/global-admin-template-mappings.md`), updated global-admin overview/wiki references, refreshed wiki index notes, and regenerated compiled help content.
+
 ## [v4.15.0] - 2026-05-11
 
 ### Added

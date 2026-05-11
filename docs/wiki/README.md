@@ -8,6 +8,11 @@ This wiki tracks **design and implementation progress** for the Nexa TC Applicat
 | [**Progress**](progress.md) | Current step, completed steps, and upcoming steps from `nexa_build_guide.md` |
 | [**Changelog**](../../CHANGELOG.md) | Version history and notable repo changes |
 
+## Recent doc updates
+
+- Added global-admin help coverage for template mapping and canonical field picker at [`help/articles/all/global-admin-template-mappings.md`](../../help/articles/all/global-admin-template-mappings.md).
+- Updated global-admin overview/wiki help entries to reference `/admin/global/templates` mapping operations.
+
 ## Related files
 
 - **[`nexa_build_guide.md`](../../nexa_build_guide.md)** — Full copy-and-paste guide (Figma › Cursor › Claude Code › Production).

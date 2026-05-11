@@ -36,4 +36,24 @@ describe("admin template API auth", () => {
     const res = await POST(req as any);
     expect(res.status).toBe(403);
   });
+
+  it("blocks non-global-admin mapping approval", async () => {
+    const { PATCH } = await import(
+      "@/app/api/admin/global/templates/[templateId]/versions/[versionId]/route"
+    );
+    const req = new Request("http://localhost/api/admin/global/templates/a/versions/b", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        action: "approve_mappings",
+      }),
+    });
+    const res = await PATCH(req as any, {
+      params: {
+        templateId: "a",
+        versionId: "b",
+      },
+    });
+    expect(res.status).toBe(403);
+  });
 });
