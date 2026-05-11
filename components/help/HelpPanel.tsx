@@ -3,7 +3,7 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleHelp, Search, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArticleMarkdown } from "@/components/help/ArticleMarkdown";
@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils/cn";
 
 export function HelpPanel() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [open, setOpen] = React.useState(false);
   const [commandOpen, setCommandOpen] = React.useState(false);
   const [pickedSlug, setPickedSlug] = React.useState<string | null>(null);
@@ -30,6 +31,14 @@ export function HelpPanel() {
   React.useEffect(() => {
     setPickedSlug(null);
   }, [pathname]);
+
+  React.useEffect(() => {
+    const linkedSlug = searchParams.get("help");
+    if (!linkedSlug || !getArticleBySlug(linkedSlug)) return;
+    setPickedSlug(linkedSlug);
+    setPanelQuery("");
+    setOpen(true);
+  }, [searchParams]);
 
   React.useEffect(() => {
     if (!open && !commandOpen) return;
@@ -84,7 +93,16 @@ export function HelpPanel() {
         aria-label="Open Help & Guide"
         aria-expanded={open}
         aria-haspopup="dialog"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          setOpen((wasOpen) => {
+            const nextOpen = !wasOpen;
+            if (nextOpen) {
+              setPickedSlug(null);
+              setPanelQuery("");
+            }
+            return nextOpen;
+          });
+        }}
       >
         <CircleHelp className="size-7" aria-hidden />
       </button>
@@ -141,6 +159,23 @@ export function HelpPanel() {
               </div>
 
               <div className="border-b border-neutral-200 bg-white px-4 py-3">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="font-sans text-xs text-neutral-600">
+                    Page help · {getArticleBySlug(contextSlug)?.title ?? "Workspace guide"}
+                  </p>
+                  {pickedSlug ? (
+                    <button
+                      type="button"
+                      className="shrink-0 font-sans text-xs text-brand-steel underline underline-offset-4"
+                      onClick={() => {
+                        setPickedSlug(null);
+                        setPanelQuery("");
+                      }}
+                    >
+                      Back to this page
+                    </button>
+                  ) : null}
+                </div>
                 <div className="relative">
                   <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-600" />
                   <Input

@@ -6,7 +6,9 @@ export type ContactLookupOption = {
   id: string;
   fullName: string;
   email: string | null;
+  phone: string | null;
   company: string | null;
+  categories: string[];
   isBrokerClient: boolean;
 };
 
@@ -17,7 +19,7 @@ export async function getContactLookupOptions(): Promise<ContactLookupOption[]> 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("contacts")
-    .select("id, full_name, email, company")
+    .select("id, full_name, email, phone, company")
     .eq("tenant_id", actor.tenantId)
     .order("full_name", { ascending: true })
     .limit(300);
@@ -30,16 +32,19 @@ export async function getContactLookupOptions(): Promise<ContactLookupOption[]> 
         .eq("tenant_id", actor.tenantId)
         .in("contact_id", ids)
     : { data: [] as { contact_id: string; category: string }[] };
-  const brokerIds = new Set(
-    (categoryRows ?? [])
-      .filter((row) => row.category === "broker")
-      .map((row) => row.contact_id),
-  );
+  const categoriesById = new Map<string, string[]>();
+  for (const row of categoryRows ?? []) {
+    const current = categoriesById.get(row.contact_id) ?? [];
+    current.push(row.category);
+    categoriesById.set(row.contact_id, current);
+  }
   return (data ?? []).map((row) => ({
     id: row.id,
     fullName: row.full_name,
     email: row.email,
+    phone: row.phone,
     company: row.company,
-    isBrokerClient: brokerIds.has(row.id),
+    categories: categoriesById.get(row.id) ?? [],
+    isBrokerClient: (categoriesById.get(row.id) ?? []).includes("broker"),
   }));
 }

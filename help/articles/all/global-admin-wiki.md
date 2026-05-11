@@ -11,5 +11,5 @@ Global Admins can open **/admin/global/wiki** to view a centralized index of in-
 ### Operational use
 
 1. Use wiki entries during onboarding.
-2. Use article slugs in issue triage and QA notes.
+2. Click an article row to open that guide in the Help panel.
 3. Keep article content current whenever workflow behavior changes.

@@ -154,26 +154,27 @@ function linkedIntakeData(args: {
 
 async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
   // Tenant row is retained because audit_log is append-only and can block tenant cascade deletes.
-  // Instead, wipe tenant-scoped data rows directly.
+  // Transactions are retained for the same reason: audit_log.transaction_id uses ON DELETE SET NULL,
+  // which would mutate immutable audit rows. Deterministic transaction upserts below refresh seed rows.
   const tenantScopedTables = [
+    "transaction_contact_assignments",
     "contact_company_links",
     "broker_profile_credentials",
     "broker_profiles",
     "contact_category_assignments",
-    "contacts",
-    "companies",
-    "tenant_access_requests",
-    "tenant_admin_assignments",
-    "transactions",
     "transaction_parties",
     "documents",
     "checklist_items",
     "checklists",
-    "checklist_templates",
     "messages",
     "tasks",
     "email_ingestion",
     "api_integrations",
+    "checklist_templates",
+    "contacts",
+    "companies",
+    "tenant_access_requests",
+    "tenant_admin_assignments",
     "users",
   ] as const;
 
@@ -725,6 +726,10 @@ async function main() {
 
   const sellerContacts = contactsByCategory.get("seller") ?? [];
   const buyerContacts = contactsByCategory.get("buyer") ?? [];
+  const vendorContacts = contactsByCategory.get("vendor") ?? [];
+  const lenderContacts = contactsByCategory.get("lender") ?? [];
+  const titleContacts = contactsByCategory.get("title") ?? [];
+  const attorneyContacts = contactsByCategory.get("attorney") ?? [];
   const linkedTransactionIds = [UAT_TRANSACTION_ID, ...extraTransactionIds];
   for (let i = 0; i < linkedTransactionIds.length; i++) {
     const seller = sellerContacts[i % sellerContacts.length];
@@ -747,6 +752,59 @@ async function main() {
       })
       .eq("id", linkedTransactionIds[i]);
     if (txLinkErr) throw new Error(`transaction link update ${i + 1}: ${txLinkErr.message}`);
+  }
+
+  console.log("[seed] transaction contact assignments…");
+  const assignmentSeed = [
+    {
+      contact: vendorContacts[0],
+      role: "vendor" as const,
+      category: "vendor" as const,
+      notes: "Primary inspection vendor",
+    },
+    {
+      contact: lenderContacts[0],
+      role: "lender" as const,
+      category: "lender" as const,
+      notes: "Primary lending contact",
+    },
+    {
+      contact: titleContacts[0],
+      role: "title" as const,
+      category: "title" as const,
+      notes: "Assigned title officer",
+    },
+    {
+      contact: attorneyContacts[0],
+      role: "attorney" as const,
+      category: "attorney" as const,
+      notes: "Closing counsel",
+    },
+    {
+      contact: brokerContacts[0],
+      role: "broker" as const,
+      category: "broker" as const,
+      notes: "Listing broker",
+    },
+  ].filter((row) => row.contact);
+
+  for (const row of assignmentSeed) {
+    const { error: assignErr } = await admin
+      .from("transaction_contact_assignments")
+      .upsert(
+        {
+          tenant_id: UAT_TENANT_ID,
+          transaction_id: UAT_TRANSACTION_ID,
+          contact_id: row.contact!.id,
+          assignment_role: row.role,
+          assignment_category: row.category,
+          notes: row.notes,
+          created_by: tcId,
+          updated_by: tcId,
+        },
+        { onConflict: "transaction_id,contact_id,assignment_role" },
+      );
+    if (assignErr) throw new Error(`transaction contact assignment: ${assignErr.message}`);
   }
 
   console.log("[seed] secondary transaction (TC not a party)…");
@@ -834,6 +892,7 @@ async function main() {
     { record: "linked transactions total", ok: true, count: LINKED_TRANSACTION_COUNT },
     { record: "contacts", ok: true, count: contactIds.length },
     { record: "brokers", ok: true, count: brokerContacts.length },
+    { record: "transaction contact assignments", ok: true, count: assignmentSeed.length },
     { record: "companies", ok: true, count: companyRows.length },
     { record: "iso document", ok: true, id: isoDoc.id },
   ]);

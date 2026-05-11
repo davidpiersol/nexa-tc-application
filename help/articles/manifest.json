@@ -35,6 +35,13 @@
     "file": "tc/checklists.md"
   },
   {
+    "slug": "tc-assign-vendors",
+    "title": "Assign Vendors to a Transaction",
+    "route": "/tc/transactions/[id]/vendors",
+    "role": "tc",
+    "file": "tc/assign-vendors.md"
+  },
+  {
     "slug": "tc-inviting-parties",
     "title": "Inviting Parties to the Transaction",
     "route": "(transaction · parties)",
@@ -215,6 +222,20 @@
     "route": "(global admin · auth setup)",
     "role": "all",
     "file": "all/global-admin-supabase-oauth-setup.md"
+  },
+  {
+    "slug": "global-admin-overview",
+    "title": "Global Admin: Overview",
+    "route": "/admin/global",
+    "role": "all",
+    "file": "all/global-admin-overview.md"
+  },
+  {
+    "slug": "global-admin-tenants",
+    "title": "Global Admin: Tenant Management",
+    "route": "/admin/global/tenants",
+    "role": "all",
+    "file": "all/global-admin-tenants.md"
   },
   {
     "slug": "global-admin-wiki",

@@ -6,30 +6,46 @@
 const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
   {
     slug: "tc-document-manager",
-    test: (p) => /\/tc\/transactions\/[^/]+\/documents$/.test(p),
+    test: (p) => /\/tc\/transactions\/[^/]+\/documents(\/[^/]+)?$/.test(p),
   },
   {
     slug: "tc-checklists",
     test: (p) => /\/tc\/transactions\/[^/]+\/first-pass$/.test(p),
   },
   {
+    slug: "tc-assign-vendors",
+    test: (p) => /\/tc\/transactions\/[^/]+\/vendors$/.test(p),
+  },
+  {
+    slug: "tc-inviting-parties",
+    test: (p) => /\/tc\/transactions\/[^/]+\/parties\/[^/]+$/.test(p),
+  },
+  {
+    slug: "tc-opening-a-transaction",
+    test: (p) => p === "/tc/transactions/new",
+  },
+  {
+    slug: "tc-opening-a-transaction",
+    test: (p) => /\/tc\/transactions\/[^/]+\/edit$/.test(p),
+  },
+  {
     slug: "tc-opening-a-transaction",
     test: (p) =>
       /\/tc\/transactions\/[^/]+$/.test(p) &&
       !p.endsWith("/transactions") &&
-      !/\/transactions\/[^/]+\/(documents|first-pass)$/.test(p),
+      !/\/transactions\/[^/]+\/(documents|first-pass|vendors|parties|edit)/.test(p),
   },
   {
     slug: "tc-opening-a-transaction",
     test: (p) => p === "/tc/transactions",
   },
   {
-    slug: "tc-contact-delete-impact-check",
-    test: (p) => /^\/tc\/contacts\/[^/]+$/.test(p),
+    slug: "tc-contacts-directory",
+    test: (p) => p === "/tc/contacts" || p === "/tc/contacts/new",
   },
   {
-    slug: "tc-contacts-directory",
-    test: (p) => p === "/tc/contacts" || p.startsWith("/tc/contacts/"),
+    slug: "tc-contact-delete-impact-check",
+    test: (p) => /^\/tc\/contacts\/[^/]+$/.test(p),
   },
   {
     slug: "tc-broker-profiles",
@@ -41,15 +57,31 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
   },
   {
     slug: "tc-dashboard-overview",
-    test: (p) => p === "/tc" || p === "/tc/",
+    test: (p) => p === "/tc" || p === "/tc/" || p === "/tc/profile" || p === "/tc/archive",
+  },
+  {
+    slug: "agent-uploading-documents",
+    test: (p) => /^\/agent\/[^/]+\/documents$/.test(p),
+  },
+  {
+    slug: "agent-messaging",
+    test: (p) => /^\/agent\/[^/]+\/messages$/.test(p),
   },
   {
     slug: "buyer-welcome",
-    test: (p) => /^\/buyer\/[^/]+$/.test(p),
+    test: (p) => /^\/buyer\/[^/]+$/.test(p) || /^\/buyer\/[^/]+\/profile$/.test(p),
+  },
+  {
+    slug: "buyer-uploading-documents",
+    test: (p) => /^\/buyer\/[^/]+\/documents$/.test(p),
+  },
+  {
+    slug: "agent-dashboard-overview",
+    test: (p) => /^\/agent\/[^/]+\/profile$/.test(p),
   },
   {
     slug: "seller-welcome",
-    test: (p) => /^\/seller\/[^/]+$/.test(p),
+    test: (p) => /^\/seller\/[^/]+$/.test(p) || /^\/seller\/[^/]+\/profile$/.test(p),
   },
   {
     slug: "agent-dashboard-overview",
@@ -57,15 +89,30 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
   },
   {
     slug: "mortgage-dashboard-overview",
-    test: (p) => /^\/mortgage\/[^/]+$/.test(p),
+    test: (p) => /^\/mortgage\/[^/]+$/.test(p) || /^\/mortgage\/[^/]+\/profile$/.test(p),
   },
   {
     slug: "title-dashboard-overview",
-    test: (p) => /^\/title\/[^/]+$/.test(p),
+    test: (p) => /^\/title\/[^/]+$/.test(p) || /^\/title\/[^/]+\/profile$/.test(p),
   },
   {
     slug: "global-admin-wiki",
     test: (p) => p === "/admin/global/wiki",
+  },
+  {
+    slug: "global-admin-tenants",
+    test: (p) => p === "/admin/global/tenants" || p.startsWith("/admin/global/tenants/"),
+  },
+  {
+    slug: "global-admin-overview",
+    test: (p) =>
+      p === "/admin/global" ||
+      p === "/admin/global/dashboard" ||
+      p === "/admin/global/reports",
+  },
+  {
+    slug: "global-admin-overview",
+    test: (p) => p.startsWith("/admin/global"),
   },
 ];
 

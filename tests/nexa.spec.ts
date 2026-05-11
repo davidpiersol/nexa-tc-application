@@ -142,8 +142,42 @@ test.describe("TC dashboard", () => {
       page.getByRole("link", { name: "Edit transaction details" }).first(),
     ).toHaveClass(/bg-brand-gold/);
 
+    await page.getByRole("link", { name: "Assign Vendors" }).first().click();
+    await expect(page).toHaveURL(new RegExp(`/tc/transactions/${id}/vendors$`));
+    await expect(page.getByRole("link", { name: "Assign Vendors" }).first()).toHaveClass(
+      /bg-brand-gold/,
+    );
+
     await page.getByRole("link", { name: "Back to transactions" }).click();
     await expect(page).toHaveURL(/\/tc\/transactions$/);
+  });
+
+  test("assign and remove vendor from transaction", async ({ page }) => {
+    const id = UAT_TRANSACTION_ID;
+    const note = `QA vendor assignment ${Date.now()}`;
+    await gotoApp(page, `/tc/transactions/${id}/vendors`);
+
+    await page.getByRole("combobox", { name: /^Contact/ }).selectOption({ index: 1 });
+    await page.getByRole("combobox", { name: "Assignment role" }).selectOption("other");
+    await page.getByRole("combobox", { name: "Category context (optional)" }).selectOption("other");
+    await page.getByLabel("Notes (optional)").fill(note);
+    await page.getByRole("button", { name: "Assign vendor" }).click();
+
+    await expect(page.getByText(`Notes · ${note}`)).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText(/Category context · Other/i).first()).toBeVisible();
+
+    await page.getByRole("link", { name: "Transaction detail", exact: true }).click();
+    await expect(page.getByText(/Assigned service providers/i)).toBeVisible();
+    await expect(page.getByText(/Category context · Other/i).first()).toBeVisible();
+
+    await page.getByRole("link", { name: "Assign Vendors" }).first().click();
+    page.once("dialog", (dialog) => dialog.accept());
+    await page
+      .locator("li")
+      .filter({ hasText: `Notes · ${note}` })
+      .getByRole("button", { name: "Remove" })
+      .click();
+    await expect(page.getByText(`Notes · ${note}`)).toHaveCount(0);
   });
 
   test("contacts and brokers foundation pages render", async ({ page }) => {

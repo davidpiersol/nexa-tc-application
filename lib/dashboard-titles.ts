@@ -18,6 +18,9 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.startsWith("/tc/transactions/") && pathname.includes("/edit")) {
     return "Edit Transaction Details";
   }
+  if (pathname.startsWith("/tc/transactions/") && pathname.includes("/vendors")) {
+    return "Assign Vendors";
+  }
   if (pathname.startsWith("/tc/transactions/") && pathname.includes("/parties/")) {
     return "Party Details";
   }

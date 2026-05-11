@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { HELP_ARTICLES } from "@/lib/help";
 
 export default function GlobalAdminWikiPage() {
@@ -34,10 +35,15 @@ export default function GlobalAdminWikiPage() {
                 .slice()
                 .sort((a, b) => a.title.localeCompare(b.title))
                 .map((article) => (
-                  <li key={article.slug} className="rounded-brand-md border border-neutral-200 px-3 py-2">
-                    <p className="font-sans text-sm font-semibold text-brand-navy">{article.title}</p>
-                    <p className="font-sans text-xs text-neutral-600">{article.route}</p>
-                    <p className="font-sans text-xs text-neutral-500">{article.slug}</p>
+                  <li key={article.slug}>
+                    <Link
+                      href={`/admin/global/wiki?help=${encodeURIComponent(article.slug)}`}
+                      className="block rounded-brand-md border border-neutral-200 px-3 py-2 transition-colors hover:border-brand-gold hover:bg-brand-gold-pale/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                    >
+                      <p className="font-sans text-sm font-semibold text-brand-navy">{article.title}</p>
+                      <p className="font-sans text-xs text-neutral-600">{article.route}</p>
+                      <p className="font-sans text-xs text-neutral-500">{article.slug}</p>
+                    </Link>
                   </li>
                 ))}
             </ul>

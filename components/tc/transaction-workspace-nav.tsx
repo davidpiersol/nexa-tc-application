@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 
-type ActiveView = "detail" | "documents" | "first-pass" | "edit";
+type ActiveView = "detail" | "documents" | "first-pass" | "edit" | "vendors";
 
 export function TransactionWorkspaceNav({
   transactionId,
@@ -18,6 +18,7 @@ export function TransactionWorkspaceNav({
     if (pathname.includes("/documents")) return "documents";
     if (pathname.includes("/first-pass")) return "first-pass";
     if (pathname.includes("/edit")) return "edit";
+    if (pathname.includes("/vendors")) return "vendors";
     return "detail";
   }, [pathname]);
 
@@ -56,8 +57,8 @@ export function TransactionWorkspaceNav({
           <Link href={`${detailHref}/edit`}>Edit transaction details</Link>
         </Button>
 
-        <Button variant="secondary" size="sm" type="button" disabled>
-          Assign Vendors (coming soon)
+        <Button variant={active === "vendors" ? "gold" : "secondary"} size="sm" type="button" asChild>
+          <Link href={`${detailHref}/vendors`}>Assign Vendors</Link>
         </Button>
       </div>
     </section>

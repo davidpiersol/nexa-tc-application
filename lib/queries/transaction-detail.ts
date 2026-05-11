@@ -18,9 +18,39 @@ export async function getTransactionDetail(transactionId: string) {
     .eq("transaction_id", transactionId)
     .order("created_at", { ascending: true });
 
+  const { data: assignments } = await supabase
+    .from("transaction_contact_assignments")
+    .select(
+      "id, contact_id, assignment_role, assignment_category, notes, created_at, contacts(id, full_name, email, phone, company)",
+    )
+    .eq("transaction_id", transactionId)
+    .order("created_at", { ascending: true });
+
   return {
     ...tx,
     parties: parties ?? [],
+    assignments: (assignments ?? []).map((assignment) => {
+      const contact = Array.isArray(assignment.contacts)
+        ? assignment.contacts[0]
+        : assignment.contacts;
+      return {
+        id: assignment.id,
+        contactId: assignment.contact_id,
+        assignmentRole: assignment.assignment_role,
+        assignmentCategory: assignment.assignment_category,
+        notes: assignment.notes,
+        createdAt: assignment.created_at,
+        contact: contact
+          ? {
+              id: contact.id,
+              fullName: contact.full_name,
+              email: contact.email,
+              phone: contact.phone,
+              company: contact.company,
+            }
+          : null,
+      };
+    }),
   };
 }
 

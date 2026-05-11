@@ -583,13 +583,13 @@
       "lane": "crm",
       "milestoneId": "m1",
       "versionScope": "v4.12.0-dev",
-      "status": "todo",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Allow contacts such as inspectors, lenders, title contacts, and vendors to be assigned to a transaction without duplicating contact data.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
         "Transaction contact assignment model exists.",
@@ -623,7 +623,8 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P12 (Vendor assignment and transaction contacts). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P12 (Vendor assignment and transaction contacts). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-11T10:37:00.000Z"
     },
     {
       "id": "P13",

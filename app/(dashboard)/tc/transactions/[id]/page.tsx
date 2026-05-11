@@ -5,6 +5,7 @@ import {
   listDocumentsForTransaction,
 } from "@/lib/queries/transaction-detail";
 import { TransactionArchiveActions } from "@/components/tc/transaction-archive-actions";
+import { assignmentCategoryLabel, transactionContactRoleLabel } from "@/lib/transactions/contact-assignment";
 
 type Props = { params: { id: string } };
 
@@ -136,6 +137,37 @@ export default async function TransactionDetailPage({ params }: Props) {
             {recentDocs.length === 0 ? (
               <li className="font-sans text-sm text-neutral-600">No documents uploaded yet.</li>
             ) : null}
+          </ul>
+        </section>
+        <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
+          <h3 className="font-display text-heading-md text-brand-navy">Assigned service providers</h3>
+          <ul className="mt-4 flex flex-col gap-2 font-sans text-sm text-neutral-900">
+            {t.assignments.length === 0 ? (
+              <li className="text-neutral-600">
+                No vendors assigned yet.{" "}
+                <Link
+                  href={`/tc/transactions/${params.id}/vendors`}
+                  className="text-brand-navy underline underline-offset-2"
+                >
+                  Assign Vendors
+                </Link>
+              </li>
+            ) : null}
+            {t.assignments.map((assignment) => (
+              <li key={assignment.id} className="rounded-brand-md border border-neutral-200 px-3 py-2">
+                <p className="font-semibold text-brand-navy">
+                  {assignment.contact?.fullName ?? "Removed contact"} ·{" "}
+                  {transactionContactRoleLabel(assignment.assignmentRole)}
+                </p>
+                <p className="text-neutral-600">
+                  {assignment.contact?.company || "No company"} ·{" "}
+                  {assignment.contact?.email || assignment.contact?.phone || "No contact details"}
+                </p>
+                <p className="text-neutral-600">
+                  Category context · {assignmentCategoryLabel(assignment.assignmentCategory)}
+                </p>
+              </li>
+            ))}
           </ul>
         </section>
         <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
