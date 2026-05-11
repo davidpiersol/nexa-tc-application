@@ -4,6 +4,19 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.17.1] - 2026-05-11
+
+### Added
+
+- **`isExpectedGlobalTemplateVersionPath`** — validates persisted global template blob paths against template/version IDs before service-role downloads.
+- **PDF generation bounds** — `lib/documents/pdf-generation-limits.ts` caps source template bytes (default 15 MiB, optional `NEXA_MAX_GENERATION_TEMPLATE_MB`).
+- **B11 blocker** — documents deferred items: optional output-PDF caps and PATCH semantics for immutable generated rows.
+
+### Changed
+
+- **Generate PDF route hardening** — rejects mismatched/invalid `storage_path`, returns `413 template_pdf_too_large` when over cap, removes orphaned uploads if document insert fails.
+- **AcroForm dropdown fills** — no longer selects an arbitrary first option when values do not match; avoids silent wrong legal payloads.
+
 ## [v4.17.0] - 2026-05-11
 
 ### Added

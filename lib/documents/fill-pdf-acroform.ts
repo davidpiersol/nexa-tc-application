@@ -41,9 +41,6 @@ function applyDropdown(field: PDFDropdown, value: string) {
     field.select(ci);
     return;
   }
-  if (opts.length > 0 && value.trim().length > 0) {
-    field.select(opts[0]!);
-  }
 }
 
 function applyRadioGroup(field: PDFRadioGroup, value: string) {

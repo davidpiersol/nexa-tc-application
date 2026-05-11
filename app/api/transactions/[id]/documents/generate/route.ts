@@ -5,12 +5,14 @@ import { insertApiAudit } from "@/lib/audit/route-audit";
 import { loadActorContext } from "@/lib/auth/actor-context";
 import { isPrivilegedRole } from "@/lib/auth/roles";
 import { fillPdfFromMappedFields } from "@/lib/documents/fill-pdf-acroform";
+import { maxGenerationTemplateBytes } from "@/lib/documents/pdf-generation-limits";
 import {
   buildStoredGenerationSnapshot,
   buildTransactionFieldSnapshot,
   listMissingMappedCanonicalFields,
 } from "@/lib/documents/transaction-data-snapshot";
 import type { TemplateFieldMappings } from "@/lib/documents/template-field-mapping";
+import { isExpectedGlobalTemplateVersionPath } from "@/lib/documents/template-storage";
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
 import { validateCsrf } from "@/lib/security/csrf-server";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
@@ -112,6 +114,16 @@ export async function POST(request: NextRequest, ctx: Ctx) {
     return NextResponse.json({ error: "template_version_not_approved" }, { status: 400 });
   }
 
+  if (
+    !isExpectedGlobalTemplateVersionPath({
+      storagePath: versionRow.storage_path,
+      templateId: selection.template_id,
+      versionId: selection.template_version_id,
+    })
+  ) {
+    return NextResponse.json({ error: "invalid_template_storage_path" }, { status: 400 });
+  }
+
   const fieldMappings = versionRow.field_mappings as TemplateFieldMappings;
   if (!fieldMappings || typeof fieldMappings !== "object" || Array.isArray(fieldMappings)) {
     return NextResponse.json({ error: "field_mappings_invalid" }, { status: 400 });
@@ -148,7 +160,14 @@ export async function POST(request: NextRequest, ctx: Ctx) {
     );
   }
 
+  const maxBytes = maxGenerationTemplateBytes();
   const templateBytes = new Uint8Array(await templateFile.arrayBuffer());
+  if (templateBytes.byteLength > maxBytes) {
+    return NextResponse.json(
+      { error: "template_pdf_too_large" },
+      { status: 413 },
+    );
+  }
 
   let filledBytes: Uint8Array;
   try {
@@ -206,6 +225,7 @@ export async function POST(request: NextRequest, ctx: Ctx) {
     .single();
 
   if (insErr || !docRow) {
+    await supabase.storage.from(BUCKET).remove([storagePath]).catch(() => undefined);
     return NextResponse.json({ error: insErr?.message ?? "insert_failed" }, { status: 500 });
   }
 
