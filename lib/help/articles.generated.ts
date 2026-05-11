@@ -77,6 +77,13 @@ export const HELP_ARTICLES: HelpArticle[] = [
     "content": "## Broker Profiles\n\nThe **Brokers** workspace is a filtered view of contacts that include the `Broker` category.\n\n### Broker-specific fields\n\n1. Brokerage selection.\n2. Signing platform.\n3. Signing preference.\n4. Credential update controls (admin-restricted).\n\n### Recommended usage\n\n1. Keep person details in the base contact record.\n2. Keep broker operations fields on broker profiles only.\n3. Use the broker list for quick lookup, edit, and delete operations.\n\n### Upcoming company linkage\n\nBrokerage values are currently selected directly in profile fields. Company-level normalization is scaffolded and can be expanded into a reusable CRM company model.\n"
   },
   {
+    "slug": "tc-contact-delete-impact-check",
+    "title": "Contact Delete Impact Check",
+    "route": "/tc/contacts/[id]",
+    "role": "tc",
+    "content": "## Contact Delete Impact Check\n\nBefore deleting a contact, NEXA now runs a quick impact scan so you can see where that person is still referenced.\n\n### What is scanned\n\n1. Transaction `intake_data` text fields (names, broker details, emails).\n2. Transaction party rows (`display_name`, `contact_email`).\n\n### What happens if you delete anyway\n\n1. The contact profile, categories, broker profile, and company links are removed.\n2. Existing transaction snapshots are **not** rewritten automatically.\n3. You can still open transactions normally after deletion.\n\n### Recommended workflow\n\n1. Review the impact warning examples.\n2. If the contact should be retained historically, update transaction intake first.\n3. Delete only after confirming you are not removing an active canonical CRM record by mistake.\n"
+  },
+  {
     "slug": "agent-dashboard-overview",
     "title": "Agent Workspace — Stay Ahead of the Next Question",
     "route": "/agent/[id]",

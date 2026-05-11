@@ -20,6 +20,29 @@ const EXTRA_TRANSACTION_IDS = [
   "cccccccc-cccc-4ccc-8ccc-ccccccccccc2",
   "cccccccc-cccc-4ccc-8ccc-ccccccccccc3",
   "cccccccc-cccc-4ccc-8ccc-ccccccccccc4",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc5",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc6",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc7",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc8",
+  "cccccccc-cccc-4ccc-8ccc-ccccccccccc9",
+] as const;
+
+const CONTACTS_PER_CATEGORY = 3;
+const BROKER_COUNT = 3;
+const LINKED_TRANSACTION_COUNT = 10;
+
+const NON_BROKER_CATEGORIES = [
+  "attorney",
+  "buyer",
+  "client",
+  "lead",
+  "lender",
+  "seller",
+  "soi",
+  "tc",
+  "title",
+  "vendor",
+  "other",
 ] as const;
 
 function assertSeedSafetyGate() {
@@ -100,6 +123,35 @@ async function pdfBytes(label: string): Promise<Uint8Array> {
   return pdf.save();
 }
 
+function linkedIntakeData(args: {
+  sellerName: string;
+  buyerName: string;
+  sellerBrokerName: string;
+  buyerBrokerName: string;
+  sellerBrokerCompany: string;
+  buyerBrokerCompany: string;
+  sellerBrokerEmail: string;
+  buyerBrokerEmail: string;
+}): Record<string, unknown> {
+  return {
+    sellers_names: args.sellerName,
+    buyers_names: args.buyerName,
+    seller_broker_1_brokerage_firm: args.sellerBrokerCompany,
+    seller_broker_1_broker_name: args.sellerBrokerName,
+    seller_broker_1_email: args.sellerBrokerEmail,
+    seller_broker_1_city: "Albuquerque",
+    seller_broker_1_state: "NM",
+    buyer_broker_1_brokerage_firm: args.buyerBrokerCompany,
+    buyer_broker_1_broker_name: args.buyerBrokerName,
+    buyer_broker_1_email: args.buyerBrokerEmail,
+    buyer_broker_1_city: "Albuquerque",
+    buyer_broker_1_state: "NM",
+    tc_representation_side: "both",
+    tc_engaged: true,
+    source_forms_received: "Seed",
+  };
+}
+
 async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
   // Tenant row is retained because audit_log is append-only and can block tenant cascade deletes.
   // Instead, wipe tenant-scoped data rows directly.
@@ -135,7 +187,10 @@ async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
     if (platformErr) console.warn(`[seed] ${table} platform delete:`, platformErr.message);
   }
 
-  const { error: globalRegistryErr } = await admin.from("global_resource_registry").delete().neq("id", "");
+  const { error: globalRegistryErr } = await admin
+    .from("global_resource_registry")
+    .delete()
+    .not("id", "is", null);
   if (globalRegistryErr) {
     console.warn("[seed] global_resource_registry delete:", globalRegistryErr.message);
   }
@@ -250,7 +305,7 @@ async function main() {
 
   console.log("[seed] additional transactions…");
   const extraTransactionIds: string[] = [];
-  for (let i = 0; i < SAMPLE_COUNT - 1; i++) {
+  for (let i = 0; i < LINKED_TRANSACTION_COUNT - 1; i++) {
     const extraClose = new Date(today);
     extraClose.setDate(extraClose.getDate() + 15 + i * 7);
     const { data: tx, error } = await admin
@@ -513,79 +568,150 @@ async function main() {
     companyRows.push(data);
   }
 
-  const contactCategories = ["broker", "client", "lead", "seller", "buyer"] as const;
   const contactIds: string[] = [];
-  for (let i = 0; i < SAMPLE_COUNT; i++) {
-    const firstName = `Sample${i + 1}`;
-    const lastName = `Contact${i + 1}`;
-    const isBroker = i < 3;
-    const categories = [contactCategories[i], ...(isBroker ? (["broker"] as const) : [])];
-    const dedupedCategories = Array.from(new Set(categories));
-    const { data: contact, error: cErr } = await admin
-      .from("contacts")
-      .insert({
-        tenant_id: UAT_TENANT_ID,
-        salutation: i % 2 === 0 ? "Mr." : "Ms.",
-        first_name: firstName,
-        middle_name: i % 2 === 0 ? "A." : null,
-        last_name: lastName,
-        suffix: i === 4 ? "Jr." : null,
-        full_name: `${firstName} ${lastName}`,
-        email: `sample.contact${i + 1}@nexa.test`,
-        phone: `505-555-20${i}`,
-        company: isBroker ? companyRows[i % companyRows.length]?.name : "Nexa Client Group",
-        address_line_1: `${500 + i} Copper Ave`,
-        city: "Albuquerque",
-        state: "NM",
-        postal_code: `8710${i}`,
-        country: "USA",
-        notes: `Seeded contact ${i + 1}`,
-        created_by: tcId,
-        updated_by: tcId,
-      })
-      .select("id")
-      .single();
-    if (cErr || !contact) throw new Error(`contact ${i + 1}: ${cErr?.message}`);
-    contactIds.push(contact.id);
+  const contactsByCategory = new Map<string, Array<{ id: string; fullName: string; email: string }>>();
+  const brokerContacts: Array<{
+    id: string;
+    fullName: string;
+    email: string;
+    company: string;
+  }> = [];
 
-    const { error: catErr } = await admin.from("contact_category_assignments").insert(
-      dedupedCategories.map((category) => ({
-        contact_id: contact.id,
-        tenant_id: UAT_TENANT_ID,
-        category,
-      })),
-    );
-    if (catErr) throw new Error(`contact categories ${i + 1}: ${catErr.message}`);
-
-    if (isBroker) {
-      const { data: profile, error: pErr } = await admin
-        .from("broker_profiles")
+  let contactOrdinal = 1;
+  for (const category of NON_BROKER_CATEGORIES) {
+    for (let i = 0; i < CONTACTS_PER_CATEGORY; i++) {
+      const firstName = `${category.toUpperCase()}${i + 1}`;
+      const lastName = "Contact";
+      const fullName = `${firstName} ${lastName}`;
+      const email = `${category}.${i + 1}@nexa.test`;
+      const company = companyRows[(contactOrdinal - 1) % companyRows.length]?.name ?? "Nexa";
+      const { data: contact, error: cErr } = await admin
+        .from("contacts")
         .insert({
           tenant_id: UAT_TENANT_ID,
-          contact_id: contact.id,
-          signing_platform: "docusign",
-          signing_preferences: { mode: "email_link" },
-          settings: { brokerage: companyRows[i % companyRows.length]?.name },
+          salutation: i % 2 === 0 ? "Mr." : "Ms.",
+          first_name: firstName,
+          middle_name: null,
+          last_name: lastName,
+          suffix: null,
+          full_name: fullName,
+          email,
+          phone: `505-555-${String(300 + contactOrdinal).padStart(4, "0")}`,
+          company,
+          address_line_1: `${700 + contactOrdinal} Copper Ave`,
+          city: "Albuquerque",
+          state: "NM",
+          postal_code: `871${String(i).padStart(2, "0")}`,
+          country: "USA",
+          notes: `Seeded ${category} contact ${i + 1}`,
+          other_category_description: category === "other" ? `Other type ${i + 1}` : null,
           created_by: tcId,
           updated_by: tcId,
         })
         .select("id")
         .single();
-      if (pErr || !profile) throw new Error(`broker profile ${i + 1}: ${pErr?.message}`);
+      if (cErr || !contact) {
+        throw new Error(`contact ${category}-${i + 1}: ${cErr?.message}`);
+      }
+      contactIds.push(contact.id);
 
-      const { error: credErr } = await admin.from("broker_profile_credentials").insert({
-        broker_profile_id: profile.id,
+      const { error: catErr } = await admin.from("contact_category_assignments").insert({
+        contact_id: contact.id,
         tenant_id: UAT_TENANT_ID,
-        provider: "docusign",
-        credentials_json: {
-          v: 1,
-          cipher: "aes-256-gcm",
-          blob: "seed-placeholder",
-        },
-        updated_by: tcId,
+        category,
       });
-      if (credErr) throw new Error(`broker creds ${i + 1}: ${credErr.message}`);
+      if (catErr) throw new Error(`contact category ${category}-${i + 1}: ${catErr.message}`);
+
+      const existing = contactsByCategory.get(category) ?? [];
+      existing.push({ id: contact.id, fullName, email });
+      contactsByCategory.set(category, existing);
+
+      const { error: linkErr } = await admin.from("contact_company_links").insert({
+        tenant_id: UAT_TENANT_ID,
+        contact_id: contact.id,
+        company_id: companyRows[contactOrdinal % companyRows.length]?.id,
+        relationship: "employee",
+        is_primary: true,
+      });
+      if (linkErr) throw new Error(`contact company link ${category}-${i + 1}: ${linkErr.message}`);
+      contactOrdinal += 1;
     }
+  }
+
+  for (let i = 0; i < BROKER_COUNT; i++) {
+    const firstName = `Broker${i + 1}`;
+    const lastName = "Contact";
+    const fullName = `${firstName} ${lastName}`;
+    const email = `broker.${i + 1}@nexa.test`;
+    const company = companyRows[i % companyRows.length]?.name ?? "Nexa Brokerage";
+    const { data: contact, error: cErr } = await admin
+      .from("contacts")
+      .insert({
+        tenant_id: UAT_TENANT_ID,
+        salutation: "Ms.",
+        first_name: firstName,
+        middle_name: null,
+        last_name: lastName,
+        suffix: null,
+        full_name: fullName,
+        email,
+        phone: `505-555-${String(800 + i).padStart(4, "0")}`,
+        company,
+        address_line_1: `${900 + i} Broker Plaza`,
+        city: "Albuquerque",
+        state: "NM",
+        postal_code: `8712${i}`,
+        country: "USA",
+        notes: `Seeded broker contact ${i + 1}`,
+        created_by: tcId,
+        updated_by: tcId,
+      })
+      .select("id")
+      .single();
+    if (cErr || !contact) throw new Error(`broker contact ${i + 1}: ${cErr?.message}`);
+    contactIds.push(contact.id);
+
+    const { error: catErr } = await admin.from("contact_category_assignments").insert({
+      contact_id: contact.id,
+      tenant_id: UAT_TENANT_ID,
+      category: "broker",
+    });
+    if (catErr) throw new Error(`broker category ${i + 1}: ${catErr.message}`);
+
+    const { data: profile, error: pErr } = await admin
+      .from("broker_profiles")
+      .insert({
+        tenant_id: UAT_TENANT_ID,
+        contact_id: contact.id,
+        signing_platform: "docusign",
+        signing_preferences: { mode: "email_link" },
+        settings: { brokerage: company },
+        created_by: tcId,
+        updated_by: tcId,
+      })
+      .select("id")
+      .single();
+    if (pErr || !profile) throw new Error(`broker profile ${i + 1}: ${pErr?.message}`);
+
+    const { error: credErr } = await admin.from("broker_profile_credentials").insert({
+      broker_profile_id: profile.id,
+      tenant_id: UAT_TENANT_ID,
+      provider: "docusign",
+      credentials_json: {
+        v: 1,
+        cipher: "aes-256-gcm",
+        blob: "seed-placeholder",
+      },
+      updated_by: tcId,
+    });
+    if (credErr) throw new Error(`broker creds ${i + 1}: ${credErr.message}`);
+
+    brokerContacts.push({
+      id: contact.id,
+      fullName,
+      email,
+      company,
+    });
 
     const { error: linkErr } = await admin.from("contact_company_links").insert({
       tenant_id: UAT_TENANT_ID,
@@ -594,7 +720,33 @@ async function main() {
       relationship: "employee",
       is_primary: true,
     });
-    if (linkErr) throw new Error(`contact company link ${i + 1}: ${linkErr.message}`);
+    if (linkErr) throw new Error(`broker company link ${i + 1}: ${linkErr.message}`);
+  }
+
+  const sellerContacts = contactsByCategory.get("seller") ?? [];
+  const buyerContacts = contactsByCategory.get("buyer") ?? [];
+  const linkedTransactionIds = [UAT_TRANSACTION_ID, ...extraTransactionIds];
+  for (let i = 0; i < linkedTransactionIds.length; i++) {
+    const seller = sellerContacts[i % sellerContacts.length];
+    const buyer = buyerContacts[i % buyerContacts.length];
+    const sellerBroker = brokerContacts[i % brokerContacts.length];
+    const buyerBroker = brokerContacts[(i + 1) % brokerContacts.length];
+    const { error: txLinkErr } = await admin
+      .from("transactions")
+      .update({
+        intake_data: linkedIntakeData({
+          sellerName: seller?.fullName ?? `Seller ${i + 1}`,
+          buyerName: buyer?.fullName ?? `Buyer ${i + 1}`,
+          sellerBrokerName: sellerBroker?.fullName ?? `Seller Broker ${i + 1}`,
+          buyerBrokerName: buyerBroker?.fullName ?? `Buyer Broker ${i + 1}`,
+          sellerBrokerCompany: sellerBroker?.company ?? "Nexa Brokerage",
+          buyerBrokerCompany: buyerBroker?.company ?? "Nexa Brokerage",
+          sellerBrokerEmail: sellerBroker?.email ?? `seller.broker.${i + 1}@nexa.test`,
+          buyerBrokerEmail: buyerBroker?.email ?? `buyer.broker.${i + 1}@nexa.test`,
+        }),
+      })
+      .eq("id", linkedTransactionIds[i]);
+    if (txLinkErr) throw new Error(`transaction link update ${i + 1}: ${txLinkErr.message}`);
   }
 
   console.log("[seed] secondary transaction (TC not a party)…");
@@ -657,6 +809,8 @@ async function main() {
         isoDocumentId: isoDoc.id,
         transactionId: UAT_TRANSACTION_ID,
         otherTransactionId: UAT_OTHER_TRANSACTION_ID,
+        linkedTransactionIds: [UAT_TRANSACTION_ID, ...extraTransactionIds],
+        brokerContactIds: brokerContacts.map((b) => b.id),
       },
       null,
       2,
@@ -677,7 +831,9 @@ async function main() {
     { record: "tasks", ok: true, count: taskSpecs.length },
     { record: "messages", ok: true, count: bodies.length },
     { record: "extra transactions", ok: true, count: extraTransactionIds.length },
+    { record: "linked transactions total", ok: true, count: LINKED_TRANSACTION_COUNT },
     { record: "contacts", ok: true, count: contactIds.length },
+    { record: "brokers", ok: true, count: brokerContacts.length },
     { record: "companies", ok: true, count: companyRows.length },
     { record: "iso document", ok: true, id: isoDoc.id },
   ]);

@@ -45,7 +45,7 @@ test.describe("TC dashboard", () => {
 
   test("transaction detail has Documents + First Pass actions", async ({ page }) => {
     const errs = attachConsoleCapture(page);
-    const id = await firstTransactionId(page);
+    const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}`);
     await expect(
       page.getByRole("link", { name: "Documents" }).first(),
@@ -79,7 +79,7 @@ test.describe("TC dashboard", () => {
   });
 
   test("party and document rows open dedicated detail pages", async ({ page }) => {
-    const id = await firstTransactionId(page);
+    const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}`);
 
     const firstPartyLink = page
@@ -101,7 +101,7 @@ test.describe("TC dashboard", () => {
   });
 
   test("documents page supports card/list, search, sort, and detail actions", async ({ page }) => {
-    const id = await firstTransactionId(page);
+    const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}/documents`);
 
     await page.getByRole("button", { name: "List view" }).click();
@@ -121,7 +121,7 @@ test.describe("TC dashboard", () => {
   });
 
   test("transaction workspace nav switches between detail pages", async ({ page }) => {
-    const id = await firstTransactionId(page);
+    const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}/documents`);
 
     const docsNavLink = page.getByRole("link", { name: "Documents" }).first();
@@ -164,7 +164,7 @@ test.describe("TC dashboard", () => {
     await expect(page.getByRole("button", { name: "Search" })).toBeVisible();
   });
 
-  test("contact create, edit, and delete flow works", async ({ page }) => {
+  test("contact delete preserves transaction snapshot and removes lookup", async ({ page }) => {
     const marker = `QA Contact ${Date.now()}`;
     await gotoApp(page, "/tc/contacts/new");
     await page.getByLabel("First name").fill("QA");
@@ -174,6 +174,8 @@ test.describe("TC dashboard", () => {
     await page.getByRole("checkbox", { name: "Client" }).check();
     await page.getByRole("button", { name: "Create contact" }).click();
     await expect(page).toHaveURL(/\/tc\/contacts\/[a-f0-9-]+$/);
+    const contactDetailUrl = page.url();
+    const contactDetailPath = new URL(contactDetailUrl).pathname;
 
     await page.getByRole("button", { name: "Edit" }).click();
     await page.getByLabel("City").fill("Santa Fe");
@@ -181,10 +183,28 @@ test.describe("TC dashboard", () => {
     await expect(page.getByRole("button", { name: "Edit" })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Santa Fe")).toBeVisible();
 
+    const txId = UAT_TRANSACTION_ID;
+    await gotoApp(page, `/tc/transactions/${txId}/edit`);
+    await page.getByLabel("Seller name(s)").fill(`QA ${marker}`);
+    await page.getByRole("button", { name: "Save changes" }).click();
+    await expect(page.getByText(/Saved\./i)).toBeVisible({ timeout: 15_000 });
+
+    const deletedName = `QA ${marker}`;
+    await gotoApp(page, contactDetailPath);
     page.once("dialog", (dialog) => dialog.accept());
     await page.getByRole("button", { name: "Delete" }).click();
     await expect(page).toHaveURL(/\/tc\/contacts$/);
     await expect(page.getByText(marker)).toHaveCount(0);
+
+    await gotoApp(page, `/tc/transactions/${txId}/edit`);
+    await expect(page.getByLabel("Seller name(s)")).toHaveValue(deletedName);
+    await expect(
+      page.locator(`#contact-options-all option[value="${deletedName}"]`),
+    ).toHaveCount(0);
+
+    await gotoApp(page, `/tc/transactions/${txId}`);
+    await expect(page).toHaveURL(new RegExp(`/tc/transactions/${txId}$`));
+    await expect(page.getByRole("heading", { level: 3, name: "Documents" })).toBeVisible();
   });
 
   test("broker create flow works", async ({ page }) => {
@@ -197,6 +217,29 @@ test.describe("TC dashboard", () => {
     await page.getByRole("button", { name: "Create broker" }).click();
     await expect(page).toHaveURL(/\/tc\/brokers\/[a-f0-9-]+$/);
     await expect(page.getByRole("heading", { level: 2, name: "Broker Profile" })).toBeVisible();
+  });
+
+  test("document delete removes row without breaking transaction", async ({ page }) => {
+    const id = UAT_TRANSACTION_ID;
+    await gotoApp(page, `/tc/transactions/${id}/documents`);
+
+    const firstDetailLink = page.locator(`a[href^="/tc/transactions/${id}/documents/"]`).first();
+    await expect(firstDetailLink).toBeVisible({ timeout: 30_000 });
+    const href = await firstDetailLink.getAttribute("href");
+    expect(href).toMatch(new RegExp(`/tc/transactions/${id}/documents/[a-f0-9-]+$`));
+    const documentId = href?.split("/").at(-1);
+    expect(documentId).toBeTruthy();
+
+    await firstDetailLink.click();
+    await expect(page).toHaveURL(new RegExp(`/tc/transactions/${id}/documents/[a-f0-9-]+$`));
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.getByRole("button", { name: "Delete document" }).click();
+    await expect(page).toHaveURL(new RegExp(`/tc/transactions/${id}/documents$`));
+    await expect(page.locator(`a[href$="/${documentId}"]`)).toHaveCount(0);
+
+    await gotoApp(page, `/tc/transactions/${id}`);
+    await expect(page).toHaveURL(new RegExp(`/tc/transactions/${id}$`));
+    await expect(page.getByRole("heading", { level: 3, name: "Documents" })).toBeVisible();
   });
 
   test("close + archive workflow hides transaction from default list", async ({ page }) => {
@@ -251,5 +294,17 @@ test.describe("Buyer timeline", () => {
       timeout: 30_000,
     });
     expect(errs).toEqual([]);
+  });
+
+  test("buyer cannot delete contacts (forbidden)", async ({ page }) => {
+    const csrfRes = await page.request.get("/api/csrf");
+    expect(csrfRes.ok()).toBeTruthy();
+    const csrf = (await csrfRes.json()) as { csrfToken?: string };
+    expect(csrf.csrfToken).toBeTruthy();
+
+    const res = await page.request.delete("/api/contacts/00000000-0000-4000-8000-000000000000", {
+      headers: { "x-csrf-token": csrf.csrfToken ?? "" },
+    });
+    expect(res.status()).toBe(403);
   });
 });

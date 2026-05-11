@@ -25,8 +25,8 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.11.1",
-    "lastDeployedVersion": "v4.11.1",
+    "currentVersion": "v4.11.2",
+    "lastDeployedVersion": "v4.11.2",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
       "netlify": "vM.S.P",
@@ -575,7 +575,7 @@
         "Run at least one browser smoke pass for the changed workflow."
       ],
       "fullQaPrompt": "Run full QA for P11 (Contacts and broker profiles). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-      "updatedAt": "2026-05-11T06:32:00.000Z"
+      "updatedAt": "2026-05-11T08:08:00.000Z"
     },
     {
       "id": "P12",

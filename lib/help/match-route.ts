@@ -24,6 +24,10 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
     test: (p) => p === "/tc/transactions",
   },
   {
+    slug: "tc-contact-delete-impact-check",
+    test: (p) => /^\/tc\/contacts\/[^/]+$/.test(p),
+  },
+  {
     slug: "tc-contacts-directory",
     test: (p) => p === "/tc/contacts" || p.startsWith("/tc/contacts/"),
   },

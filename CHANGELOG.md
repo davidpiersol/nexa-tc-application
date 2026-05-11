@@ -2,6 +2,18 @@
 
 All notable changes to this repository are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version numbers follow **`v.X.Y.Z`** in [`VERSION`](VERSION) and [`.cursor/rules/versioning.mdc`](.cursor/rules/versioning.mdc).
 
+## [v4.11.2] - 2026-05-11
+
+### Added
+
+- **Contact delete impact API** — added `GET /api/contacts/[id]/impact` to summarize transaction intake and party/email references before contact removal.
+- **Delete impact help coverage** — added `help/articles/tc/contact-delete-impact-check.md`, wired into manifest and route matching, and regenerated compiled help content.
+
+### Changed
+
+- **Delete warning hardening** — contact deletion confirmation now shows impact counts and sample transaction references so admins can make informed cleanup decisions.
+- **P11 data depth + scenario coverage** — expanded seed dataset to 3 contacts per category, 3 brokers, and 10 linked transactions, and added deterministic end-to-end delete integrity scenarios (contact/document delete + auth guard).
+
 ## [v4.11.1] - 2026-05-10
 
 ### Added

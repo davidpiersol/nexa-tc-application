@@ -22,6 +22,24 @@ async function getCsrfToken(): Promise<string | null> {
   return body.csrfToken ?? null;
 }
 
+type DeleteImpactResponse = {
+  impact?: {
+    intakeMatches?: Array<{
+      transactionId: string;
+      propertyAddress: string | null;
+      mlsNumber: string | null;
+      matchedFields: string[];
+    }>;
+    partyMatches?: Array<{
+      transactionId: string;
+      propertyAddress: string | null;
+      mlsNumber: string | null;
+      matchedFields: string[];
+    }>;
+    total?: number;
+  };
+};
+
 export function ContactDetailConsole({
   contactId,
   brokerMode = false,
@@ -524,8 +542,38 @@ export function ContactDetailConsole({
               size="sm"
               type="button"
               onClick={async () => {
+                let impactMessage = "";
+                try {
+                  const impactRes = await fetch(`/api/contacts/${contactId}/impact`, {
+                    credentials: "include",
+                  });
+                  if (impactRes.ok) {
+                    const impactBody = (await impactRes.json().catch(() => ({}))) as DeleteImpactResponse;
+                    const intakeCount = impactBody.impact?.intakeMatches?.length ?? 0;
+                    const partyCount = impactBody.impact?.partyMatches?.length ?? 0;
+                    const total = impactBody.impact?.total ?? intakeCount + partyCount;
+                    if (total > 0) {
+                      const sample = [
+                        ...(impactBody.impact?.intakeMatches ?? []),
+                        ...(impactBody.impact?.partyMatches ?? []),
+                      ]
+                        .slice(0, 3)
+                        .map((row) => row.propertyAddress ?? row.mlsNumber ?? row.transactionId)
+                        .join("\n- ");
+                      impactMessage =
+                        `Potential references found:\n` +
+                        `- Intake matches: ${intakeCount}\n` +
+                        `- Party/email matches: ${partyCount}\n` +
+                        (sample ? `\nExamples:\n- ${sample}\n` : "\n") +
+                        "Deleting this contact removes the profile but does not rewrite transaction snapshots.\n\n";
+                    }
+                  }
+                } catch {
+                  // Fallback to default warning if impact lookup fails.
+                }
+
                 const confirmed = window.confirm(
-                  "Warning: you are deleting this record. This action cannot be undone. Continue?",
+                  `${impactMessage}Warning: you are deleting this record. This action cannot be undone. Continue?`,
                 );
                 if (!confirmed) return;
                 setError(null);
