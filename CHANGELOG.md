@@ -4,6 +4,20 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.17.0] - 2026-05-11
+
+### Added
+
+- **Generated PDF workflow** — added transaction-scoped PDF generation from approved mapped template versions, with generated files stored under `{tenant_id}/{transaction_id}/generated/{timestamp}_{form_number}.pdf`.
+- **Generated document history metadata** — added document metadata for template version lineage and source data snapshots so later template updates do not mutate existing generated PDFs.
+- **P17 validation coverage** — added unit coverage for transaction data snapshots, AcroForm filling, and generated-document API insertion behavior, plus browser smoke coverage for generating a filled PDF from seeded mapped templates.
+
+### Changed
+
+- **Documents UI generation action** — transaction document selections now expose a guarded “Generate filled PDF” action with actionable missing-data errors and document list refresh after generation.
+- **Template seed readiness** — UAT template seeds now include fillable fields and mappings for generation smoke while preserving unmapped-template behavior for validation paths.
+- **Storage-path hardening** — added a follow-up migration to keep the global template storage-path check compatible with normal PostgreSQL regex behavior.
+
 ## [v4.16.0] - 2026-05-11
 
 ### Added

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CANONICAL_FIELD_PICKER_OPTIONS } from "@/lib/documents/template-field-mapping";
@@ -65,7 +65,10 @@ export function GlobalTemplateConsole() {
   }, []);
 
   const selected = templates.find((t) => t.id === selectedTemplateId) ?? null;
-  const versions = selected?.global_document_template_versions ?? [];
+  const versions = useMemo(
+    () => selected?.global_document_template_versions ?? [],
+    [selected],
+  );
   const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? null;
 
   useEffect(() => {

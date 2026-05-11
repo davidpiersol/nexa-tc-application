@@ -25,8 +25,8 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.11.2",
-    "lastDeployedVersion": "v4.11.2",
+    "currentVersion": "v4.19.0-dev",
+    "lastDeployedVersion": "v4.16.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
       "netlify": "vM.S.P",
@@ -792,13 +792,13 @@
       "lane": "admin-ui",
       "milestoneId": "m1",
       "versionScope": "v4.16.0-dev",
-      "status": "todo",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Allow admins to map PDF fields to canonical Choral Point transaction and intake data fields.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
         "Admin can map PDF fields to canonical fields such as property_address, mls_number, close_date, notes, and intake_data.* keys.",
@@ -833,7 +833,8 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P16 (Template field mapping and canonical field picker). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P16 (Template field mapping and canonical field picker). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-11T19:42:47.223Z"
     },
     {
       "id": "P17",
@@ -841,12 +842,12 @@
       "lane": "documents",
       "milestoneId": "m1",
       "versionScope": "v4.17.0-dev",
-      "status": "todo",
+      "status": "done",
       "jiraKey": null,
       "summary": "Generate filled PDFs from selected template mappings using transaction data and preserve version/data snapshot history.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
+        "build": "passed",
+        "tests": "passed",
         "approval": "pending"
       },
       "acceptance": [
@@ -858,7 +859,7 @@
         "Generated document records store template version id and source data snapshot.",
         "Updating templates does not mutate existing generated PDFs."
       ],
-      "recommendedPrompt": "Implement Choral Point PDF autofill generation and generated document history.",
+      "recommendedPrompt": "P17 implementation and local QA are complete. David should review generated PDF behavior, then approve P17 if the result matches expectations. Before any remote/production use, explicitly approve and apply pending Supabase migrations through 20260511143000_fix_template_storage_path_check.sql.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
         "stableWhen": "P17 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
@@ -871,6 +872,7 @@
         "Confirm the sprint changed only the intended feature area.",
         "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
         "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
+        "Resolve clear sprint notes, risks, and follow-up tasks; document anything deferred with a safe next action.",
         "Confirm BuildTrack status and validation fields were updated without marking human approval."
       ],
       "testChecklist": [
@@ -881,9 +883,11 @@
         "Run npm run test.",
         "Run npm run build.",
         "Run focused unit tests for new helpers, validators, and permission logic.",
+        "Without waiting for an explicit prompt from David, verify the local site is running and functional enough to exercise the sprint workflow.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P17 (PDF generation and generated document history). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P17 (PDF generation and generated document history). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. The agent must proactively confirm the local site is functioning before asking David for next steps. Resolve clear notes, risks, and tasks; document any deferred items with recommendations. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-11T19:51:00.000Z"
     },
     {
       "id": "P18",
@@ -891,7 +895,7 @@
       "lane": "data",
       "milestoneId": "m1",
       "versionScope": "v4.18.0-dev",
-      "status": "todo",
+      "status": "skipped",
       "jiraKey": null,
       "summary": "Seed NMAR form metadata and template candidates from the extracted inventory, including downloaded-public and licensed-copy-needed states.",
       "validation": {
@@ -906,7 +910,7 @@
         "Seed data does not imply production authorization for copyrighted NMAR forms.",
         "Admin can later replace a copy-needed record with an uploaded licensed PDF."
       ],
-      "recommendedPrompt": "Seed Choral Point NMAR template candidates and licensed-copy tracking from the generated inventory.",
+      "recommendedPrompt": "P18 is skipped/deferred by David until licensed/public NMAR source documents are available. Continue with P19 hardening before adding more template inventory.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
         "stableWhen": "P18 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
@@ -930,7 +934,8 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P18 (Seed NMAR template candidates and licensed-copy tracking). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "P18 is intentionally skipped/deferred. Do not seed NMAR candidates until licensed/public source documents are available and David explicitly restarts this sprint.",
+      "updatedAt": "2026-05-11T19:56:00.000Z"
     },
     {
       "id": "P19",
@@ -938,7 +943,7 @@
       "lane": "hardening",
       "milestoneId": "m1",
       "versionScope": "v4.19.0-dev",
-      "status": "todo",
+      "status": "in_progress",
       "jiraKey": null,
       "summary": "No-new-feature security, performance, and code-quality pass after global template storage, mapping, PDF generation, and NMAR candidate tracking.",
       "validation": {
@@ -959,7 +964,7 @@
         "PDF mapping/generation helpers are checked for duplication and reusable abstractions.",
         "Generation performance is reviewed for large PDFs, unnecessary memory use, and long-running request risks."
       ],
-      "recommendedPrompt": "Run a no-new-feature hardening gate for templates, private storage, PDF mapping/generation, and NMAR candidate tracking. Review admin-only controls, storage access, generated document history, reusable PDF helpers, and performance. If cleanup risks breaking generated PDFs or historical version links, stop and recommend a path forward first.",
+      "recommendedPrompt": "Start P19 as a no-new-feature hardening gate for templates, private storage, PDF mapping/generation, and generated document history. Review admin-only controls, storage access, generated document history, reusable PDF helpers, and performance. If cleanup risks breaking generated PDFs or historical version links, stop and recommend a path forward first.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
         "stableWhen": "P19 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
@@ -988,7 +993,8 @@
         "Regression test PDF generation and generated document history.",
         "Verify non-admin users cannot mutate global templates."
       ],
-      "fullQaPrompt": "Run full QA for P19 (Hardening gate: templates, storage, PDF mapping, and generated documents). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P19 (Hardening gate: templates, storage, PDF mapping, and generated documents). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-11T19:56:00.000Z"
     },
     {
       "id": "P20",
@@ -1811,6 +1817,13 @@
       "owner": "Cursor agent / David",
       "eta": "TBD",
       "status": "resolved"
+    },
+    {
+      "id": "B10",
+      "title": "P18 is blocked until source documents are available (licensed/public PDF copies not fully in hand). Consider advancing to P19 hardening while awaiting documents.",
+      "owner": "Client / licensed NMAR source",
+      "eta": "TBD",
+      "status": "open"
     }
   ]
 }

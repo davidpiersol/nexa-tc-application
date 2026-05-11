@@ -120,6 +120,20 @@ test.describe("TC dashboard", () => {
     await expect(page.getByRole("button", { name: "Delete document" })).toBeVisible();
   });
 
+  test("documents page generates a filled PDF from a mapped template", async ({ page }) => {
+    const id = UAT_TRANSACTION_ID;
+    await gotoApp(page, `/tc/transactions/${id}/documents`);
+
+    const generateButton = page.getByRole("button", { name: "Generate filled PDF" }).first();
+    await expect(generateButton).toBeEnabled({ timeout: 30_000 });
+    await generateButton.click();
+
+    await page.getByPlaceholder("Search file, category, status").fill("NMAR-2104");
+    await expect(page.getByText(/NMAR-2104[.]pdf/i).first()).toBeVisible({
+      timeout: 30_000,
+    });
+  });
+
   test("transaction workspace nav switches between detail pages", async ({ page }) => {
     const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}/documents`);

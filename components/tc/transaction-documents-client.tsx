@@ -98,6 +98,9 @@ export function TransactionDocumentsClient({
   const [docs, setDocs] = React.useState(initialDocs);
   const [selections, setSelections] = React.useState(initialSelections);
   const [pending, setPending] = React.useState(false);
+  const [generatingSelectionId, setGeneratingSelectionId] = React.useState<string | null>(
+    null,
+  );
   const [error, setError] = React.useState<string | null>(null);
   const [viewMode, setViewMode] = React.useState<ViewMode>("card");
   const [sortMode, setSortMode] = React.useState<SortMode>("newest");
@@ -167,6 +170,67 @@ export function TransactionDocumentsClient({
     form.reset();
   }
 
+  async function onGenerateFilledPdf(selectionId: string) {
+    setError(null);
+    const token = await getCsrf();
+    if (!token) {
+      setError("Could not load CSRF token.");
+      return;
+    }
+    setGeneratingSelectionId(selectionId);
+    const res = await fetch(`/api/transactions/${transactionId}/documents/generate`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "content-type": "application/json",
+        [CSRF_HEADER_NAME]: token,
+      },
+      body: JSON.stringify({ selection_id: selectionId }),
+    });
+    setGeneratingSelectionId(null);
+    if (!res.ok) {
+      const j = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        missing_fields?: string[];
+      };
+      if (j.error === "missing_mapped_data" && Array.isArray(j.missing_fields)) {
+        setError(
+          `Fill in these fields on the transaction before generating: ${j.missing_fields.join(", ")}`,
+        );
+      } else {
+        setError(j.error ?? "PDF generation failed");
+      }
+      return;
+    }
+    const listRes = await fetch(
+      `/api/documents?transaction_id=${encodeURIComponent(transactionId)}`,
+      { credentials: "include" },
+    );
+    if (!listRes.ok) {
+      setError("Generated PDF saved; refresh the page to see the document list.");
+      return;
+    }
+    const listJson = (await listRes.json()) as {
+      documents?: Array<{
+        id: string;
+        category: string;
+        status: string;
+        file_name: string | null;
+        created_at: string;
+      }>;
+    };
+    const next = listJson.documents ?? [];
+    setDocs(
+      next.map((d) => ({
+        id: d.id,
+        category: d.category,
+        status: d.status,
+        file_name: d.file_name,
+        created_at: d.created_at,
+      })),
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -230,6 +294,27 @@ export function TransactionDocumentsClient({
                     </>
                   ) : null}
                 </p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    disabled={
+                      !selection.template_version_id ||
+                      generatingSelectionId !== null
+                    }
+                    onClick={() => onGenerateFilledPdf(selection.id)}
+                  >
+                    {generatingSelectionId === selection.id
+                      ? "Generating…"
+                      : "Generate filled PDF"}
+                  </Button>
+                  {!selection.template_version_id ? (
+                    <span className="font-sans text-xs text-neutral-600">
+                      Pick an approved template version on this checklist row before generating.
+                    </span>
+                  ) : null}
+                </div>
               </li>
             );
           })}
