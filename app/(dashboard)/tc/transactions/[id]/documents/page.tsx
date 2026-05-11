@@ -1,5 +1,8 @@
 import { TransactionDocumentsClient } from "@/components/tc/transaction-documents-client";
-import { listDocumentsForTransaction } from "@/lib/queries/transaction-detail";
+import {
+  listDocumentsForTransaction,
+  listTransactionDocumentSelections,
+} from "@/lib/queries/transaction-detail";
 
 type Props = { params: { id: string } };
 
@@ -7,7 +10,10 @@ type Props = { params: { id: string } };
  * Figma: **Document Manager/Default** → `/tc/transactions/[id]/documents`
  */
 export default async function TransactionDocumentsPage({ params }: Props) {
-  const rows = await listDocumentsForTransaction(params.id);
+  const [rows, selections] = await Promise.all([
+    listDocumentsForTransaction(params.id),
+    listTransactionDocumentSelections(params.id),
+  ]);
   const docs = rows.map((d) => ({
     id: d.id,
     category: d.category,
@@ -17,6 +23,10 @@ export default async function TransactionDocumentsPage({ params }: Props) {
   }));
 
   return (
-    <TransactionDocumentsClient transactionId={params.id} initialDocs={docs} />
+    <TransactionDocumentsClient
+      transactionId={params.id}
+      initialDocs={docs}
+      initialSelections={selections}
+    />
   );
 }

@@ -2,10 +2,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getTransactionDetail,
+  listTransactionDocumentSelections,
   listDocumentsForTransaction,
 } from "@/lib/queries/transaction-detail";
 import { TransactionArchiveActions } from "@/components/tc/transaction-archive-actions";
 import { assignmentCategoryLabel, transactionContactRoleLabel } from "@/lib/transactions/contact-assignment";
+import { documentStatusToBadge } from "@/lib/ui/map-document-status";
+import {
+  templateAvailabilityLabel,
+  templateSelectionStateLabel,
+} from "@/lib/documents/template-selection";
 
 type Props = { params: { id: string } };
 
@@ -13,9 +19,10 @@ type Props = { params: { id: string } };
  * Figma: **Transaction Detail/Default** → `/tc/transactions/[id]`
  */
 export default async function TransactionDetailPage({ params }: Props) {
-  const [t, docs] = await Promise.all([
+  const [t, docs, templateSelections] = await Promise.all([
     getTransactionDetail(params.id),
     listDocumentsForTransaction(params.id),
+    listTransactionDocumentSelections(params.id),
   ]);
   if (!t) notFound();
 
@@ -121,6 +128,38 @@ export default async function TransactionDetailPage({ params }: Props) {
           <p className="mt-3 font-sans text-sm text-neutral-600">
             Total · {docsByStatus.total} · Under review · {docsByStatus.review} · Signature requested
             · {docsByStatus.signatures}
+          </p>
+          <p className="mt-1 font-sans text-sm text-neutral-600">
+            Checklist templates · {templateSelections.length}
+          </p>
+          <ul className="mt-3 space-y-2">
+            {templateSelections.slice(0, 4).map((selection) => {
+              const badge = documentStatusToBadge(selection.document_status);
+              return (
+                <li key={selection.id} className="font-sans text-sm text-neutral-900">
+                  <span className="font-medium text-brand-navy">
+                    {selection.template?.title ?? "Template"}
+                  </span>{" "}
+                  · {templateSelectionStateLabel(selection.selection_state)} · {badge.label}
+                  {selection.template?.availability_status ? (
+                    <> · {templateAvailabilityLabel(selection.template.availability_status)}</>
+                  ) : null}
+                </li>
+              );
+            })}
+            {templateSelections.length === 0 ? (
+              <li className="font-sans text-sm text-neutral-600">
+                No template selections yet.
+              </li>
+            ) : null}
+          </ul>
+          <p className="mt-2">
+            <Link
+              href={`/tc/transactions/${params.id}/documents`}
+              className="font-sans text-sm text-brand-navy underline underline-offset-2"
+            >
+              Open document manager checklist
+            </Link>
           </p>
           <ul className="mt-3 space-y-2">
             {recentDocs.map((d) => (

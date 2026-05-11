@@ -4,6 +4,7 @@
  */
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { randomUUID } from "node:crypto";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import {
@@ -83,6 +84,13 @@ type DocStatus =
   | "approved"
   | "sent_for_signature";
 
+type TemplateSelectionState =
+  | "required"
+  | "optional"
+  | "default"
+  | "unavailable"
+  | "pending_licensed_copy";
+
 const BUCKET = process.env.SUPABASE_ATTACHMENTS_BUCKET?.trim() || "attachments";
 
 function tenantIdForUser(
@@ -157,6 +165,7 @@ async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
   // Transactions are retained for the same reason: audit_log.transaction_id uses ON DELETE SET NULL,
   // which would mutate immutable audit rows. Deterministic transaction upserts below refresh seed rows.
   const tenantScopedTables = [
+    "transaction_document_selections",
     "transaction_contact_assignments",
     "contact_company_links",
     "broker_profile_credentials",
@@ -187,6 +196,15 @@ async function wipe(admin: ReturnType<typeof createServiceRoleClient>) {
       .eq("tenant_id", UAT_PLATFORM_TENANT_ID);
     if (platformErr) console.warn(`[seed] ${table} platform delete:`, platformErr.message);
   }
+
+  await admin
+    .from("global_document_template_versions")
+    .delete()
+    .like("storage_path", "templates/global/%");
+  await admin
+    .from("global_document_templates")
+    .delete()
+    .contains("metadata", { seed_key: "uat_template" });
 
   const { error: globalRegistryErr } = await admin
     .from("global_resource_registry")
@@ -451,6 +469,145 @@ async function main() {
       if (dErr || !docRow) throw new Error(`document row: ${dErr?.message}`);
       docIds.push(docRow.id);
     }
+  }
+
+  console.log("[seed] global document templates + selections…");
+  const templateSpecs: Array<{
+    formNumber: string;
+    title: string;
+    category: DocCategory | "other";
+    availability: "available" | "unavailable" | "pending_licensed_copy";
+    selectionState: TemplateSelectionState;
+    docStatus:
+      | "missing"
+      | "requested"
+      | "uploaded"
+      | "under_review"
+      | "approved"
+      | "rejected";
+  }> = [
+    {
+      formNumber: "NMAR-2104",
+      title: "Residential Purchase Agreement",
+      category: "contract",
+      availability: "available",
+      selectionState: "required",
+      docStatus: "uploaded",
+    },
+    {
+      formNumber: "NMAR-1100",
+      title: "Seller Property Disclosure",
+      category: "disclosure",
+      availability: "available",
+      selectionState: "default",
+      docStatus: "under_review",
+    },
+    {
+      formNumber: "NMAR-2300",
+      title: "Lead-Based Paint Addendum",
+      category: "disclosure",
+      availability: "pending_licensed_copy",
+      selectionState: "pending_licensed_copy",
+      docStatus: "missing",
+    },
+    {
+      formNumber: "NMAR-2600",
+      title: "Historic Property Rider",
+      category: "other",
+      availability: "unavailable",
+      selectionState: "unavailable",
+      docStatus: "missing",
+    },
+    {
+      formNumber: "NMAR-2420",
+      title: "HOA Addendum",
+      category: "other",
+      availability: "available",
+      selectionState: "optional",
+      docStatus: "requested",
+    },
+  ];
+
+  const templateSelectionIds: string[] = [];
+  for (const spec of templateSpecs) {
+    const { data: templateRow, error: templateErr } = await admin
+      .from("global_document_templates")
+      .upsert(
+        {
+          form_number: spec.formNumber,
+          title: spec.title,
+          category: spec.category,
+          jurisdiction_state: "NM",
+          availability_status: spec.availability,
+          is_active: true,
+          metadata: { seed_key: "uat_template" },
+          created_by: tcId,
+          updated_by: tcId,
+        },
+        { onConflict: "form_number,jurisdiction_state" },
+      )
+      .select("id")
+      .single();
+    if (templateErr || !templateRow) {
+      throw new Error(`global template ${spec.formNumber}: ${templateErr?.message}`);
+    }
+
+    const templateVersionId = randomUUID();
+    const versionPath = `templates/global/${templateRow.id}/${templateVersionId}/${spec.formNumber.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`;
+    const templatePdf = await pdfBytes(`${spec.formNumber} template`);
+    const { error: templateUploadErr } = await admin.storage
+      .from(BUCKET)
+      .upload(versionPath, templatePdf, {
+        contentType: "application/pdf",
+        upsert: true,
+      });
+    if (templateUploadErr) {
+      throw new Error(`template storage upload ${spec.formNumber}: ${templateUploadErr.message}`);
+    }
+
+    const { data: versionRow, error: versionErr } = await admin
+      .from("global_document_template_versions")
+      .upsert(
+        {
+          id: templateVersionId,
+          template_id: templateRow.id,
+          version_label: "seed-v1",
+          source_file_name: `${spec.formNumber}.pdf`,
+          storage_path: versionPath,
+          is_current: true,
+          is_active: true,
+          created_by: tcId,
+          updated_by: tcId,
+        },
+        { onConflict: "template_id,version_label" },
+      )
+      .select("id")
+      .single();
+    if (versionErr || !versionRow) {
+      throw new Error(`template version ${spec.formNumber}: ${versionErr?.message}`);
+    }
+
+    const { data: selectionRow, error: selectionErr } = await admin
+      .from("transaction_document_selections")
+      .upsert(
+        {
+          tenant_id: UAT_TENANT_ID,
+          transaction_id: UAT_TRANSACTION_ID,
+          template_id: templateRow.id,
+          template_version_id: versionRow.id,
+          selection_state: spec.selectionState,
+          document_status: spec.docStatus,
+          notes: `Seeded ${spec.selectionState} template`,
+          added_by: tcId,
+        },
+        { onConflict: "transaction_id,template_id" },
+      )
+      .select("id")
+      .single();
+    if (selectionErr || !selectionRow) {
+      throw new Error(`transaction template selection ${spec.formNumber}: ${selectionErr?.message}`);
+    }
+    templateSelectionIds.push(selectionRow.id);
   }
 
   console.log("[seed] tasks…");
@@ -869,6 +1026,7 @@ async function main() {
         otherTransactionId: UAT_OTHER_TRANSACTION_ID,
         linkedTransactionIds: [UAT_TRANSACTION_ID, ...extraTransactionIds],
         brokerContactIds: brokerContacts.map((b) => b.id),
+        templateSelectionIds,
       },
       null,
       2,
@@ -893,6 +1051,7 @@ async function main() {
     { record: "contacts", ok: true, count: contactIds.length },
     { record: "brokers", ok: true, count: brokerContacts.length },
     { record: "transaction contact assignments", ok: true, count: assignmentSeed.length },
+    { record: "template selections", ok: true, count: templateSelectionIds.length },
     { record: "companies", ok: true, count: companyRows.length },
     { record: "iso document", ok: true, id: isoDoc.id },
   ]);

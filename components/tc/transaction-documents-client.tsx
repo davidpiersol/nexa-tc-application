@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import { documentStatusToBadge } from "@/lib/ui/map-document-status";
 import { DocumentDownloadButton } from "@/components/tc/document-download-button";
+import {
+  templateAvailabilityLabel,
+  templateSelectionStateLabel,
+} from "@/lib/documents/template-selection";
 
 export type DocRow = {
   id: string;
@@ -14,6 +18,29 @@ export type DocRow = {
   status: string;
   file_name: string | null;
   created_at: string;
+};
+
+export type TemplateSelectionRow = {
+  id: string;
+  template_id: string;
+  template_version_id: string | null;
+  selection_state: string;
+  document_status: string;
+  notes: string | null;
+  created_at: string;
+  template: {
+    id: string;
+    form_number: string;
+    title: string;
+    category: string;
+    jurisdiction_state: string;
+    availability_status: string;
+  } | null;
+  version: {
+    id: string;
+    version_label: string;
+    storage_path: string;
+  } | null;
 };
 
 type ViewMode = "card" | "list";
@@ -62,11 +89,14 @@ function sortDocuments(rows: DocRow[], sort: SortMode): DocRow[] {
 export function TransactionDocumentsClient({
   transactionId,
   initialDocs,
+  initialSelections,
 }: {
   transactionId: string;
   initialDocs: DocRow[];
+  initialSelections: TemplateSelectionRow[];
 }) {
   const [docs, setDocs] = React.useState(initialDocs);
+  const [selections, setSelections] = React.useState(initialSelections);
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [viewMode, setViewMode] = React.useState<ViewMode>("card");
@@ -76,6 +106,10 @@ export function TransactionDocumentsClient({
   React.useEffect(() => {
     setDocs(initialDocs);
   }, [initialDocs]);
+
+  React.useEffect(() => {
+    setSelections(initialSelections);
+  }, [initialSelections]);
 
   const visibleDocs = React.useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -158,6 +192,54 @@ export function TransactionDocumentsClient({
           </Button>
         </form>
       </header>
+
+      <section className="rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm">
+        <div className="flex flex-col gap-2 border-b border-neutral-200 pb-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="font-display text-heading-md text-brand-navy">
+              Document checklist foundation
+            </h3>
+            <p className="mt-1 font-sans text-sm text-neutral-600">
+              Selected templates with required/optional/default and availability states.
+            </p>
+          </div>
+          <Button variant="secondary" type="button" size="sm" disabled>
+            Export packet (manual placeholder)
+          </Button>
+        </div>
+        <ul className="mt-3 flex flex-col gap-2">
+          {selections.map((selection) => {
+            const statusBadge = documentStatusToBadge(selection.document_status);
+            return (
+              <li
+                key={selection.id}
+                className="rounded-brand-md border border-neutral-200 bg-neutral-50 px-3 py-2 font-sans text-sm text-neutral-900"
+              >
+                <p className="font-medium text-brand-navy">
+                  {selection.template?.title ?? "Template"}{" "}
+                  {selection.template?.form_number ? `(${selection.template.form_number})` : ""}
+                </p>
+                <p className="mt-1 text-neutral-700">
+                  State · {templateSelectionStateLabel(selection.selection_state)} · Status ·{" "}
+                  {statusBadge.label}
+                  {selection.template?.availability_status ? (
+                    <>
+                      {" "}
+                      · Availability ·{" "}
+                      {templateAvailabilityLabel(selection.template.availability_status)}
+                    </>
+                  ) : null}
+                </p>
+              </li>
+            );
+          })}
+          {selections.length === 0 ? (
+            <li className="rounded-brand-md border border-neutral-200 bg-neutral-50 px-3 py-2 font-sans text-sm text-neutral-600">
+              No template selections yet for this transaction.
+            </li>
+          ) : null}
+        </ul>
+      </section>
 
       <section className="rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

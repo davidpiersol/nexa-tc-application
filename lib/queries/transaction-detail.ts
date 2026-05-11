@@ -84,6 +84,79 @@ export async function listDocumentsForTransaction(transactionId: string) {
   return data ?? [];
 }
 
+export type TransactionDocumentSelectionRow = {
+  id: string;
+  template_id: string;
+  template_version_id: string | null;
+  selection_state: string;
+  document_status: string;
+  notes: string | null;
+  created_at: string;
+  template: {
+    id: string;
+    form_number: string;
+    title: string;
+    category: string;
+    jurisdiction_state: string;
+    availability_status: string;
+  } | null;
+  version: {
+    id: string;
+    version_label: string;
+    storage_path: string;
+  } | null;
+};
+
+export async function listTransactionDocumentSelections(
+  transactionId: string,
+): Promise<TransactionDocumentSelectionRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("transaction_document_selections")
+    .select(
+      "id, template_id, template_version_id, selection_state, document_status, notes, created_at, global_document_templates(id, form_number, title, category, jurisdiction_state, availability_status), global_document_template_versions(id, version_label, storage_path)",
+    )
+    .eq("transaction_id", transactionId)
+    .order("created_at", { ascending: true });
+
+  if (error) return [];
+
+  return (data ?? []).map((row) => {
+    const template = Array.isArray(row.global_document_templates)
+      ? row.global_document_templates[0]
+      : row.global_document_templates;
+    const version = Array.isArray(row.global_document_template_versions)
+      ? row.global_document_template_versions[0]
+      : row.global_document_template_versions;
+    return {
+      id: row.id,
+      template_id: row.template_id,
+      template_version_id: row.template_version_id,
+      selection_state: row.selection_state,
+      document_status: row.document_status,
+      notes: row.notes,
+      created_at: row.created_at,
+      template: template
+        ? {
+            id: template.id,
+            form_number: template.form_number,
+            title: template.title,
+            category: template.category,
+            jurisdiction_state: template.jurisdiction_state,
+            availability_status: template.availability_status,
+          }
+        : null,
+      version: version
+        ? {
+            id: version.id,
+            version_label: version.version_label,
+            storage_path: version.storage_path,
+          }
+        : null,
+    };
+  });
+}
+
 export async function getTransactionDocumentDetail(
   transactionId: string,
   documentId: string,
