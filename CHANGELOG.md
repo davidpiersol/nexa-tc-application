@@ -4,6 +4,18 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.24.2-dev] - 2026-05-13
+
+### Added
+
+- **Invoice workspace split** — moved invoice search, sort, detail, print, and email operations to `/tc/billing/invoices`.
+- **Universal TC reports hub** — added `/tc/reports` as the landing page for billing, contacts, brokers, transactions/listings, document operations, and future page-specific reporting.
+- **Billing report detail** — added `/tc/reports/billing` with total billed, total received, taxes on received, period summaries, and invoice detail rows.
+
+### Changed
+
+- **Billing landing page** — kept invoice creation and high-level billed/received/tax summary cards on `/tc/billing`, with tax settings moved to the bottom.
+
 ## [v4.24.1-dev] - 2026-05-13
 
 ### Added

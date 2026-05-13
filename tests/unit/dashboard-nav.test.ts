@@ -43,4 +43,8 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
   it("includes billing in the TC navigation", () => {
     expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/billing");
   });
+
+  it("includes reports in the TC navigation", () => {
+    expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/reports");
+  });
 });

@@ -40,13 +40,18 @@ export type BillingInvoiceListItem = {
   receivableStatusLabel: string;
   issueDate: string;
   dueDate: string | null;
+  paidAt: string | null;
   taxCents: number;
   taxRatePercent: number;
   totalCents: number;
   balanceCents: number;
+  receivedCents: number;
+  taxOnReceivedCents: number;
   taxLabel: string;
   totalLabel: string;
   balanceLabel: string;
+  receivedLabel: string;
+  taxOnReceivedLabel: string;
   sourceLabel: string;
   accountingSyncStatus: string;
   paymentTerms: string;
@@ -63,10 +68,14 @@ export type BillingPeriodSummary = {
   taxCents: number;
   totalCents: number;
   balanceCents: number;
+  receivedCents: number;
+  taxOnReceivedCents: number;
   subtotalLabel: string;
   taxLabel: string;
   totalLabel: string;
   balanceLabel: string;
+  receivedLabel: string;
+  taxOnReceivedLabel: string;
 };
 
 export type BillingDashboardData = {
@@ -116,7 +125,7 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
     supabase
       .from("billing_invoices")
       .select(
-        "id, invoice_number, broker_contact_id, broker_name, status, receivable_status, issue_date, due_date, subtotal_cents, tax_cents, tax_rate_percent, total_cents, balance_cents, source_transaction_id, source_mls_entry_job_id, accounting_sync_status, payment_terms, reminder_schedule, next_reminder_due_at, email_delivery_status",
+        "id, invoice_number, broker_contact_id, broker_name, status, receivable_status, issue_date, due_date, paid_at, subtotal_cents, tax_cents, tax_rate_percent, total_cents, balance_cents, source_transaction_id, source_mls_entry_job_id, accounting_sync_status, payment_terms, reminder_schedule, next_reminder_due_at, email_delivery_status",
       )
       .order("updated_at", { ascending: false })
       .limit(200),
@@ -179,6 +188,9 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
     const totalCents = Number(row.total_cents ?? 0);
     const balanceCents = Number(row.balance_cents ?? 0);
     const taxCents = Number(row.tax_cents ?? 0);
+    const receivedCents = Math.max(0, totalCents - balanceCents);
+    const taxOnReceivedCents =
+      totalCents > 0 ? Math.round(taxCents * (receivedCents / totalCents)) : 0;
     const reminder = nextInvoiceReminder({
       issueDate: row.issue_date as string,
       dueDate: (row.due_date as string | null) ?? null,
@@ -199,13 +211,18 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
       receivableStatusLabel: formatReceivableStatus(row.receivable_status as string),
       issueDate: row.issue_date as string,
       dueDate: (row.due_date as string | null) ?? null,
+      paidAt: (row.paid_at as string | null)?.slice(0, 10) ?? null,
       taxCents,
       taxRatePercent: Number(row.tax_rate_percent ?? 0),
       totalCents,
       balanceCents,
+      receivedCents,
+      taxOnReceivedCents,
       taxLabel: formatCurrencyFromCents(taxCents),
       totalLabel: formatCurrencyFromCents(totalCents),
       balanceLabel: formatCurrencyFromCents(balanceCents),
+      receivedLabel: formatCurrencyFromCents(receivedCents),
+      taxOnReceivedLabel: formatCurrencyFromCents(taxOnReceivedCents),
       sourceLabel,
       accountingSyncStatus: (row.accounting_sync_status as string | null) ?? "not_configured",
       paymentTerms: (row.payment_terms as string | null) ?? "due_on_receipt",
@@ -264,6 +281,8 @@ function summarizeByPeriod(
       taxCents: number;
       totalCents: number;
       balanceCents: number;
+      receivedCents: number;
+      taxOnReceivedCents: number;
     }
   >();
   for (const invoice of invoices) {
@@ -274,12 +293,16 @@ function summarizeByPeriod(
       taxCents: 0,
       totalCents: 0,
       balanceCents: 0,
+      receivedCents: 0,
+      taxOnReceivedCents: 0,
     };
     current.invoiceCount += 1;
     current.subtotalCents += invoice.totalCents - invoice.taxCents;
     current.taxCents += invoice.taxCents;
     current.totalCents += invoice.totalCents;
     current.balanceCents += invoice.balanceCents;
+    current.receivedCents += invoice.receivedCents;
+    current.taxOnReceivedCents += invoice.taxOnReceivedCents;
     map.set(key, current);
   }
   return Array.from(map.entries())
@@ -292,5 +315,7 @@ function summarizeByPeriod(
       taxLabel: formatCurrencyFromCents(value.taxCents),
       totalLabel: formatCurrencyFromCents(value.totalCents),
       balanceLabel: formatCurrencyFromCents(value.balanceCents),
+      receivedLabel: formatCurrencyFromCents(value.receivedCents),
+      taxOnReceivedLabel: formatCurrencyFromCents(value.taxOnReceivedCents),
     }));
 }
