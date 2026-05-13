@@ -297,6 +297,25 @@ test.describe("TC dashboard", () => {
     expect(errs).toEqual([]);
   });
 
+  test("billing workspace creates an invoice without accounting sync", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    const marker = `Billing QA ${Date.now()}`;
+    await gotoApp(page, "/tc/billing");
+    await expect(page.getByRole("heading", { level: 2, name: "Billing" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText(/Accounting sync is scaffolded/i)).toBeVisible();
+    await page.getByLabel("Broker / client to invoice").fill(marker);
+    await page.getByLabel("Description").fill("MLS-only entry smoke invoice");
+    await page.getByLabel("Quantity").fill("1");
+    await page.getByLabel("Unit amount").fill("250.00");
+    await page.getByRole("button", { name: "Create invoice" }).click();
+    await expect(page.getByText(marker)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("$250.00").first()).toBeVisible();
+    await expect(page.getByText(/Sync: not configured/i).first()).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
   test("document delete removes row without breaking transaction", async ({ page }) => {
     const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}/documents`);

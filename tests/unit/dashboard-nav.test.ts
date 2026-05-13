@@ -39,4 +39,8 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
   it("includes MLS entry in the TC navigation", () => {
     expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/mls-entry");
   });
+
+  it("includes billing in the TC navigation", () => {
+    expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/billing");
+  });
 });

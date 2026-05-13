@@ -38,6 +38,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/tc/mls-entry/new") return "New MLS Entry";
   if (pathname === "/tc/mls-entry/research") return "MLS Write Access";
   if (pathname === "/tc/mls-entry") return "MLS Entry";
+  if (pathname === "/tc/billing") return "Billing";
   if (pathname === "/tc/settings") return "Settings";
   if (pathname === "/agent" || pathname === "/agent/") return "Broker dashboard";
   if (pathname.startsWith("/agent/profile")) return "Broker profile";

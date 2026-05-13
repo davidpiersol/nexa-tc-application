@@ -984,12 +984,12 @@
     "lane": "billing",
     "milestoneId": "m1",
     "versionScope": "v4.24.0-dev",
-    "status": "in_progress",
+    "status": "done",
     "jiraKey": null,
     "summary": "Add billing scaffolding for standard transaction work and MLS-only jobs, with an accounting/payment integration path.",
     "validation": {
-      "build": "not_run",
-      "tests": "not_run",
+      "build": "passed",
+      "tests": "passed",
       "approval": "pending"
     },
     "acceptance": [
@@ -1026,7 +1026,7 @@
       "Run at least one browser smoke pass for the changed workflow."
     ],
     "fullQaPrompt": "Run full QA for P24 (Billing, invoicing, and accounting integration path). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-    "updatedAt": "2026-05-13T05:15:00Z"
+    "updatedAt": "2026-05-13T05:45:00Z"
   },
   {
     "id": "P25",

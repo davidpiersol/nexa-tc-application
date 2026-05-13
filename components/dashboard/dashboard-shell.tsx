@@ -36,6 +36,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     if (pathname.startsWith("/tc/mls-entry")) {
       return { href: "/tc/mls-entry/new", label: "New MLS entry" };
     }
+    if (pathname.startsWith("/tc/billing")) {
+      return { href: "/tc/billing#new-invoice", label: "New invoice" };
+    }
     return { href: "/tc/transactions/new", label: "Add transaction" };
   })();
 

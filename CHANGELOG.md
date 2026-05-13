@@ -4,6 +4,16 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.24.0-dev] - 2026-05-13
+
+### Added
+
+- **Billing workspace** — added `/tc/billing` with invoice creation, invoice list, accounts receivable status, and monthly/quarterly/yearly summary cards.
+- **Invoice scaffolding schema** — added billing service types, invoices, invoice line items, RLS policies, and default tenant service rows for full TC transaction, MLS-only entry, and custom services.
+- **Billing API and reusable math** — added guarded invoice create/list API, centralized invoice total/currency/receivable helpers, and audit logging for invoice creation.
+- **Accounting integration plan** — documented QuickBooks, Profit Power, and payment-provider integration paths while leaving external sync, payments, and tax filing out of P24 scope.
+- **P24 validation coverage** — added unit tests for invoice totals/status/periods and browser smoke coverage that creates an invoice with accounting sync still not configured.
+
 ## [v4.23.0-dev] - 2026-05-13
 
 ### Added
