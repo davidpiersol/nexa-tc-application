@@ -81,7 +81,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
     "title": "Broker Profiles",
     "route": "/tc/brokers",
     "role": "tc",
-    "content": "## Broker Profiles\n\nThe **Brokers** workspace is a filtered view of contacts that include the `Broker` category.\n\n### Broker-specific fields\n\n1. Brokerage selection.\n2. Signing platform.\n3. Signing preference.\n4. Credential update controls (admin-restricted).\n\n### Recommended usage\n\n1. Keep person details in the base contact record.\n2. Keep broker operations fields on broker profiles only.\n3. Use the broker list for quick lookup, edit, and delete operations.\n\n### Upcoming company linkage\n\nBrokerage values are currently selected directly in profile fields. Company-level normalization is scaffolded and can be expanded into a reusable CRM company model.\n"
+    "content": "## Broker Profiles\n\nThe **Brokers** workspace is a filtered view of contacts that include the `Broker` category.\n\n### Broker-specific fields\n\n1. Brokerage selection.\n2. E-sign provider selection.\n3. Signing method.\n4. Credential update controls (admin-restricted and encrypted).\n\n### Recommended usage\n\n1. Keep person details in the base contact record.\n2. Keep broker operations fields on broker profiles only.\n3. Use the broker list for quick lookup, edit, and delete operations.\n\n### Upcoming company linkage\n\nBrokerage values are currently selected directly in profile fields. Company-level normalization is scaffolded and can be expanded into a reusable CRM company model.\n"
   },
   {
     "slug": "tc-contact-delete-impact-check",

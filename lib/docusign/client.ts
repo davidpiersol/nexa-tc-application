@@ -179,6 +179,95 @@ export async function createEnvelope(params: {
   return { envelopeId: json.envelopeId };
 }
 
+export type DocusignRecipientStatus = {
+  email: string | null;
+  name: string | null;
+  recipientId: string | null;
+  status: string | null;
+  deliveredDateTime: string | null;
+  signedDateTime: string | null;
+};
+
+export async function getEnvelopeStatus(params: {
+  tenantId: string;
+  envelopeId: string;
+  actorId?: string | null;
+}): Promise<{
+  envelopeId: string;
+  status: string | null;
+  statusChangedDateTime: string | null;
+  recipients: DocusignRecipientStatus[];
+}> {
+  const { accountId, accessToken, restBasePath } = await getAccessContext(params);
+
+  const base = `${restBasePath}/v2.1/accounts/${encodeURIComponent(accountId)}/envelopes/${encodeURIComponent(params.envelopeId)}`;
+  const [envelopeRes, recipientsRes] = await Promise.all([
+    fetchWithRetry(base, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    }),
+    fetchWithRetry(`${base}/recipients`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    }),
+  ]);
+
+  const envelopeText = await envelopeRes.text();
+  if (!envelopeRes.ok) {
+    throw new IntegrationError(PROVIDER, "http_error", envelopeText, {
+      status: envelopeRes.status,
+    });
+  }
+  const recipientsText = await recipientsRes.text();
+  if (!recipientsRes.ok) {
+    throw new IntegrationError(PROVIDER, "http_error", recipientsText, {
+      status: recipientsRes.status,
+    });
+  }
+
+  const envelopeJson = JSON.parse(envelopeText) as {
+    envelopeId?: string;
+    status?: string | null;
+    statusChangedDateTime?: string | null;
+  };
+  const recipientsJson = JSON.parse(recipientsText) as {
+    signers?: Array<{
+      email?: string | null;
+      name?: string | null;
+      recipientId?: string | null;
+      status?: string | null;
+      deliveredDateTime?: string | null;
+      signedDateTime?: string | null;
+    }>;
+  };
+
+  await auditIntegrationAction({
+    tenantId: params.tenantId,
+    provider: PROVIDER,
+    operation: "docusign.getEnvelopeStatus",
+    actorId: params.actorId,
+    detail: { envelopeId: params.envelopeId },
+  });
+
+  return {
+    envelopeId: envelopeJson.envelopeId ?? params.envelopeId,
+    status: envelopeJson.status ?? null,
+    statusChangedDateTime: envelopeJson.statusChangedDateTime ?? null,
+    recipients: (recipientsJson.signers ?? []).map((signer) => ({
+      email: signer.email ?? null,
+      name: signer.name ?? null,
+      recipientId: signer.recipientId ?? null,
+      status: signer.status ?? null,
+      deliveredDateTime: signer.deliveredDateTime ?? null,
+      signedDateTime: signer.signedDateTime ?? null,
+    })),
+  };
+}
+
 export async function getEmbeddedSigningUrl(params: {
   tenantId: string;
   envelopeId: string;

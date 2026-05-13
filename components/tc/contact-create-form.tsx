@@ -10,6 +10,10 @@ import {
   type ContactCategory,
 } from "@/lib/contacts/categories";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
+import {
+  SIGNING_DELIVERY_MODE,
+  SIGNING_PROVIDERS,
+} from "@/lib/signing/signing-workflow";
 
 const SALUTATION_OPTIONS = ["", "Mr.", "Mrs.", "Ms.", "Dr.", "Rev.", "Hon."] as const;
 const SUFFIX_OPTIONS = ["", "Jr.", "Sr.", "II", "III", "IV", "Esq."] as const;
@@ -304,23 +308,31 @@ export function ContactCreateForm({ brokerMode = false }: { brokerMode?: boolean
           )}
           <label className="flex flex-col gap-1.5">
             <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
-              Signing platform
+              E-sign provider
             </span>
-            <input
+            <select
               name="signingPlatform"
-              placeholder="DocuSign, Dotloop, etc."
               className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
-            />
+            >
+              {SIGNING_PROVIDERS.map((provider) => (
+                <option key={provider.slug} value={provider.slug}>
+                  {provider.label}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="flex flex-col gap-1.5">
             <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
-              Signing preference
+              Signing method
             </span>
-            <input
+            <select
               name="signingPreference"
-              placeholder="Email link, embedded, broker portal"
               className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
-            />
+            >
+              <option value={SIGNING_DELIVERY_MODE.emailLink}>Email signing link</option>
+              <option value={SIGNING_DELIVERY_MODE.providerPortal}>Provider portal handoff</option>
+              <option value={SIGNING_DELIVERY_MODE.manualExport}>Manual export packet</option>
+            </select>
           </label>
         </>
       ) : null}

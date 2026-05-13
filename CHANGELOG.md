@@ -4,6 +4,26 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.26.0] - 2026-05-13
+
+### Changed
+
+- **P26 hardening gate** — reviewed signing/export, integrations, billing, and workflow handoffs for security, performance, code quality, permissions, and regression risk without adding new product features.
+- **Envelope status sync performance** — de-duplicated DocuSign envelope status refreshes so documents sharing one envelope use one provider status call and one grouped database update.
+- **Signing provider safety** — added typed provider-slug checking for provider labels and hardened external provider links with safe new-tab attributes.
+
+## [v4.25.0-dev] - 2026-05-13
+
+### Added
+
+- **Provider-agnostic e-sign setup** — added friendly broker signing provider scaffolding for DocuSign, Adobe Acrobat Sign, SkySlope DigiSign, Dotloop, Lone Wolf Authentisign, SkySlope, and manual export fallback.
+- **DocuSign status sync** — added a read-only envelope status refresh path for transaction documents with recipient delivery/signing details.
+- **Provider-neutral signing metadata** — added document columns for provider slug, envelope id, envelope status, provider URL, delivery detail, and sync errors.
+
+### Changed
+
+- **Broker signing setup UX** — replaced raw signing preference JSON in normal broker-facing flows with provider and signing-method dropdowns.
+
 ## [v4.24.2-dev] - 2026-05-13
 
 ### Added

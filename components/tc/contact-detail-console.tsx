@@ -11,6 +11,13 @@ import {
 } from "@/lib/contacts/categories";
 import type { ContactRow } from "@/lib/contacts/types";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
+import {
+  SIGNING_DELIVERY_MODE,
+  SIGNING_PROVIDERS,
+  getSigningProvider,
+  normalizeSigningDeliveryMode,
+  resolveSigningWorkflowSlug,
+} from "@/lib/signing/signing-workflow";
 
 const SALUTATION_OPTIONS = ["", "Mr.", "Mrs.", "Ms.", "Dr.", "Rev.", "Hon."] as const;
 const SUFFIX_OPTIONS = ["", "Jr.", "Sr.", "II", "III", "IV", "Esq."] as const;
@@ -410,23 +417,34 @@ export function ContactDetailConsole({
               )}
               <label className="flex flex-col gap-1.5">
                 <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
-                  Signing platform
+                  E-sign provider
                 </span>
-                <input
+                <select
                   name="signingPlatform"
-                  defaultValue={contact.brokerProfile?.signingPlatform ?? ""}
+                  defaultValue={resolveSigningWorkflowSlug(contact.brokerProfile?.signingPlatform).slug}
                   className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
-                />
+                >
+                  {SIGNING_PROVIDERS.map((provider) => (
+                    <option key={provider.slug} value={provider.slug}>
+                      {provider.label}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
-                  Signing preference
+                  Signing method
                 </span>
-                <input
+                <select
                   name="signingPreference"
-                  defaultValue={contact.brokerProfile?.signingPreference ?? ""}
+                  defaultValue={normalizeSigningDeliveryMode(contact.brokerProfile?.signingPreference)}
                   className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
-                />
+                >
+                  <option value={SIGNING_DELIVERY_MODE.emailLink}>Email signing link</option>
+                  <option value={SIGNING_DELIVERY_MODE.embedded}>Embedded signing later</option>
+                  <option value={SIGNING_DELIVERY_MODE.providerPortal}>Provider portal handoff</option>
+                  <option value={SIGNING_DELIVERY_MODE.manualExport}>Manual export packet</option>
+                </select>
               </label>
 
               {canManageCredentials ? (
@@ -435,22 +453,27 @@ export function ContactDetailConsole({
                     <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
                       Credential provider
                     </span>
-                    <input
+                    <select
                       name="credentialProvider"
-                      placeholder="docusign"
                       className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
-                    />
+                    >
+                      {SIGNING_PROVIDERS.filter((provider) => provider.status !== "manual").map((provider) => (
+                        <option key={provider.slug} value={provider.slug}>
+                          {provider.label}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                   <label className="flex flex-col gap-1.5">
                     <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
-                      Credential secret blob
+                      API credential or setup secret
                     </span>
                     <input
                       name="credentialBlob"
                       placeholder={
                         contact.brokerProfile?.hasCredentials
-                          ? "Stored (enter to replace)"
-                          : "Paste token/secret"
+                          ? "Stored securely (enter to replace)"
+                          : "Paste API token, private key, or sandbox secret"
                       }
                       className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
                     />
@@ -521,12 +544,20 @@ export function ContactDetailConsole({
                   value={contact.brokerProfile?.brokerage || "Not set"}
                 />
                 <Info
-                  label="Signing platform"
-                  value={contact.brokerProfile?.signingPlatform || "Not set"}
+                  label="E-sign provider"
+                  value={
+                    contact.brokerProfile?.signingPlatform
+                      ? getSigningProvider(resolveSigningWorkflowSlug(contact.brokerProfile.signingPlatform).slug).label
+                      : "Not set"
+                  }
                 />
                 <Info
-                  label="Signing preference"
-                  value={contact.brokerProfile?.signingPreference || "Not set"}
+                  label="Signing method"
+                  value={
+                    contact.brokerProfile?.signingPreference
+                      ? normalizeSigningDeliveryMode(contact.brokerProfile.signingPreference).replace(/_/g, " ")
+                      : "Not set"
+                  }
                 />
               </>
             ) : null}

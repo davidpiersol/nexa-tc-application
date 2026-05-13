@@ -25,8 +25,8 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.24.2-dev",
-    "lastDeployedVersion": "v4.16.0",
+    "currentVersion": "v4.26.0",
+    "lastDeployedVersion": "v4.26.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
       "netlify": "vM.S.P",
@@ -1197,13 +1197,13 @@
       "lane": "billing",
       "milestoneId": "m1",
       "versionScope": "v4.24.2-dev",
-      "status": "done",
+      "status": "approved",
       "jiraKey": null,
       "summary": "P24 billing/reporting patch: invoice operations moved to their own searchable/sortable page, billing landing keeps entry plus billed/received/tax summaries, and universal TC reports hub now includes the first live billing collections report with invoice detail rows.",
       "validation": {
         "build": "passed",
         "tests": "passed",
-        "approval": "pending"
+        "approval": "approved"
       },
       "acceptance": [
         "Service types can drive billing: full TC transaction and MLS-only job.",
@@ -1255,7 +1255,7 @@
         "Migration apply confirms P24.1 billing columns and exact tax-rate storage."
       ],
       "fullQaPrompt": "Run full QA for P24 (Billing, invoicing, and accounting integration path). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-      "updatedAt": "2026-05-13T15:50:20.610Z"
+      "updatedAt": "2026-05-13T16:55:24.555Z"
     },
     {
       "id": "P25",
@@ -1263,13 +1263,13 @@
       "lane": "integrations",
       "milestoneId": "m1",
       "versionScope": "v4.25.0-dev",
-      "status": "todo",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Replace broker-facing raw signing preferences JSON with a friendly provider setup flow, provider-specific credential capture, DocuSign test-account path, and envelope status sync on document screen load.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
         "Broker-facing signing preferences are no longer raw JSON fields.",
@@ -1311,21 +1311,22 @@
         "Run npm run build.",
         "Run local smoke/render checks without Netlify deploy."
       ],
-      "fullQaPrompt": "Run full QA for P25 (Broker e-sign provider setup and DocuSign status sync). Verify provider setup UI, credential security, tenant/broker role boundaries, DocuSign mocked test path, envelope status refresh, manual fallback, typecheck, tests, build, and local browser smoke. Do not deploy to Netlify. If any change could break existing signing/export behavior, stop and report the risk plus recommendations before making it. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+      "fullQaPrompt": "Run full QA for P25 (Broker e-sign provider setup and DocuSign status sync). Verify provider setup UI, credential security, tenant/broker role boundaries, DocuSign mocked test path, envelope status refresh, manual fallback, typecheck, tests, build, and local browser smoke. Do not deploy to Netlify. If any change could break existing signing/export behavior, stop and report the risk plus recommendations before making it. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves.",
+      "updatedAt": "2026-05-13T18:45:00Z"
     },
     {
       "id": "P26",
       "name": "Hardening gate: signing, integrations, billing, and workflow handoffs",
       "lane": "hardening",
       "milestoneId": "m1",
-      "versionScope": "v4.26.0-dev",
-      "status": "todo",
+      "versionScope": "v4.26.0",
+      "status": "approved",
       "jiraKey": null,
       "summary": "No-new-feature security, performance, and code-quality pass after signing/export, broker/client dashboards, MLS-only jobs, billing, and accounting integration planning.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
-        "approval": "pending"
+        "build": "passed",
+        "tests": "passed",
+        "approval": "approved"
       },
       "acceptance": [
         "No new product features are added in this sprint.",
@@ -1369,7 +1370,8 @@
         "Regression test MLS-only job flow where implemented.",
         "Regression test billing/invoice role access and audit behavior."
       ],
-      "fullQaPrompt": "Run full QA for P26 (Hardening gate: signing, integrations, billing, and workflow handoffs). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P26 (Hardening gate: signing, integrations, billing, and workflow handoffs). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "updatedAt": "2026-05-13T21:35:00Z"
     },
     {
       "id": "P27",

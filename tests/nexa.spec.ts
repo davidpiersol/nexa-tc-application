@@ -259,7 +259,7 @@ test.describe("TC dashboard", () => {
     await gotoApp(page, "/tc/brokers/new");
     await page.getByLabel("First name").fill("Broker");
     await page.getByLabel("Last name").fill(`QA ${Date.now()}`);
-    await page.getByLabel("Signing platform").fill("docusign");
+    await page.getByLabel("E-sign provider").selectOption("docusign_api");
     await page.getByRole("combobox", { name: "Brokerage" }).selectOption("Other");
     await page.getByLabel("Brokerage (other)").fill("QA Brokerage");
     await page.getByRole("button", { name: "Create broker" }).click();

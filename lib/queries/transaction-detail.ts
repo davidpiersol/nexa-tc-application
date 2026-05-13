@@ -79,6 +79,12 @@ export type TransactionDocumentSummary = {
   created_at: string;
   updated_at?: string | null;
   visible_to_client?: boolean;
+  signing_provider_slug?: string | null;
+  signing_envelope_id?: string | null;
+  signing_envelope_status?: string | null;
+  signing_envelope_status_updated_at?: string | null;
+  signing_delivery_status?: Record<string, unknown> | null;
+  signing_provider_url?: string | null;
   /** Stored file exists (ZIP packet + signing payloads). */
   can_export: boolean;
 };
@@ -90,7 +96,7 @@ export async function listDocumentsForTransaction(
   const { data, error } = await supabase
     .from("documents")
     .select(
-      "id, category, status, file_name, mime_type, created_at, updated_at, visible_to_client, storage_path",
+      "id, category, status, file_name, mime_type, created_at, updated_at, visible_to_client, signing_provider_slug, signing_envelope_id, signing_envelope_status, signing_envelope_status_updated_at, signing_delivery_status, signing_provider_url, storage_path",
     )
     .eq("transaction_id", transactionId)
     .order("created_at", { ascending: false });

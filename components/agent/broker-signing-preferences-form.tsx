@@ -3,6 +3,14 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
+import {
+  SIGNING_DELIVERY_MODE,
+  SIGNING_PROVIDERS,
+  getSigningProvider,
+  normalizeSigningDeliveryMode,
+  resolveSigningWorkflowSlug,
+  type SigningDeliveryMode,
+} from "@/lib/signing/signing-workflow";
 
 async function getCsrf(): Promise<string | undefined> {
   const res = await fetch("/api/csrf", { credentials: "include" });
@@ -17,23 +25,27 @@ export function BrokerSigningPreferencesForm({
   initialSigningPlatform: string | null;
   initialSigningPreferencesJson: string;
 }) {
-  const [platform, setPlatform] = React.useState(initialSigningPlatform ?? "");
-  const [prefsJson, setPrefsJson] = React.useState(initialSigningPreferencesJson);
+  const initialPrefs = React.useMemo(() => {
+    try {
+      return JSON.parse(initialSigningPreferencesJson || "{}") as { mode?: string };
+    } catch {
+      return {};
+    }
+  }, [initialSigningPreferencesJson]);
+  const initialProvider = resolveSigningWorkflowSlug(initialSigningPlatform).slug;
+  const [platform, setPlatform] = React.useState(initialProvider);
+  const [mode, setMode] = React.useState<SigningDeliveryMode>(
+    normalizeSigningDeliveryMode(initialPrefs.mode),
+  );
   const [pending, setPending] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const selectedProvider = getSigningProvider(platform);
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setMessage(null);
-    let prefs: Record<string, unknown>;
-    try {
-      prefs = JSON.parse(prefsJson || "{}") as Record<string, unknown>;
-    } catch {
-      setError("Signing preferences must be valid JSON.");
-      return;
-    }
 
     const token = await getCsrf();
     if (!token) {
@@ -50,8 +62,11 @@ export function BrokerSigningPreferencesForm({
         [CSRF_HEADER_NAME]: token,
       },
       body: JSON.stringify({
-        signing_platform: platform.trim() || null,
-        signing_preferences: prefs,
+        signing_platform: platform,
+        signing_preferences: {
+          providerSlug: platform,
+          mode,
+        },
       }),
     });
     setPending(false);
@@ -71,28 +86,41 @@ export function BrokerSigningPreferencesForm({
     >
       <h3 className="font-display text-heading-md text-brand-navy">Signing preferences</h3>
       <p className="font-sans text-sm text-neutral-600">
-        TC-visible defaults for coordinated packets; DocuSign routing still follows tenant integration
-        setup.
+        Choose where Choral Point should send documents for signature. Secrets are handled by the
+        tenant admin setup; this form only chooses the default workflow.
       </p>
       <label className="block font-sans text-sm">
-        <span className="font-semibold text-brand-navy">Signing platform label</span>
-        <input
+        <span className="font-semibold text-brand-navy">E-sign provider</span>
+        <select
           value={platform}
-          onChange={(e) => setPlatform(e.target.value)}
+          onChange={(e) => setPlatform(e.target.value as typeof platform)}
           className="mt-1 w-full rounded-brand-md border border-neutral-300 px-3 py-2 font-sans text-sm text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-          placeholder="e.g. DocuSign, Dotloop, Manual"
-          maxLength={120}
-        />
+        >
+          {SIGNING_PROVIDERS.map((provider) => (
+            <option key={provider.slug} value={provider.slug}>
+              {provider.label}
+            </option>
+          ))}
+        </select>
       </label>
       <label className="block font-sans text-sm">
-        <span className="font-semibold text-brand-navy">Signing preferences (JSON)</span>
-        <textarea
-          value={prefsJson}
-          onChange={(e) => setPrefsJson(e.target.value)}
-          rows={6}
-          className="mt-1 w-full rounded-brand-md border border-neutral-300 px-3 py-2 font-mono text-xs text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-        />
+        <span className="font-semibold text-brand-navy">How should recipients sign?</span>
+        <select
+          value={mode}
+          onChange={(e) => setMode(e.target.value as SigningDeliveryMode)}
+          className="mt-1 w-full rounded-brand-md border border-neutral-300 px-3 py-2 font-sans text-sm text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+        >
+          <option value={SIGNING_DELIVERY_MODE.emailLink}>Email signing link</option>
+          <option value={SIGNING_DELIVERY_MODE.embedded}>Embedded signing later</option>
+          <option value={SIGNING_DELIVERY_MODE.providerPortal}>Provider portal handoff</option>
+          <option value={SIGNING_DELIVERY_MODE.manualExport}>Manual export packet</option>
+        </select>
       </label>
+      <div className="rounded-brand-md border border-neutral-200 bg-neutral-50 p-3 font-sans text-sm text-neutral-700">
+        <p className="font-semibold text-brand-navy">{selectedProvider.shortLabel}</p>
+        <p className="mt-1">{selectedProvider.apiSummary}</p>
+        <p className="mt-1">{selectedProvider.setupHelp}</p>
+      </div>
       {error ? (
         <p className="font-sans text-sm text-status-danger" role="alert">
           {error}

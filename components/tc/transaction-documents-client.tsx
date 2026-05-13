@@ -11,6 +11,11 @@ import {
   templateAvailabilityLabel,
   templateSelectionStateLabel,
 } from "@/lib/documents/template-selection";
+import {
+  getSigningProvider,
+  normalizeEnvelopeStatus,
+  signingEnvelopeStatusLabel,
+} from "@/lib/signing/signing-workflow";
 
 export type DocRow = {
   id: string;
@@ -20,6 +25,12 @@ export type DocRow = {
   created_at: string;
   /** Row has attachment storage — included in ZIP / signing bundle. */
   can_export: boolean;
+  signing_provider_slug?: string | null;
+  signing_envelope_id?: string | null;
+  signing_envelope_status?: string | null;
+  signing_envelope_status_updated_at?: string | null;
+  signing_delivery_status?: Record<string, unknown> | null;
+  signing_provider_url?: string | null;
 };
 
 export type TemplateSelectionRow = {
@@ -115,6 +126,8 @@ export function TransactionDocumentsClient({
   const [signerEmail, setSignerEmail] = React.useState("");
   const [signerName, setSignerName] = React.useState("");
   const [workflowMessage, setWorkflowMessage] = React.useState<string | null>(null);
+  const [statusSyncing, setStatusSyncing] = React.useState(false);
+  const [statusSyncMessage, setStatusSyncMessage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     setDocs(initialDocs);
@@ -134,6 +147,58 @@ export function TransactionDocumentsClient({
       return next;
     });
   }, [docs]);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    async function syncStatuses() {
+      if (!initialDocs.some((doc) => doc.signing_envelope_id)) return;
+      setStatusSyncing(true);
+      setStatusSyncMessage(null);
+      const res = await fetch(`/api/transactions/${transactionId}/documents/send-for-signing`, {
+        credentials: "include",
+      });
+      if (cancelled) return;
+      setStatusSyncing(false);
+      if (!res.ok) {
+        setStatusSyncMessage("Envelope status refresh was unavailable. Existing statuses are still shown.");
+        return;
+      }
+      const body = (await res.json().catch(() => ({}))) as {
+        statuses?: Array<{
+          document_id: string;
+          provider?: string;
+          envelope_id?: string | null;
+          status?: string | null;
+          status_updated_at?: string | null;
+          delivery?: Record<string, unknown>;
+          provider_url?: string | null;
+        }>;
+      };
+      const statuses = body.statuses ?? [];
+      if (statuses.length === 0) return;
+      setDocs((prev) =>
+        prev.map((doc) => {
+          const next = statuses.find((status) => status.document_id === doc.id);
+          if (!next) return doc;
+          return {
+            ...doc,
+            signing_provider_slug: next.provider ?? doc.signing_provider_slug,
+            signing_envelope_id: next.envelope_id ?? doc.signing_envelope_id,
+            signing_envelope_status: next.status ?? doc.signing_envelope_status,
+            signing_envelope_status_updated_at:
+              next.status_updated_at ?? doc.signing_envelope_status_updated_at,
+            signing_delivery_status: next.delivery ?? doc.signing_delivery_status,
+            signing_provider_url: next.provider_url ?? doc.signing_provider_url,
+          };
+        }),
+      );
+      setStatusSyncMessage("Envelope statuses refreshed.");
+    }
+    syncStatuses();
+    return () => {
+      cancelled = true;
+    };
+  }, [initialDocs, transactionId]);
 
   const visibleDocs = React.useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -266,7 +331,7 @@ export function TransactionDocumentsClient({
     let msg =
       body.executed_provider === "docusign_api" && body.envelope_id
         ? "Envelope sent via DocuSign."
-        : "Marked sent for signature. Use Export ZIP Choral Point or your external signing workflow when DocuSign is not used.";
+        : "Marked sent for signature. Use Export ZIP in Choral Point or your external signing workflow when direct API send is not available.";
     if (body.manual_hint) {
       msg = `${msg} (${body.manual_hint})`;
     }
@@ -274,7 +339,17 @@ export function TransactionDocumentsClient({
 
     setDocs((prev) =>
       prev.map((d) =>
-        idsSnapshot.includes(d.id) ? { ...d, status: "sent_for_signature" } : d,
+        idsSnapshot.includes(d.id)
+          ? {
+              ...d,
+              status: "sent_for_signature",
+              signing_provider_slug: body.executed_provider ?? d.signing_provider_slug,
+              signing_envelope_id: body.envelope_id ?? d.signing_envelope_id,
+              signing_envelope_status:
+                body.executed_provider === "docusign_api" && body.envelope_id ? "sent" : "manual",
+              signing_envelope_status_updated_at: new Date().toISOString(),
+            }
+          : d,
       ),
     );
   }
@@ -398,8 +473,13 @@ export function TransactionDocumentsClient({
             <p className="mt-2 max-w-3xl font-sans text-sm text-neutral-700">
               Broker default signing: <strong>{signingPreference.label}</strong>
               {signingPreference.slug === "docusign_api"
-                ? ". DocuSign runs when tenant credentials are configured; otherwise Nexa falls back to a neutral / manual workflow."
-                : ". Use Export ZIP for Choral Point or carry files into your external signing workspace."}
+                ? ". DocuSign runs when tenant credentials are configured; otherwise Choral Point falls back to a neutral / manual workflow."
+                : ". Choral Point will export the packet or hand off to the provider portal until that provider's API is connected."}
+            </p>
+          ) : null}
+          {statusSyncing || statusSyncMessage ? (
+            <p className="mt-1 font-sans text-xs text-neutral-600" role="status">
+              {statusSyncing ? "Refreshing envelope statuses..." : statusSyncMessage}
             </p>
           ) : null}
         </div>
@@ -624,6 +704,11 @@ export function TransactionDocumentsClient({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleDocs.map((d) => {
             const badge = documentStatusToBadge(d.status);
+            const envelopeStatus = normalizeEnvelopeStatus(d.signing_envelope_status);
+            const provider =
+              d.signing_provider_slug === "docusign_api"
+                ? getSigningProvider("docusign_api")
+                : null;
             return (
               <div key={d.id} className="relative flex flex-col gap-2">
                 <input
@@ -649,6 +734,32 @@ export function TransactionDocumentsClient({
                   </Button>
                   <DocumentDownloadButton documentId={d.id} size="sm" label="Download" />
                 </div>
+                {d.signing_envelope_id || d.signing_envelope_status ? (
+                  <div className="rounded-brand-md border border-neutral-200 bg-neutral-50 px-3 py-2 font-sans text-xs text-neutral-700">
+                    <p>
+                      Signing:{" "}
+                      <strong className="text-brand-navy">
+                        {provider?.shortLabel ?? "External provider"}
+                      </strong>{" "}
+                      · {signingEnvelopeStatusLabel(envelopeStatus)}
+                    </p>
+                    {d.signing_envelope_status_updated_at ? (
+                      <p className="mt-1">
+                        Updated {new Date(d.signing_envelope_status_updated_at).toLocaleString()}
+                      </p>
+                    ) : null}
+                    {d.signing_provider_url ? (
+                      <a
+                        className="mt-1 inline-block underline"
+                        href={d.signing_provider_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open provider
+                      </a>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
             );
           })}
@@ -671,6 +782,7 @@ export function TransactionDocumentsClient({
             <tbody>
               {visibleDocs.map((d) => {
                 const badge = documentStatusToBadge(d.status);
+                const envelopeStatus = normalizeEnvelopeStatus(d.signing_envelope_status);
                 return (
                   <tr key={d.id} className="border-b border-neutral-200 last:border-b-0">
                     <td className="px-3 py-2 font-sans text-sm text-neutral-900">
@@ -695,7 +807,14 @@ export function TransactionDocumentsClient({
                       </Link>
                     </td>
                     <td className="px-3 py-2 font-sans text-sm text-neutral-900">{d.category}</td>
-                    <td className="px-3 py-2 font-sans text-sm text-neutral-900">{badge.label}</td>
+                    <td className="px-3 py-2 font-sans text-sm text-neutral-900">
+                      <p>{badge.label}</p>
+                      {d.signing_envelope_id || d.signing_envelope_status ? (
+                        <p className="text-xs text-neutral-600">
+                          Signing · {signingEnvelopeStatusLabel(envelopeStatus)}
+                        </p>
+                      ) : null}
+                    </td>
                     <td className="px-3 py-2 font-sans text-sm text-neutral-600">
                       {new Date(d.created_at).toLocaleString()}
                     </td>

@@ -36,6 +36,12 @@ export default async function TransactionDocumentsPage({ params }: Props) {
     file_name: d.file_name,
     created_at: d.created_at,
     can_export: d.can_export,
+    signing_provider_slug: d.signing_provider_slug ?? null,
+    signing_envelope_id: d.signing_envelope_id ?? null,
+    signing_envelope_status: d.signing_envelope_status ?? null,
+    signing_envelope_status_updated_at: d.signing_envelope_status_updated_at ?? null,
+    signing_delivery_status: d.signing_delivery_status ?? null,
+    signing_provider_url: d.signing_provider_url ?? null,
   }));
 
   return (
