@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 const baseURL =
   process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+// IMPORTANT: Prefer `localhost` — not `127.0.0.1`. Auth cookies and redirects follow
+// `NEXT_PUBLIC_APP_URL`; mixing hosts breaks TC login during global-setup.
 
 const useAutoServer = process.env.PLAYWRIGHT_AUTO_SERVER === "1";
 const isCI = !!process.env.CI;

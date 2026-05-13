@@ -25,6 +25,13 @@ describe("resolveHelpSlugForPath", () => {
     expect(resolveHelpSlugForPath("/admin/global/wiki")).toBe("global-admin-wiki");
   });
 
+  it("maps broker hub routes to agent dashboard help", () => {
+    expect(resolveHelpSlugForPath("/agent")).toBe("agent-dashboard-overview");
+    expect(resolveHelpSlugForPath("/agent/profile")).toBe("agent-dashboard-overview");
+    expect(resolveHelpSlugForPath("/agent/tx-1/documents")).toBe("agent-uploading-documents");
+    expect(resolveHelpSlugForPath("/agent/tx-1/messages")).toBe("agent-messaging");
+  });
+
   it("falls back to workspace guide for unknown pages", () => {
     expect(resolveHelpSlugForPath("/unknown")).toBe("workspace-overview");
   });

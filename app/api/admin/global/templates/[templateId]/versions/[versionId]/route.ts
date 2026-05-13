@@ -1,10 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { requireGlobalAdmin } from "@/lib/auth/admin-guard";
-import {
-  canVersionBecomeCurrent,
-  validateTemplateFieldMappings,
-} from "@/lib/documents/template-field-mapping";
+import { persistDraftFieldMappings } from "@/lib/documents/persist-version-field-mappings";
+import { canVersionBecomeCurrent } from "@/lib/documents/template-field-mapping";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
 import { validateCsrf } from "@/lib/security/csrf-server";
@@ -64,34 +62,23 @@ export async function PATCH(request: NextRequest, ctx: Ctx) {
   if (!version) return NextResponse.json({ error: "version_not_found" }, { status: 404 });
 
   if (parsed.data.action === "save_mappings") {
-    const validated = validateTemplateFieldMappings(
-      parsed.data.mappings,
-      version.fillable_field_names,
-    );
-    if (validated.errors.length) {
+    const saved = await persistDraftFieldMappings({
+      admin,
+      templateId: ctx.params.templateId,
+      versionId: ctx.params.versionId,
+      mappings: parsed.data.mappings,
+      fillableFieldNames: version.fillable_field_names,
+      userId: current.userId,
+    });
+    if (!saved.ok) {
       return NextResponse.json(
-        { error: "mapping_validation_error", details: validated.errors },
-        { status: 400 },
+        saved.error === "mapping_validation_error"
+          ? { error: saved.error, details: saved.details }
+          : { error: saved.error },
+        { status: saved.status },
       );
     }
-
-    const { data, error: saveErr } = await admin
-      .from("global_document_template_versions")
-      .update({
-        field_mappings: validated.normalized,
-        review_status: "needs_review",
-        mapping_review_status: "needs_review",
-        mapping_reviewed_by: null,
-        mapping_reviewed_at: null,
-        is_current: false,
-        updated_by: current.userId,
-      })
-      .eq("id", ctx.params.versionId)
-      .eq("template_id", ctx.params.templateId)
-      .select(SELECT_COLUMNS)
-      .single();
-    if (saveErr) return NextResponse.json({ error: saveErr.message }, { status: 400 });
-    return NextResponse.json({ ok: true, version: data });
+    return NextResponse.json({ ok: true, version: saved.version });
   }
 
   if (parsed.data.action === "approve_mappings") {

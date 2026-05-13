@@ -230,10 +230,37 @@ export function formatTransactionNextLabel(closeDate: string | null): string {
   });
 }
 
+function mapBrokerAgentRow(t: {
+  id: string;
+  status: string;
+  close_date: string | null;
+  closed_at: string | null;
+  archived_at: string | null;
+  property_address: string | null;
+  first_pass_status: string | null;
+}): TcTransactionListRow {
+  return {
+    id: t.id,
+    status: t.status,
+    close_date: t.close_date,
+    closed_at: t.closed_at,
+    archived_at: t.archived_at,
+    property_address: t.property_address,
+    mls_number: null,
+    notes: null,
+    first_pass_status: t.first_pass_status,
+    legal_description: null,
+    representation_side: null,
+    seller_broker_name: null,
+    buyer_broker_name: null,
+  };
+}
+
 /**
- * Transactions visible to the current user as an agent party (RLS-scoped).
+ * Transactions visible to broker/agent via transaction_parties OR broker contact assignment (RLS).
+ * Omits TC-only intake-derived overview columns and notes.
  */
-export async function getAgentTransactionsList(): Promise<TcTransactionListRow[]> {
+export async function getBrokerAgentTransactionsList(): Promise<TcTransactionListRow[]> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -243,11 +270,31 @@ export async function getAgentTransactionsList(): Promise<TcTransactionListRow[]
   const { data: txRows, error } = await supabase
     .from("transactions")
     .select(
-      "id, status, close_date, closed_at, archived_at, property_address, mls_number, notes, first_pass_status",
+      "id, status, close_date, closed_at, archived_at, property_address, first_pass_status",
     )
     .order("updated_at", { ascending: false })
     .limit(200);
 
   if (error || !txRows?.length) return [];
-  return txRows.map(mapRow);
+  return txRows.map(mapBrokerAgentRow);
+}
+
+/** @deprecated Use getBrokerAgentTransactionsList */
+export async function getAgentTransactionsList(): Promise<TcTransactionListRow[]> {
+  return getBrokerAgentTransactionsList();
+}
+
+export async function getBrokerScopedTransaction(
+  transactionId: string,
+): Promise<TcTransactionListRow | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("transactions")
+    .select(
+      "id, status, close_date, closed_at, archived_at, property_address, first_pass_status",
+    )
+    .eq("id", transactionId)
+    .maybeSingle();
+  if (error || !data) return null;
+  return mapBrokerAgentRow(data);
 }

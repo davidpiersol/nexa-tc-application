@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { HeroGraphic } from "@/components/graphics/HeroGraphic";
 import { DocumentIcons } from "@/components/graphics/DocumentIcons";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,12 @@ import {
   buyerImportantDatesFromMake,
   buyerTimelineFromMake,
 } from "@/lib/data/figma-make";
+import { getClientPartyTransactionOverview } from "@/lib/queries/client-party-overview";
+import {
+  formatTransactionNextLabel,
+  formatTransactionStatusLabel,
+} from "@/lib/queries/tc-transactions-list";
+import { cn } from "@/lib/utils/cn";
 
 type Props = { params: { id: string } };
 
@@ -32,10 +39,12 @@ function statusVariant(
 }
 
 /**
- * Figma Make **BuyerDashboard** → `/buyer/[id]` — hero, timeline, dates, documents.
- * TODO: buyer-scoped transaction + messaging + API-backed lists.
+ * Buyer dashboard — hero uses RLS-safe transaction overview only; illustrative tiles stay labeled.
  */
-export default function BuyerDashboardPage({ params }: Props) {
+export default async function BuyerDashboardPage({ params }: Props) {
+  const overview = await getClientPartyTransactionOverview(params.id);
+  if (!overview) notFound();
+
   const timelineSteps = buyerTimelineFromMake.map((s) => ({
     label: s.label,
     completed: s.completed,
@@ -48,18 +57,23 @@ export default function BuyerDashboardPage({ params }: Props) {
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-6">
           <div className="flex flex-col justify-center gap-4 p-6 sm:p-8">
             <p className="font-sans text-ui-label uppercase tracking-wide text-neutral-600">
-              {/* TODO: transaction ref */}
-              Buyer · {params.id}
+              Buyer workspace
             </p>
             <h2 className="font-display text-heading-xl text-brand-navy">
               Your home purchase
             </h2>
             <p className="font-prose text-prose-body text-neutral-900">
-              {/* TODO: property address */}
-              4821 Maple Ridge Dr — we’ll guide you through each step in plain English.
+              {overview.property_address?.trim() ||
+                "Your coordinator will publish the property address when it is ready to share."}{" "}
+              We&apos;ll guide you through each step in plain English.
             </p>
             <div className="flex flex-wrap gap-2">
-              <BadgePill>Under contract</BadgePill>
+              <BadgePill>{formatTransactionStatusLabel(overview.status)}</BadgePill>
+              {overview.close_date ? (
+                <BadgePill subtle>
+                  Closing {formatTransactionNextLabel(overview.close_date)}
+                </BadgePill>
+              ) : null}
             </div>
             <div className="flex flex-wrap gap-3">
               <Button variant="gold" type="button" asChild>
@@ -80,6 +94,9 @@ export default function BuyerDashboardPage({ params }: Props) {
         <h3 id="buyer-progress" className="font-display text-heading-md text-brand-navy">
           Your progress
         </h3>
+        <p className="mt-2 font-sans text-xs text-neutral-500">
+          Illustrative timeline — live milestones ship with coordinator workflow integration.
+        </p>
         <div className="mt-6 rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm sm:p-6">
           <ProgressTimeline steps={timelineSteps} />
         </div>
@@ -89,6 +106,9 @@ export default function BuyerDashboardPage({ params }: Props) {
         <h3 id="buyer-dates" className="font-display text-heading-md text-brand-navy">
           Important dates
         </h3>
+        <p className="mt-2 font-sans text-xs text-neutral-500">
+          Sample dates — your TC publishes real deadlines in documents and messages.
+        </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {buyerImportantDatesFromMake.map((d) => (
             <div
@@ -109,6 +129,9 @@ export default function BuyerDashboardPage({ params }: Props) {
         <h3 id="buyer-docs" className="font-display text-heading-md text-brand-navy">
           Documents
         </h3>
+        <p className="mt-2 font-sans text-xs text-neutral-500">
+          Examples below — open &quot;View documents&quot; for your visible files from the coordinator.
+        </p>
         <div className="mt-4 flex flex-wrap gap-4">
           {buyerDocumentsFromMake.map((doc) => {
             const Icon = DocumentIcons[doc.category];
@@ -128,16 +151,14 @@ export default function BuyerDashboardPage({ params }: Props) {
       </section>
 
       <section className="rounded-brand-lg border-l-4 border-brand-gold bg-brand-brown-pale p-6 shadow-brand-sm">
-        <h3 className="font-display text-heading-md text-brand-navy">Action needed</h3>
+        <h3 className="font-display text-heading-md text-brand-navy">Next steps</h3>
         <p className="mt-2 font-sans text-ui-body text-neutral-900">
-          {/* TODO: dynamic tasks */}
-          Review the seller disclosure package and acknowledge receipt.
+          Watch for coordinator tasks and client-visible documents — internal TC notes never appear
+          here.
         </p>
         <div className="mt-4">
           <Button variant="gold" type="button" asChild>
-            <Link href={`/buyer/${params.id}/documents?category=disclosure`}>
-              Open disclosure
-            </Link>
+            <Link href={`/buyer/${params.id}/documents`}>Open documents</Link>
           </Button>
         </div>
       </section>
@@ -145,9 +166,14 @@ export default function BuyerDashboardPage({ params }: Props) {
   );
 }
 
-function BadgePill({ children }: { children: ReactNode }) {
+function BadgePill({ children, subtle }: { children: ReactNode; subtle?: boolean }) {
   return (
-    <span className="inline-flex rounded-full bg-brand-gold px-4 py-1.5 font-sans text-sm font-semibold text-brand-navy">
+    <span
+      className={cn(
+        "inline-flex rounded-full px-4 py-1.5 font-sans text-sm font-semibold",
+        subtle ? "bg-neutral-200 text-brand-navy" : "bg-brand-gold text-brand-navy",
+      )}
+    >
       {children}
     </span>
   );

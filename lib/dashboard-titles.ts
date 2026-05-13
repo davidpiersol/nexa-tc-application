@@ -1,7 +1,6 @@
 /** Top bar titles aligned with Figma frame names (fallback when route matches). */
 export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/tc/profile") return "Profile";
-  if (pathname.match(/^\/agent\/[^/]+\/profile$/)) return "Profile";
   if (pathname.match(/^\/seller\/[^/]+\/profile$/)) return "Profile";
   if (pathname.match(/^\/mortgage\/[^/]+\/profile$/)) return "Profile";
   if (pathname.match(/^\/title\/[^/]+\/profile$/)) return "Profile";
@@ -36,8 +35,13 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/tc/brokers") return "Brokers";
   if (pathname === "/tc/archive") return "Archive";
   if (pathname === "/tc/transactions") return "Transactions";
+  if (pathname === "/tc/mls-entry/new") return "New MLS Entry";
+  if (pathname === "/tc/mls-entry/research") return "MLS Write Access";
+  if (pathname === "/tc/mls-entry") return "MLS Entry";
   if (pathname === "/tc/settings") return "Settings";
-  if (pathname.match(/^\/agent\/[^/]+$/)) return "Agent Dashboard";
+  if (pathname === "/agent" || pathname === "/agent/") return "Broker dashboard";
+  if (pathname.startsWith("/agent/profile")) return "Broker profile";
+  if (pathname.match(/^\/agent\/[^/]+$/)) return "Broker transaction";
   if (pathname.match(/^\/buyer\/[^/]+$/)) return "Buyer Dashboard";
   if (pathname.match(/^\/seller\/[^/]+$/)) return "Seller Dashboard";
   if (pathname.match(/^\/mortgage\/[^/]+$/)) return "Mortgage Dashboard";
@@ -45,6 +49,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/admin/global" || pathname === "/admin/global/dashboard") return "Global Admin";
   if (pathname === "/admin/global/tenants") return "Tenants";
   if (pathname === "/admin/global/templates") return "Templates";
+  if (pathname === "/admin/global/package-rules") return "Package rules";
   if (pathname === "/admin/global/wiki") return "Wiki";
   if (pathname === "/admin/global/reports") return "Reports";
   if (pathname === "/admin/tenant" || pathname === "/admin/tenant/dashboard") return "Admin Console";

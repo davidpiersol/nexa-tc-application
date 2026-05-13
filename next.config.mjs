@@ -1,6 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      const mem =
+        process.env.NEXA_WEBPACK_DEV_MEMORY_CACHE === "1" ||
+        process.env.NEXA_WEBPACK_DEV_MEMORY_CACHE === "true";
+      if (mem) {
+        // Opt-in: avoids corrupted `.next/cache/webpack/*.pack.gz` restores (hasStartTime / ENOENT).
+        // Default OFF — filesystem cache is much faster for day-to-day dev.
+        config.cache = { type: "memory" };
+      }
+    }
+    return config;
+  },
+
   async redirects() {
     return [{ source: "/mfa", destination: "/auth/mfa", permanent: false }];
   },

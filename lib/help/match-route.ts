@@ -60,6 +60,10 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
     test: (p) => p === "/tc" || p === "/tc/" || p === "/tc/profile" || p === "/tc/archive",
   },
   {
+    slug: "agent-dashboard-overview",
+    test: (p) => p === "/agent" || p === "/agent/profile",
+  },
+  {
     slug: "agent-uploading-documents",
     test: (p) => /^\/agent\/[^/]+\/documents$/.test(p),
   },

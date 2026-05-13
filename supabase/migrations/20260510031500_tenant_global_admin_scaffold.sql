@@ -1,4 +1,4 @@
--- P7 scaffolding: tenant admin / global admin boundaries, seat limits, invite approvals.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  -- P7 scaffolding: tenant admin / global admin boundaries, seat limits, invite approvals.
 -- Additive migration to avoid breaking existing auth and transaction behavior.
 
 ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'tenant_admin';

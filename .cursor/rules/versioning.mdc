@@ -20,10 +20,10 @@ All releases use **v.X.Y.Z** where **X**, **Y**, and **Z** are non-negative inte
 
 ## Sprint / bug-fix cadence (Nexa)
 
-Use **`v4.Y.Z`** with this team rhythm (third digit **Z** = patch / bug-fix iteration; middle digit **Y** = sprint phase):
+Use **`v4.Y.Z`** with this team rhythm (third digit **Z** = patch / bug-fix iteration; middle digit **Y** = sprint phase — e.g. **P21 → Y = 21**):
 
-- **Bump Z** after each **bug fix** or small iteration that is merged (login styling, logout edge case, nav tweak, etc.).
-- **Bump Y** (and reset Z to `0`) only when the **product owner certifies the current sprint finished** and you move to the next sprint phase.
+- **During an active sprint:** keep **Y** fixed for that phase. **Bump Z** in **`VERSION`** and **`package.json`** after each **merged** bug fix or small iteration (`v4.21.0-dev` → `v4.21.1-dev` → …). BuildTrack **`versionScope`** can track the same tuple (e.g. `v4.21.3-dev`).
+- **When the product owner certifies the sprint** and you cut a **deployable** release: publish **stable** `v4.Y.Z` using the **final** Z reached in that sprint (no `-dev`), update **`CHANGELOG.md`**, and tag **`v4.Y.Z`**. Then start the **next** sprint at **`v4.(Y+1).0-dev`**.
 - **Bump X** only for milestone releases per the table above.
 
 ## Dev vs deployed versions (required)

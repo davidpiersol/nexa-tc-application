@@ -834,7 +834,8 @@ async function main() {
     const firstName = `Broker${i + 1}`;
     const lastName = "Contact";
     const fullName = `${firstName} ${lastName}`;
-    const email = `broker.${i + 1}@nexa.test`;
+    const email =
+      i === 0 ? UAT_USERS.agent.email : `broker.${i + 1}@nexa.test`;
     const company = companyRows[i % companyRows.length]?.name ?? "Nexa Brokerage";
     const { data: contact, error: cErr } = await admin
       .from("contacts")

@@ -6,6 +6,7 @@ import {
 } from "@/lib/auth/paths";
 import { roleFromUser, roleRequiresMfa } from "@/lib/auth/mfa";
 import { isGlobalAdminRole, isTenantAdminRole } from "@/lib/auth/roles";
+import { isWorkspaceTransactionId } from "@/lib/utils/workspace-id";
 
 const ROLE_SCOPED_PREFIXES = new Set([
   "agent",
@@ -117,15 +118,28 @@ export async function middleware(request: NextRequest) {
         return new NextResponse(null, { status: 403 });
       }
 
-      if (scopedId) {
+      if (scopedId && scopedId !== "profile" && isWorkspaceTransactionId(scopedId)) {
         const { data: link } = await supabase
           .from("transaction_parties")
           .select("id")
           .eq("transaction_id", scopedId)
           .eq("user_id", user.id)
           .maybeSingle();
+
         if (!link) {
-          return new NextResponse(null, { status: 403 });
+          const allowBrokerFallback = role === "broker" || role === "agent";
+
+          if (allowBrokerFallback) {
+            const { data: brokerAssigned } = await supabase.rpc(
+              "user_broker_assigned_via_contact",
+              { p_transaction_id: scopedId },
+            );
+            if (!brokerAssigned) {
+              return new NextResponse(null, { status: 403 });
+            }
+          } else {
+            return new NextResponse(null, { status: 403 });
+          }
         }
       }
     }

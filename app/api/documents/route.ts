@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from("documents")
     .select(
-      "id, category, status, file_name, mime_type, size_bytes, created_at, updated_at, transaction_id",
+      "id, category, status, file_name, mime_type, size_bytes, created_at, updated_at, transaction_id, storage_path",
     )
     .eq("transaction_id", transactionId)
     .order("created_at", { ascending: false });
@@ -36,7 +36,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ documents: data ?? [] });
+  const documents = (data ?? []).map(({ storage_path, ...pub }) => ({
+    ...pub,
+    can_export: Boolean(storage_path),
+  }));
+
+  return NextResponse.json({ documents });
 }
 
 export async function POST(request: NextRequest) {

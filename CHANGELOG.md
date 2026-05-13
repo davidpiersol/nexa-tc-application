@@ -4,6 +4,25 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.23.0-dev] - 2026-05-13
+
+### Added
+
+- **MLS-only job workspace** — added `/tc/mls-entry`, `/tc/mls-entry/new`, and `/tc/mls-entry/research` so MLS entry-only service requests live outside the full TC transaction pipeline.
+- **MLS entry job persistence** — added `mls_entry_jobs` schema, RLS, API create/list routes, normalizers, and billing status fields for manual MLS-only work tracking.
+- **MLS write-access spike notes** — documented SWMLS/GAAR/FlexMLS write-access questions and kept MLS submission manual until write capability is confirmed.
+- **P23 validation coverage** — added unit tests for MLS job helpers/nav and browser smoke coverage that creates an MLS-only job.
+
+### Fixed
+
+- **Local dev rendering** — Added `npm run dev:fresh` (`scripts/dev-fresh.sh`) to free port **3000**, remove `.next`, and start a single `next dev` on that port so you do not get one stale process on 3000 (unstyled pages) and a second Next on 3001. **`NEXA_WEBPACK_DEV_MEMORY_CACHE=true`** opt-in webpack **memory** cache when `.next/cache/webpack` restores fail (`PackFileCacheStrategy` / `hasStartTime`); otherwise dev uses Next’s filesystem cache for faster incremental builds.
+
+### Changed
+
+- **`PageEnter` reduced-motion guard** — only bypasses Framer Motion when `useReducedMotion() === true` (not on `null` unknown), avoiding inconsistent trees across SSR and hydration.
+
+- **Dev-only login diagnostics** — `POST /api/auth/login` returns a clearer `401` body when Auth cannot connect to **`NEXT_PUBLIC_SUPABASE_URL`** (typical **`ECONNREFUSED`** against `127.0.0.1:54321` when Docker/Supabase stack is stopped). `.env.example` notes local URL vs **`npx supabase start`** requirement.
+
 ## [v4.17.1] - 2026-05-11
 
 ### Added

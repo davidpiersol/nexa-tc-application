@@ -28,6 +28,14 @@ export function routeBase(pathname: string): string {
     return "/admin/global/dashboard";
   }
   if (role === "tc") return "/tc";
+  if (role === "agent") {
+    const parts = pathname.split("/").filter(Boolean);
+    const seg = parts[1];
+    if (seg && seg !== "profile" && seg.length > 0) {
+      return `/agent/${seg}`;
+    }
+    return "/agent";
+  }
   const parts = pathname.split("/").filter(Boolean);
   const id = parts[1];
   if (id) return `/${role}/${id}`;
@@ -43,6 +51,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
     return [
       { href: "/tc", label: "Overview" },
       { href: "/tc/transactions", label: "Transactions" },
+      { href: "/tc/mls-entry", label: "MLS entry" },
       { href: "/tc/contacts", label: "Contacts" },
       { href: "/tc/brokers", label: "Brokers" },
       { href: "/tc/archive", label: "Archive" },
@@ -56,6 +65,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
         { href: "/admin/global/dashboard", label: "Dashboard" },
         { href: "/admin/global/tenants", label: "Tenants" },
         { href: "/admin/global/templates", label: "Templates" },
+        { href: "/admin/global/package-rules", label: "Package rules" },
         { href: "/admin/global/wiki", label: "Wiki" },
         { href: "/admin/global/reports", label: "Reports" },
       ];
@@ -68,17 +78,25 @@ export function navItemsForPath(pathname: string): NavItem[] {
     ];
   }
 
+  if (role === "agent") {
+    return [
+      { href: "/agent", label: "Transactions" },
+      { href: "/agent/profile", label: "Signing & profile" },
+    ];
+  }
+
   return [{ href: base, label: "Overview" }];
 }
 
 /**
- * Profile route per role: TC uses `/tc/profile`; party dashboards use `/{role}/{transactionId}/profile`.
+ * Profile route per role: TC `/tc/profile`; agent `/agent/profile`; other parties `/{role}/{transactionId}/profile`.
  */
 export function profileHrefFromPathname(pathname: string): string | null {
   const role = roleFromPathname(pathname);
   if (!role) return null;
   if (role === "admin") return null;
   if (role === "tc") return "/tc/profile";
+  if (role === "agent") return "/agent/profile";
 
   const parts = pathname.split("/").filter(Boolean);
   const scopedId = parts[1];
@@ -86,4 +104,3 @@ export function profileHrefFromPathname(pathname: string): string | null {
 
   return `/${role}/${scopedId}/profile`;
 }
-

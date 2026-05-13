@@ -267,6 +267,36 @@ test.describe("TC dashboard", () => {
     await expect(page.getByRole("heading", { level: 2, name: "Broker Profile" })).toBeVisible();
   });
 
+  test("MLS-only entry workspace renders without MLS write integration", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    const marker = `MLS QA ${Date.now()}`;
+    await gotoApp(page, "/tc/mls-entry");
+    await expect(page.getByRole("heading", { level: 2, name: "MLS entry jobs" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText(/No MLS write integration is enabled/i)).toBeVisible();
+    await page.getByRole("link", { name: "Research notes" }).click();
+    await expect(page).toHaveURL(/\/tc\/mls-entry\/research$/);
+    await expect(page.getByText(/Do not implement MLS write submission yet/i)).toBeVisible();
+
+    await gotoApp(page, "/tc/mls-entry/new");
+    await expect(page.getByRole("heading", { level: 2, name: "New MLS entry job" })).toBeVisible();
+    await expect(page.getByLabel("Requesting broker")).toBeVisible();
+    await expect(page.getByLabel("Property address")).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Property type" })).toBeVisible();
+    await expect(page.getByLabel("General notes")).toBeVisible();
+
+    await page.getByLabel("Requesting broker").fill("Angela QA");
+    await page.getByLabel("Property address").fill(marker);
+    await page.getByRole("combobox", { name: "Property type" }).selectOption("Vacant Land");
+    await page.getByLabel("General notes").fill("MLS-only smoke job; no write integration.");
+    await page.getByRole("button", { name: "Create MLS entry job" }).click();
+    await expect(page).toHaveURL(/\/tc\/mls-entry$/);
+    await expect(page.getByText(marker)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/MLS-only/i).first()).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
   test("document delete removes row without breaking transaction", async ({ page }) => {
     const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}/documents`);
@@ -329,6 +359,35 @@ test.describe("TC dashboard", () => {
       const res = await page.request.get(src);
       expect(res.ok(), `img ${src} should load`).toBeTruthy();
     }
+  });
+});
+
+test.describe("Broker dashboard", () => {
+  test.use({ storageState: "playwright/.auth/agent.json" });
+
+  test("broker hub renders assigned-transactions workspace without console errors", async ({
+    page,
+  }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, "/agent");
+    await expect(page.getByText(/Broker workspace/i)).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(
+      page.getByRole("heading", { name: /Assigned transactions/i }),
+    ).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
+  test("broker transaction workspace shows client-visible documents section", async ({
+    page,
+  }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, `/agent/${UAT_TRANSACTION_ID}`);
+    await expect(page.getByText(/Client-visible documents/i)).toBeVisible({
+      timeout: 30_000,
+    });
+    expect(errs).toEqual([]);
   });
 });
 

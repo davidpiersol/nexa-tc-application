@@ -1,0 +1,14 @@
+---
+description: Sprint close — align Supabase local and remote; Netlify deployment opt-in only
+alwaysApply: true
+---
+
+# Sprint Supabase alignment and deployment
+
+When a sprint’s database work is **complete** or you’re handing off migrations:
+
+1. **Remote:** Apply migrations with `supabase db push` (linked project), or the team’s CI path, so the cloud project matches `supabase/migrations/`.
+2. **Local:** Align the Docker/local stack with the same migration set — typically **`supabase db reset`** so local Postgres replays every migration cleanly (acceptable to wipe dev data locally). If preserving local-only data is required, use another agreed process and still verify schema parity.
+3. **Netlify:** **Do not** deploy or push to Netlify by default (**build minutes / credits**). Only deploy when the maintainer explicitly asks.
+
+This is separate from **version tags**: stable releases still follow `versioning.mdc` (`VERSION`, tag `vX.Y.Z`, no `-dev` on deploy).
