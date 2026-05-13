@@ -311,8 +311,17 @@ test.describe("TC dashboard", () => {
     await page.getByLabel("Unit amount").fill("250.00");
     await page.getByRole("button", { name: "Create invoice" }).click();
     await expect(page.getByText(marker)).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText("$250.00").first()).toBeVisible();
+    await expect(page.getByText("$262.19").first()).toBeVisible();
     await expect(page.getByText(/Sync: not configured/i).first()).toBeVisible();
+    await page.locator("li", { hasText: marker }).getByRole("link").first().click();
+    await expect(page).toHaveURL(/\/tc\/billing\/[a-f0-9-]+$/);
+    await expect(page.getByRole("heading", { name: /CP-/ })).toBeVisible();
+    await expect(page.getByText(/Payable upon receipt/i)).toBeVisible();
+    await gotoApp(page, "/tc/billing");
+    await page.getByRole("checkbox", { name: /select all invoices/i }).check();
+    const printLink = page.getByRole("link", { name: /print selected/i });
+    await expect(printLink).toHaveAttribute("href", /\/tc\/billing\/print\?ids=/);
+    await expect(page.getByRole("link", { name: /email selected/i })).toHaveAttribute("href", /^mailto:/);
     expect(errs).toEqual([]);
   });
 

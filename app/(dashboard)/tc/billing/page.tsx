@@ -1,8 +1,14 @@
 import { BillingInvoiceForm } from "@/components/tc/billing-invoice-form";
+import { BillingInvoiceListClient } from "@/components/tc/billing-invoice-list-client";
 import { getBillingDashboardData } from "@/lib/queries/billing-dashboard";
+import { getTcSettingsForCurrentUser } from "@/lib/queries/tc-settings";
 
 export default async function TcBillingPage() {
-  const data = await getBillingDashboardData();
+  const [data, settings] = await Promise.all([
+    getBillingDashboardData(),
+    getTcSettingsForCurrentUser(),
+  ]);
+  const taxRatePercent = settings?.billingTaxRatePercent ?? 4.875;
 
   return (
     <div className="flex flex-col gap-6">
@@ -11,7 +17,7 @@ export default async function TcBillingPage() {
         <p className="mt-1 max-w-3xl font-sans text-ui-body text-neutral-600">
           Track invoice drafts and accounts receivable for full TC transactions, MLS-only jobs, and
           custom work. Accounting sync is scaffolded but not connected to QuickBooks, Profit Power,
-          taxes, or payment processors yet.
+          provider email, tax filing, or payment processors yet.
         </p>
       </header>
 
@@ -25,6 +31,8 @@ export default async function TcBillingPage() {
         serviceTypes={data.serviceTypes}
         transactions={data.transactions}
         mlsJobs={data.mlsJobs}
+        contacts={data.contacts}
+        taxRatePercent={taxRatePercent}
       />
 
       <section className="flex flex-col gap-3">
@@ -39,35 +47,26 @@ export default async function TcBillingPage() {
             No invoices yet.
           </div>
         ) : (
-          <ul className="flex flex-col gap-3">
-            {data.invoices.map((invoice) => (
-              <li
-                key={invoice.id}
-                className="rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm"
-              >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="font-sans font-semibold text-brand-navy">
-                      {invoice.invoiceNumber ?? "Draft invoice"} · {invoice.totalLabel}
-                    </p>
-                    <p className="mt-1 font-sans text-sm text-neutral-600">
-                      {invoice.brokerName ?? "Broker TBD"} · {invoice.statusLabel} · AR:{" "}
-                      {invoice.receivableStatusLabel}
-                    </p>
-                    <p className="mt-1 font-sans text-xs text-neutral-600">
-                      {invoice.sourceLabel} · Issue {invoice.issueDate}
-                      {invoice.dueDate ? ` · Due ${invoice.dueDate}` : ""} · Balance{" "}
-                      {invoice.balanceLabel}
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-neutral-100 px-3 py-1 font-sans text-xs font-semibold text-neutral-700">
-                    Sync: {invoice.accountingSyncStatus.replace(/_/g, " ")}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <BillingInvoiceListClient invoices={data.invoices} />
         )}
+      </section>
+
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-3" aria-label="Tax reporting scaffold">
+        <ReportCard
+          title="NM quarterly GRT"
+          summary={data.taxReports.nmQuarterly[0]}
+          note={`Default rate ${taxRatePercent}% from TC settings. Local NM rates vary by reporting location.`}
+        />
+        <ReportCard
+          title="Federal quarterly"
+          summary={data.taxReports.federalQuarterly[0]}
+          note="Tracks gross receipts for quarterly estimate review. Filing math stays with accounting software or CPA review."
+        />
+        <ReportCard
+          title="Year end"
+          summary={data.taxReports.yearEnd[0]}
+          note="Annual gross receipts, tax collected, and open balance scaffold for 1099/accounting review."
+        />
       </section>
 
       <section className="rounded-brand-lg border border-brand-gold/40 bg-brand-gold/10 p-5 font-sans text-sm text-brand-navy">
@@ -97,6 +96,35 @@ function SummaryCard({
       <p className="mt-1 font-sans text-sm text-neutral-600">
         {summary ? `${summary.invoiceCount} invoice(s), ${summary.balanceLabel} open` : "No invoices"}
       </p>
+    </div>
+  );
+}
+
+function ReportCard({
+  title,
+  summary,
+  note,
+}: {
+  title: string;
+  summary?: {
+    period: string;
+    invoiceCount: number;
+    subtotalLabel: string;
+    taxLabel: string;
+    totalLabel: string;
+  };
+  note: string;
+}) {
+  return (
+    <div className="rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm">
+      <p className="font-sans text-ui-label uppercase tracking-wide text-neutral-600">{title}</p>
+      <p className="mt-2 font-display text-heading-md text-brand-navy">
+        {summary?.period ?? "No data"}
+      </p>
+      <p className="mt-1 font-sans text-sm text-neutral-700">
+        Gross {summary?.totalLabel ?? "$0.00"} · Tax {summary?.taxLabel ?? "$0.00"}
+      </p>
+      <p className="mt-2 font-sans text-xs text-neutral-600">{note}</p>
     </div>
   );
 }

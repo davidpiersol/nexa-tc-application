@@ -4,6 +4,16 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.24.1-dev] - 2026-05-13
+
+### Added
+
+- **Billing usability patch** — invoice broker/client entry now searches tenant contacts and broker-client records while still allowing manual names.
+- **Invoice tax defaults** — TC settings now include a default NM invoice tax rate, and invoice creation auto-calculates/stores tax using that rate.
+- **Receivable follow-ups** — invoices default to payable upon receipt with 0/30/60/90 reminder scaffolding, plus a TC dashboard modal for past-due/open follow-ups.
+- **Invoice operations scaffold** — invoices can be opened from the list, selected in bulk for print, and staged for email via a mailto handoff until provider email/API sync is approved.
+- **Reporting scaffold** — billing now shows NM quarterly, federal quarterly, and year-end summary cards for accounting review without automated filing.
+
 ## [v4.24.0-dev] - 2026-05-13
 
 ### Added

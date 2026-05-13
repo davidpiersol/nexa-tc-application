@@ -29,6 +29,8 @@ export function TcSettingsForm({ initial }: { initial: TcSettingsData }) {
     const dateFormat = String(formData.get("dateFormat") ?? "");
     const autoArchiveDaysRaw = String(formData.get("autoArchiveDays") ?? "");
     const autoArchiveDays = Number.parseInt(autoArchiveDaysRaw, 10);
+    const billingTaxRatePercentRaw = String(formData.get("billingTaxRatePercent") ?? "");
+    const billingTaxRatePercent = Number.parseFloat(billingTaxRatePercentRaw);
 
     const res = await updateTcSettings({
       fullName,
@@ -37,6 +39,7 @@ export function TcSettingsForm({ initial }: { initial: TcSettingsData }) {
       timezone: timezone as (typeof TC_TIMEZONE_OPTIONS)[number],
       dateFormat: dateFormat as (typeof TC_DATE_FORMAT_OPTIONS)[number],
       autoArchiveDays: Number.isFinite(autoArchiveDays) ? autoArchiveDays : 30,
+      billingTaxRatePercent: Number.isFinite(billingTaxRatePercent) ? billingTaxRatePercent : 4.875,
     });
 
     if (!res.ok) {
@@ -115,6 +118,16 @@ export function TcSettingsForm({ initial }: { initial: TcSettingsData }) {
           min={0}
           max={3650}
           defaultValue={String(initial.autoArchiveDays)}
+        />
+        <Input
+          label="Default NM invoice tax rate (%)"
+          name="billingTaxRatePercent"
+          type="number"
+          min={0}
+          max={20}
+          step="0.001"
+          defaultValue={String(initial.billingTaxRatePercent)}
+          helperText="Used for invoice tax calculation. NM gross receipts rates vary by location, so adjust this when your reporting location rate differs."
         />
       </div>
 

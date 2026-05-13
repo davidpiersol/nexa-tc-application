@@ -8,10 +8,12 @@ import {
   calculateInvoiceTotals,
   calculateLineTotalCents,
   centsFromCurrencyInput,
+  DEFAULT_INVOICE_REMINDER_DAYS,
   deriveReceivableStatus,
   normalizeBillingServiceCode,
   normalizeInvoiceStatus,
   normalizeReceivableStatus,
+  normalizeTaxRatePercent,
 } from "@/lib/billing/invoices";
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
 import { validateCsrf } from "@/lib/security/csrf-server";
@@ -19,11 +21,13 @@ import { createClient } from "@/lib/supabase/server";
 
 const bodySchema = z.object({
   broker_name: z.string().trim().max(240).optional().nullable(),
+  broker_contact_id: z.string().uuid().optional().nullable(),
   service_code: z.string().trim().max(80).optional().nullable(),
   description: z.string().trim().max(500).optional().nullable(),
   quantity: z.union([z.string(), z.number()]).optional().nullable(),
   unit_amount: z.union([z.string(), z.number()]).optional().nullable(),
   tax_amount: z.union([z.string(), z.number()]).optional().nullable(),
+  tax_rate_percent: z.union([z.string(), z.number()]).optional().nullable(),
   status: z.string().trim().max(80).optional().nullable(),
   receivable_status: z.string().trim().max(80).optional().nullable(),
   issue_date: z.string().trim().max(20).optional().nullable(),
@@ -102,6 +106,7 @@ export async function POST(request: NextRequest) {
   const quantity = quantityFromInput(parsed.quantity);
   const unitAmountCents = centsFromCurrencyInput(parsed.unit_amount);
   const taxCents = centsFromCurrencyInput(parsed.tax_amount);
+  const taxRatePercent = normalizeTaxRatePercent(parsed.tax_rate_percent);
   const lineTotalCents = calculateLineTotalCents(quantity, unitAmountCents);
   const calculatedTotals = calculateInvoiceTotals([{ quantity, unitAmountCents }], taxCents);
   const totals =
@@ -109,7 +114,7 @@ export async function POST(request: NextRequest) {
       ? { ...calculatedTotals, balanceCents: 0 }
       : calculatedTotals;
   const issueDate = isoDateOrNull(parsed.issue_date) ?? new Date().toISOString().slice(0, 10);
-  const dueDate = isoDateOrNull(parsed.due_date);
+  const dueDate = isoDateOrNull(parsed.due_date) ?? issueDate;
   const receivableStatus = deriveReceivableStatus({
     invoiceStatus: status,
     currentReceivableStatus: explicitReceivableStatus,
@@ -133,6 +138,7 @@ export async function POST(request: NextRequest) {
       invoice_number: invoiceNumber(),
       status,
       receivable_status: receivableStatus,
+      broker_contact_id: parsed.broker_contact_id ?? null,
       broker_name: text(parsed.broker_name),
       source_transaction_id: parsed.source_transaction_id ?? null,
       source_mls_entry_job_id: parsed.source_mls_entry_job_id ?? null,
@@ -141,9 +147,14 @@ export async function POST(request: NextRequest) {
       paid_at: status === "paid" ? new Date().toISOString() : null,
       subtotal_cents: totals.subtotalCents,
       tax_cents: totals.taxCents,
+      tax_rate_percent: taxRatePercent,
       total_cents: totals.totalCents,
       balance_cents: totals.balanceCents,
+      payment_terms: "due_on_receipt",
+      reminder_schedule: DEFAULT_INVOICE_REMINDER_DAYS,
+      next_reminder_due_at: totals.balanceCents > 0 ? dueDate : null,
       accounting_sync_status: "not_configured",
+      email_delivery_status: "not_configured",
       notes: text(parsed.notes),
       created_by: actor.userId,
     })

@@ -9,16 +9,21 @@ P24 adds Choral Point billing scaffolding:
 - Invoice line items with centralized total calculation.
 - Accounts receivable status tracking.
 - Monthly, quarterly, and yearly summary scaffolding.
+- Search/fill invoice broker/client entry from tenant contacts and broker-client records.
+- Payable-upon-receipt defaults with 0/30/60/90 follow-up scaffolding.
+- NM quarterly GRT, federal quarterly, and year-end reporting summaries for accounting review.
 
 P24 does not implement:
 
 - Tax filing.
-- Sales tax calculation.
+- Automated tax filing or guaranteed location-specific GRT lookup.
 - Payment processing.
 - QuickBooks sync.
 - Profit Power sync.
 - Profit Power, QuickBooks, or payment-provider credential storage.
-- External invoice sending.
+- Provider-delivered invoice email sending.
+
+P24.1 adds a TC-editable default tax rate used to calculate invoice tax at creation time. The default is New Mexico's current state gross receipts base rate, but New Mexico combines state, county, and municipal rates by reporting location. Treat the in-app value as a working billing default until a provider/API or CPA-reviewed location-rate process is approved.
 
 ## Provider Candidates
 
@@ -32,6 +37,7 @@ Questions before implementation:
 - Which QuickBooks product/service item should map to each Choral Point service type?
 - Should Choral Point create draft invoices, send invoices, or only export/sync invoice data?
 - How should payment status sync back into Choral Point?
+- Should 0/30/60/90 reminder delivery be owned by QuickBooks, Choral Point email, or a manual process?
 - Who owns accounting corrections: Choral Point or QuickBooks?
 
 ### Profit Power

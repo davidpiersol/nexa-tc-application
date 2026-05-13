@@ -6,6 +6,9 @@ import {
   deriveReceivableStatus,
   formatCurrencyFromCents,
   invoicePeriodKey,
+  nextInvoiceReminder,
+  normalizeTaxRatePercent,
+  taxCentsFromRate,
 } from "@/lib/billing/invoices";
 
 describe("billing invoice helpers", () => {
@@ -62,5 +65,36 @@ describe("billing invoice helpers", () => {
     expect(invoicePeriodKey("2026-05-13", "month")).toBe("2026-05");
     expect(invoicePeriodKey("2026-05-13", "quarter")).toBe("2026-Q2");
     expect(invoicePeriodKey("2026-05-13", "year")).toBe("2026");
+  });
+
+  it("calculates and normalizes invoice tax rates", () => {
+    expect(taxCentsFromRate(10000, 4.875)).toBe(488);
+    expect(normalizeTaxRatePercent("7.625")).toBe(7.625);
+    expect(normalizeTaxRatePercent("bad")).toBe(4.875);
+  });
+
+  it("summarizes payable-upon-receipt invoice reminders", () => {
+    expect(
+      nextInvoiceReminder({
+        issueDate: "2026-05-13",
+        dueDate: "2026-05-13",
+        balanceCents: 10000,
+        receivableStatus: "sent",
+        now: new Date("2026-05-13T12:00:00"),
+      }),
+    ).toEqual({
+      status: "due_now",
+      label: "Due today",
+      nextDate: "2026-05-13",
+    });
+    expect(
+      nextInvoiceReminder({
+        issueDate: "2026-05-01",
+        dueDate: "2026-05-01",
+        balanceCents: 10000,
+        receivableStatus: "overdue",
+        now: new Date("2026-05-13T12:00:00"),
+      }).status,
+    ).toBe("past_due");
   });
 });

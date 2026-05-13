@@ -8,10 +8,16 @@ import type {
   PipelineColumnId,
 } from "@/components/dashboard/tc-pipeline-kanban";
 import { StatCountUp } from "@/components/motion/stat-count-up";
+import { BillingRemindersModal } from "@/components/tc/billing-reminders-modal";
 import { StatsCard } from "@/components/ui/stats-card";
 import { updateTransactionPipelineStage } from "@/app/actions/tc-pipeline";
 import { TcTasksInteractive } from "@/components/tc/tc-tasks-interactive";
-import type { TcDeadlineRow, TcStats, TcTaskRow } from "@/lib/queries/tc-dashboard";
+import type {
+  BillingReminderItem,
+  TcDeadlineRow,
+  TcStats,
+  TcTaskRow,
+} from "@/lib/queries/tc-dashboard";
 import { tcTransactionListHref } from "@/lib/tc-transaction-list-filter";
 
 export function TcDashboardClient(props: {
@@ -19,8 +25,9 @@ export function TcDashboardClient(props: {
   pipeline: Record<PipelineColumnId, PipelineCard[]>;
   deadlines: TcDeadlineRow[];
   tasks: TcTaskRow[];
+  billingReminders: BillingReminderItem[];
 }) {
-  const { stats, pipeline: initialPipeline, deadlines, tasks } = props;
+  const { stats, pipeline: initialPipeline, deadlines, tasks, billingReminders } = props;
 
   async function onPipelineDrop(cardId: string, targetColumn: PipelineColumnId) {
     const res = await updateTransactionPipelineStage(cardId, targetColumn);
@@ -31,6 +38,8 @@ export function TcDashboardClient(props: {
 
   return (
     <div className="flex flex-col gap-8 lg:gap-10">
+      <BillingRemindersModal reminders={billingReminders} />
+
       <section aria-labelledby="tc-stats-heading">
         <h2 id="tc-stats-heading" className="sr-only">
           Transaction KPIs

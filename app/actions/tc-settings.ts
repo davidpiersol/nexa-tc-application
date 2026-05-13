@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { normalizeTaxRatePercent } from "@/lib/billing/invoices";
 import { createClient } from "@/lib/supabase/server";
 import {
   TC_DATE_FORMAT_OPTIONS,
@@ -14,6 +15,7 @@ const updateTcSettingsSchema = z.object({
   timezone: z.enum(TC_TIMEZONE_OPTIONS),
   dateFormat: z.enum(TC_DATE_FORMAT_OPTIONS),
   autoArchiveDays: z.number().int().min(0).max(3650),
+  billingTaxRatePercent: z.number().min(0).max(20),
 });
 
 export type UpdateTcSettingsInput = z.infer<typeof updateTcSettingsSchema>;
@@ -52,6 +54,7 @@ export async function updateTcSettings(
       timezone: parsed.data.timezone,
       dateFormat: parsed.data.dateFormat,
       autoArchiveDays: parsed.data.autoArchiveDays,
+      billingTaxRatePercent: normalizeTaxRatePercent(parsed.data.billingTaxRatePercent),
     },
   };
 

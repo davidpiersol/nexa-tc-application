@@ -32,6 +32,11 @@ export type InvoiceLineInput = {
   unitAmountCents: number;
 };
 
+export const DEFAULT_NM_GRT_RATE_PERCENT = 4.875;
+export const DEFAULT_INVOICE_REMINDER_DAYS = [0, 30, 60, 90] as const;
+
+export type InvoiceReminderStatus = "none" | "due_now" | "past_due" | "upcoming";
+
 export function formatBillingServiceCode(code: string | null | undefined): string {
   switch (code) {
     case "full_tc_transaction":
@@ -147,6 +152,18 @@ export function calculateInvoiceTotals(
   };
 }
 
+export function taxCentsFromRate(subtotalCents: number, ratePercent: number): number {
+  const safeSubtotal = Number.isFinite(subtotalCents) && subtotalCents >= 0 ? subtotalCents : 0;
+  const safeRate = Number.isFinite(ratePercent) && ratePercent >= 0 ? ratePercent : 0;
+  return Math.round(safeSubtotal * (safeRate / 100));
+}
+
+export function normalizeTaxRatePercent(value: number | string | null | undefined): number {
+  const parsed = typeof value === "number" ? value : Number(String(value ?? "").trim());
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 20) return DEFAULT_NM_GRT_RATE_PERCENT;
+  return Math.round(parsed * 1000) / 1000;
+}
+
 export function deriveReceivableStatus(input: {
   invoiceStatus: BillingInvoiceStatus;
   currentReceivableStatus?: BillingReceivableStatus;
@@ -174,4 +191,41 @@ export function invoicePeriodKey(date: string | Date, period: "month" | "quarter
   if (period === "year") return String(year);
   if (period === "quarter") return `${year}-Q${Math.floor(value.getMonth() / 3) + 1}`;
   return `${year}-${String(value.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export function nextInvoiceReminder(input: {
+  issueDate: string;
+  dueDate?: string | null;
+  balanceCents: number;
+  receivableStatus?: string | null;
+  reminderDays?: readonly number[];
+  now?: Date;
+}): { status: InvoiceReminderStatus; label: string; nextDate: string | null } {
+  if (input.balanceCents <= 0 || input.receivableStatus === "paid" || input.receivableStatus === "void") {
+    return { status: "none", label: "No reminder needed", nextDate: null };
+  }
+
+  const baseDate = new Date(`${input.dueDate ?? input.issueDate}T00:00:00`);
+  if (Number.isNaN(baseDate.getTime())) {
+    return { status: "none", label: "Reminder date unavailable", nextDate: null };
+  }
+
+  const now = input.now ?? new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = [...(input.reminderDays ?? DEFAULT_INVOICE_REMINDER_DAYS)].sort((a, b) => a - b);
+  const candidates = days.map((day) => {
+    const value = new Date(baseDate);
+    value.setDate(value.getDate() + day);
+    return value;
+  });
+  const next = candidates.find((date) => date >= today) ?? candidates[candidates.length - 1] ?? baseDate;
+  const dateLabel = next.toISOString().slice(0, 10);
+
+  if (baseDate < today) {
+    return { status: "past_due", label: `Past due · next follow-up ${dateLabel}`, nextDate: dateLabel };
+  }
+  if (baseDate.getTime() === today.getTime()) {
+    return { status: "due_now", label: "Due today", nextDate: dateLabel };
+  }
+  return { status: "upcoming", label: `Next reminder ${dateLabel}`, nextDate: dateLabel };
 }

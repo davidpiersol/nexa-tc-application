@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.24.0-dev",
+    "currentVersion": "v4.24.1-dev",
     "lastDeployedVersion": "v4.16.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -1196,10 +1196,10 @@
       "name": "Billing, invoicing, and accounting integration path",
       "lane": "billing",
       "milestoneId": "m1",
-      "versionScope": "v4.24.0-dev",
+      "versionScope": "v4.24.1-dev",
       "status": "done",
       "jiraKey": null,
-      "summary": "Add billing scaffolding for standard transaction work and MLS-only jobs, with an accounting/payment integration path.",
+      "summary": "P24 billing scaffold plus P24.1 usability patch for broker/contact invoice selection, TC-editable NM GRT default tax calculation, payable-upon-receipt reminders, invoice detail/print/email actions, TC dashboard follow-ups, and quarterly/year-end reporting scaffolding.",
       "validation": {
         "build": "passed",
         "tests": "passed",
@@ -1211,7 +1211,13 @@
         "Accounts receivable status can be tracked.",
         "Monthly, quarterly, and yearly billing summaries are planned or scaffolded.",
         "QuickBooks, Profit Power, or payment-provider integration path is documented before provider-specific implementation.",
-        "No tax filing automation is implemented without a separate approved plan."
+        "No tax filing automation is implemented without a separate approved plan.",
+        "Broker/client invoice entry can search and fill from broker/contact records while allowing manual entry.",
+        "Invoice tax auto-calculates from a TC-editable default NM GRT rate and stores the rate used on the invoice.",
+        "Invoices default to payable upon receipt with 0/30/60/90 reminder scaffolding.",
+        "TC dashboard surfaces open invoice reminders and past-due follow-ups.",
+        "Invoice list supports detail navigation plus selected invoice print and email scaffold actions.",
+        "Quarterly NM/federal and year-end reporting summaries are scaffolded without automated filing."
       ],
       "recommendedPrompt": "Implement Choral Point billing and invoicing scaffolding with a documented accounting integration path.",
       "milestoneMarker": {
@@ -1226,7 +1232,11 @@
         "Confirm the sprint changed only the intended feature area.",
         "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
         "Confirm existing TC transaction creation, login, dashboard, document upload, and First Pass flows still work.",
-        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+        "Confirm BuildTrack status and validation fields were updated without marking human approval.",
+        "Verify broker/client invoice search uses tenant contact data without duplicating contacts.",
+        "Verify TC settings expose the default NM invoice tax rate and billing creation uses it.",
+        "Verify invoice detail, selected print, selected email, reminders, and reporting cards render cleanly.",
+        "Verify tax/reporting language does not imply automated filing or provider sync."
       ],
       "testChecklist": [
         "Unit test invoice totals/status.",
@@ -1236,10 +1246,12 @@
         "Run npm run test.",
         "Run npm run build.",
         "Run focused unit tests for new helpers, validators, and permission logic.",
-        "Run at least one browser smoke pass for the changed workflow."
+        "Run at least one browser smoke pass for the changed workflow.",
+        "Focused billing smoke creates an invoice, opens detail, checks print selection, and checks email handoff.",
+        "Migration apply confirms P24.1 billing columns and exact tax-rate storage."
       ],
       "fullQaPrompt": "Run full QA for P24 (Billing, invoicing, and accounting integration path). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-      "updatedAt": "2026-05-13T05:45:00Z"
+      "updatedAt": "2026-05-13T15:17:04.290Z"
     },
     {
       "id": "P25",
