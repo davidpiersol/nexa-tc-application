@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   CRM_LITE_BOUNDARIES,
   CRM_PROVIDER_CATALOG,
+  crmProviderCanBeEnabledWhenApproved,
   defaultCrmAdapterCapabilities,
-  externalCrmSyncEnabled,
 } from "@/lib/crm/catalog";
 
 describe("CRM catalog", () => {
@@ -24,9 +24,9 @@ describe("CRM catalog", () => {
     expect(delta?.status).toBe("investigate");
     expect(delta?.guardrail).toMatch(/official API access/i);
 
-    expect(externalCrmSyncEnabled("lofty")).toBe(true);
-    expect(externalCrmSyncEnabled("follow_up_boss")).toBe(true);
-    expect(externalCrmSyncEnabled("moxiworks")).toBe(true);
+    expect(crmProviderCanBeEnabledWhenApproved("lofty")).toBe(true);
+    expect(crmProviderCanBeEnabledWhenApproved("follow_up_boss")).toBe(true);
+    expect(crmProviderCanBeEnabledWhenApproved("moxiworks")).toBe(true);
   });
 
   it("does not enable adapter operations by default", () => {

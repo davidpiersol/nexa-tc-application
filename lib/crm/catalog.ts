@@ -94,12 +94,12 @@ export function crmProviderLabel(key: CrmProviderKey): string {
   return CRM_PROVIDER_CATALOG.find((provider) => provider.key === key)?.label ?? key;
 }
 
-export function externalCrmSyncEnabled(provider: CrmProviderKey): boolean {
+export function crmProviderCanBeEnabledWhenApproved(provider: CrmProviderKey): boolean {
   return provider !== "manual" && CRM_PROVIDER_CATALOG.find((item) => item.key === provider)?.status === "available_when_approved";
 }
 
 export function defaultCrmAdapterCapabilities(provider: CrmProviderKey): CrmAdapterCapability[] {
-  const externalEnabled = externalCrmSyncEnabled(provider);
+  const canBeEnabledWhenApproved = crmProviderCanBeEnabledWhenApproved(provider);
   const blockedReason =
     provider === "deltanet"
       ? "DeltaNET API access is unconfirmed; use vendor investigation or import/export only."
@@ -109,6 +109,6 @@ export function defaultCrmAdapterCapabilities(provider: CrmProviderKey): CrmAdap
     providerKey: provider,
     operation,
     enabled: false,
-    reason: externalEnabled ? blockedReason : blockedReason,
+    reason: canBeEnabledWhenApproved ? blockedReason : blockedReason,
   }));
 }

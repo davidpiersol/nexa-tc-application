@@ -4,6 +4,17 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.30.0-dev] - 2026-05-14
+
+### Changed
+
+- **AI/CRM hardening gate** — reviewed P28/P29 for credential exposure, tenant/RLS boundaries, cost controls, disabled provider behavior, and performance risks without adding product features.
+- **CRM adapter wording** — renamed an internal CRM helper so candidate providers are described as enableable after approval, not currently synced.
+
+### Added
+
+- **Hardening report** — documented P30 findings, deferred risks, and recommendations for live AI execution, prompt retention, CRM sync, and migration validation.
+
 ## [v4.29.0-dev] - 2026-05-14
 
 ### Added

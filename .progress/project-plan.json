@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.29.0-dev",
+    "currentVersion": "v4.30.0-dev",
     "lastDeployedVersion": "v4.26.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -1531,12 +1531,12 @@
       "lane": "hardening",
       "milestoneId": "m1",
       "versionScope": "v4.30.0-dev",
-      "status": "todo",
+      "status": "done",
       "jiraKey": null,
       "summary": "No-new-feature security, privacy, performance, and code-quality pass after AI provider architecture and CRM module/integration assessment.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
+        "build": "passed",
+        "tests": "passed",
         "approval": "pending"
       },
       "acceptance": [
@@ -1581,7 +1581,8 @@
         "Regression test CRM-lite contact behavior and external sync disabled state.",
         "Verify no AI or CRM provider credential is exposed to the client."
       ],
-      "fullQaPrompt": "Run full QA for P30 (Hardening gate: AI, CRM, privacy, cost, and provider adapters). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P30 (Hardening gate: AI, CRM, privacy, cost, and provider adapters). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "completedAt": "2026-05-14T17:59:54.021Z"
     },
     {
       "id": "P31",
