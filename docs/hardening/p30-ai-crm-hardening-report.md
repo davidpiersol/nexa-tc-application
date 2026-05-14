@@ -6,7 +6,7 @@ Scope: P28 AI provider scaffolding and P29 CRM scaffolding.
 
 ## Result
 
-P30 is a no-new-feature hardening pass. The review found the P28/P29 work intentionally scaffolded, disabled by default, and bounded by human review. No AI model calls, CRM sync calls, outbound messages, signature sends, or calendar/email sends are enabled by these sprints.
+P30 is a no-new-feature hardening pass. The review found the P28/P29 work intentionally scaffolded and bounded by human review. As of the later `v4.30.1-dev` testing patch, AI feature defaults may be active for local/admin testing, but no AI model calls, CRM sync calls, outbound messages, signature sends, or calendar/email sends are enabled without credentials and future server-side adapters.
 
 ## Security And Privacy
 
@@ -37,7 +37,7 @@ P30 is a no-new-feature hardening pass. The review found the P28/P29 work intent
 
 ## Deferred Risks And Recommendations
 
-- Before enabling live AI, add request execution through a server-only adapter layer that logs usage events before returning suggestions.
+- Before enabling live AI beyond local/admin testing, add request execution through a server-only adapter layer that logs usage events before returning suggestions.
 - Before storing prompt text, define a PII retention policy and redaction rules.
 - Before enabling external CRM sync, require tenant/broker consent, external ID matching rules, duplicate handling, field mapping approval, and retry/error-state design.
 - Before applying migrations remotely, run Supabase migration validation against a disposable database because the new AI/CRM tables depend on existing helper functions and enum roles.

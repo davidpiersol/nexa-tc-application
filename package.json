@@ -1,6 +1,6 @@
 {
   "name": "nexa-tc-application",
-  "version": "4.30.0-dev",
+  "version": "4.30.1-dev",
   "private": true,
   "scripts": {
     "dev": "next dev",

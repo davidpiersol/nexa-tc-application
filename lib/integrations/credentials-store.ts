@@ -24,6 +24,7 @@ export const INTEGRATION_PROVIDERS = {
   aiGoogleVertex: "ai_google_vertex",
   aiOpenrouter: "ai_openrouter",
   aiGroq: "ai_groq",
+  aiXaiGrok: "ai_xai_grok",
 } as const;
 
 export type IntegrationProvider =

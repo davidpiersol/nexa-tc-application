@@ -4,6 +4,17 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.30.1-dev] - 2026-05-14
+
+### Added
+
+- **xAI Grok provider** — added xAI Grok as a separate provider from Groq, including credential-provider wiring and local env placeholders for testing without committing keys.
+
+### Changed
+
+- **AI testing defaults** — activated scaffolded AI feature defaults for testing with per-feature providers, max-token limits, a $50/month placeholder budget, and human-review safety boundaries still intact.
+- **AI database defaults** — added a follow-up migration that permits `xai_grok` in AI feature settings and seeds global testing defaults prospectively.
+
 ## [v4.30.0-dev] - 2026-05-14
 
 ### Changed

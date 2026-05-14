@@ -6,6 +6,7 @@ export const AI_PROVIDER_KEYS = [
   "google_vertex",
   "openrouter",
   "groq",
+  "xai_grok",
 ] as const;
 
 export type AiProviderKey = (typeof AI_PROVIDER_KEYS)[number];
@@ -113,6 +114,13 @@ export const AI_PROVIDER_CATALOG: AiProviderCatalogItem[] = [
     authMode: "api_key",
     notes: "Fast inference provider added to the catalog for lower-latency assistive workflows.",
   },
+  {
+    key: "xai_grok",
+    label: "xAI Grok",
+    credentialProvider: "ai_xai_grok",
+    authMode: "api_key",
+    notes: "xAI Grok provider for current testing with a user-supplied key stored outside source control.",
+  },
 ];
 
 export const AI_FEATURE_CATALOG: AiFeatureCatalogItem[] = [
@@ -120,8 +128,8 @@ export const AI_FEATURE_CATALOG: AiFeatureCatalogItem[] = [
     key: "intake_assist",
     label: "Intake assist",
     defaultCostTier: "medium",
-    defaultProvider: "openai",
-    defaultModel: "fast-general",
+    defaultProvider: "xai_grok",
+    defaultModel: "grok-fast-general",
     maxOutputTokens: 1200,
     requiresHumanReview: true,
     safetyBoundary: "Suggest intake values only; never change transaction data automatically.",
@@ -130,8 +138,8 @@ export const AI_FEATURE_CATALOG: AiFeatureCatalogItem[] = [
     key: "property_legal_description_assist",
     label: "Property/legal description assist",
     defaultCostTier: "medium",
-    defaultProvider: "google_gemini",
-    defaultModel: "reasoning-general",
+    defaultProvider: "xai_grok",
+    defaultModel: "grok-reasoning-general",
     maxOutputTokens: 1400,
     requiresHumanReview: true,
     safetyBoundary: "Summarize or extract pasted/source property text; human confirms legal fields.",
@@ -150,8 +158,8 @@ export const AI_FEATURE_CATALOG: AiFeatureCatalogItem[] = [
     key: "template_mapping_suggestions",
     label: "Template mapping suggestions",
     defaultCostTier: "high",
-    defaultProvider: "anthropic",
-    defaultModel: "strong-mapping",
+    defaultProvider: "xai_grok",
+    defaultModel: "grok-strong-mapping",
     maxOutputTokens: 2000,
     requiresHumanReview: true,
     safetyBoundary: "Create draft mappings only; admin approval is required before applying.",
@@ -160,8 +168,8 @@ export const AI_FEATURE_CATALOG: AiFeatureCatalogItem[] = [
     key: "package_review",
     label: "Package completeness review",
     defaultCostTier: "medium",
-    defaultProvider: "openrouter",
-    defaultModel: "strong-review",
+    defaultProvider: "xai_grok",
+    defaultModel: "grok-strong-review",
     maxOutputTokens: 1600,
     requiresHumanReview: true,
     safetyBoundary: "Flag possible package gaps only; TC decides whether the packet is complete.",
@@ -200,8 +208,8 @@ export const AI_FEATURE_CATALOG: AiFeatureCatalogItem[] = [
     key: "communication_drafts",
     label: "Broker/client message drafts",
     defaultCostTier: "medium",
-    defaultProvider: "openai",
-    defaultModel: "polished-writing",
+    defaultProvider: "xai_grok",
+    defaultModel: "grok-polished-writing",
     maxOutputTokens: 1200,
     requiresHumanReview: true,
     safetyBoundary: "Draft messages only; never send email, Slack, SMS, or signature requests.",
@@ -229,11 +237,11 @@ export function isAiFeatureKey(value: string | null | undefined): value is AiFea
 export function defaultAiFeatureSettings(): AiFeatureSetting[] {
   return AI_FEATURE_CATALOG.map((feature) => ({
     featureKey: feature.key,
-    enabled: false,
+    enabled: true,
     providerKey: feature.defaultProvider,
     modelKey: feature.defaultModel,
     maxOutputTokens: feature.maxOutputTokens,
-    monthlyBudgetCents: 0,
+    monthlyBudgetCents: 5_000,
     requireExpensiveModelConfirmation: feature.defaultCostTier === "high",
   }));
 }

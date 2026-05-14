@@ -7,7 +7,7 @@ import {
 } from "@/lib/ai/catalog";
 
 describe("AI provider catalog", () => {
-  it("supports major direct providers, gateways, and Groq", () => {
+  it("supports major direct providers, gateways, Groq, and xAI Grok", () => {
     const keys = AI_PROVIDER_CATALOG.map((provider) => provider.key);
 
     expect(keys).toEqual(
@@ -18,16 +18,21 @@ describe("AI provider catalog", () => {
         "google_vertex",
         "openrouter",
         "groq",
+        "xai_grok",
       ]),
     );
   });
 
-  it("defines disabled-by-default settings for every AI feature", () => {
+  it("defines active testing settings for every AI feature", () => {
     const settings = defaultAiFeatureSettings();
 
     expect(settings).toHaveLength(AI_FEATURE_CATALOG.length);
-    expect(settings.every((setting) => setting.enabled === false)).toBe(true);
+    expect(settings.every((setting) => setting.enabled === true)).toBe(true);
+    expect(settings.every((setting) => setting.monthlyBudgetCents > 0)).toBe(true);
     expect(settings.every((setting) => setting.maxOutputTokens > 0)).toBe(true);
+    expect(settings.find((setting) => setting.featureKey === "intake_assist")?.providerKey).toBe(
+      "xai_grok",
+    );
     expect(
       settings.find((setting) => setting.featureKey === "template_mapping_suggestions")
         ?.requireExpensiveModelConfirmation,

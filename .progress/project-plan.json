@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.30.0-dev",
+    "currentVersion": "v4.30.1-dev",
     "lastDeployedVersion": "v4.26.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -1379,13 +1379,13 @@
       "lane": "operations",
       "milestoneId": "m1",
       "versionScope": "v4.27.0-dev",
-      "status": "done",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Add operational workflow surfaces for scorecard, notifications, reminders, Slack/Outlook-style integrations, and dashboard task visibility.",
       "validation": {
         "build": "passed",
         "tests": "passed",
-        "approval": "pending"
+        "approval": "approved"
       },
       "acceptance": [
         "Scorecard tab placeholder exists if detailed scorecard rules are still blocked.",
@@ -1421,7 +1421,8 @@
         "Run at least one browser smoke pass for the changed workflow."
       ],
       "fullQaPrompt": "Run full QA for P27 (Scorecard, notifications, calendar, and communication integrations). Verify all acceptance criteria, review checklist items, unit/integration tests, browser smoke paths, role permissions, data migrations/RLS where applicable, and regression flows: login, TC dashboard, transactions list, create/edit transaction, transaction detail, documents, First Pass, and role dashboards. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-      "completedAt": "2026-05-14T17:41:00.823Z"
+      "completedAt": "2026-05-14T17:41:00.823Z",
+      "updatedAt": "2026-05-14T19:41:44.446Z"
     },
     {
       "id": "P28",

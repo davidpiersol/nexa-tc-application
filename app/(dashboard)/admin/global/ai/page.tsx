@@ -23,8 +23,8 @@ export default async function GlobalAdminAiPage() {
         <h2 className="mt-2 font-display text-heading-lg text-brand-navy">AI Configuration</h2>
         <p className="mt-2 max-w-3xl font-sans text-ui-body text-neutral-600">
           P28 scaffolds model/provider governance, feature-level defaults, cost controls, and audit
-          requirements. AI is disabled by default and every legally sensitive workflow remains
-          human-review only.
+          requirements. AI features are active for testing, while every legally sensitive workflow
+          remains human-review only.
         </p>
       </header>
 
@@ -51,13 +51,15 @@ export default async function GlobalAdminAiPage() {
         <h3 className="font-display text-heading-md text-brand-navy">Feature defaults</h3>
         <p className="mt-2 font-sans text-sm text-neutral-600">
           Admin-selectable settings are represented per feature in the P28 schema. Defaults below
-          are intentionally disabled until credentials, tenant budget, and review rules are approved.
+          are enabled for testing with provider/model governance, budget placeholders, and review
+          rules still intact.
         </p>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[840px] text-left font-sans text-sm">
             <thead className="border-b border-neutral-200 text-ui-label uppercase tracking-wide text-neutral-600">
               <tr>
                 <th className="py-2 pr-4">Feature</th>
+                <th className="py-2 pr-4">Status</th>
                 <th className="py-2 pr-4">Default provider</th>
                 <th className="py-2 pr-4">Model class</th>
                 <th className="py-2 pr-4">Max tokens</th>
@@ -73,11 +75,12 @@ export default async function GlobalAdminAiPage() {
                     <td className="py-3 pr-4 text-brand-navy">
                       {feature?.label ?? setting.featureKey}
                     </td>
+                    <td className="py-3 pr-4">{setting.enabled ? "Active" : "Disabled"}</td>
                     <td className="py-3 pr-4">{setting.providerKey}</td>
                     <td className="py-3 pr-4">{setting.modelKey}</td>
                     <td className="py-3 pr-4">{setting.maxOutputTokens}</td>
                     <td className="py-3 pr-4">
-                      {setting.monthlyBudgetCents === 0 ? "Disabled" : setting.monthlyBudgetCents}
+                      ${(setting.monthlyBudgetCents / 100).toFixed(2)}
                     </td>
                     <td className="py-3 pr-4">
                       {feature?.safetyBoundary ?? "Human review required"}
