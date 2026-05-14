@@ -69,6 +69,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
         { href: "/admin/global/tenants", label: "Tenants" },
         { href: "/admin/global/templates", label: "Templates" },
         { href: "/admin/global/package-rules", label: "Package rules" },
+        { href: "/admin/global/ai", label: "AI" },
         { href: "/admin/global/wiki", label: "Wiki" },
         { href: "/admin/global/reports", label: "Reports" },
       ];

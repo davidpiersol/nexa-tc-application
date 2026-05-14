@@ -4,6 +4,14 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.28.0-dev] - 2026-05-14
+
+### Added
+
+- **Provider-neutral AI catalog** — added disabled-by-default AI provider and feature scaffolding for OpenAI, Anthropic, Google Gemini, Google Vertex AI, OpenRouter-compatible gateways, and Groq.
+- **AI governance schema** — added AI feature settings and usage event tables for provider/model selection, budget controls, token/cost tracking, and tenant-scoped audit history.
+- **Global AI configuration page** — added a global-admin AI configuration surface showing provider credentials, per-feature defaults, max-token limits, and human-review safety boundaries.
+
 ## [v4.27.0-dev] - 2026-05-14
 
 ### Added

@@ -36,6 +36,12 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
     expect(profileHrefFromPathname("/admin/global")).toBeNull();
   });
 
+  it("includes AI configuration in global admin navigation", () => {
+    expect(navItemsForPath("/admin/global/dashboard").map((item) => item.href)).toContain(
+      "/admin/global/ai",
+    );
+  });
+
   it("includes MLS entry in the TC navigation", () => {
     expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/mls-entry");
   });
