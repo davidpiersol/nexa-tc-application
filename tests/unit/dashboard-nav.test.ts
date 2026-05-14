@@ -25,6 +25,7 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
 
   it("uses agent hub route base", () => {
     expect(routeBase("/agent")).toBe("/agent");
+    expect(routeBase("/agent/crm")).toBe("/agent");
     expect(routeBase("/agent/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")).toBe(
       "/agent/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
     );
@@ -60,5 +61,9 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
 
   it("includes CRM in the TC navigation", () => {
     expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/crm");
+  });
+
+  it("includes CRM in the agent navigation", () => {
+    expect(navItemsForPath("/agent").map((item) => item.href)).toContain("/agent/crm");
   });
 });

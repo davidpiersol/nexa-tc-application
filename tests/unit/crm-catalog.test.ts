@@ -1,20 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
-  CRM_LITE_BOUNDARIES,
+  CRM_BOUNDARIES,
   CRM_PROVIDER_CATALOG,
   crmProviderCanBeEnabledWhenApproved,
   defaultCrmAdapterCapabilities,
 } from "@/lib/crm/catalog";
 
 describe("CRM catalog", () => {
-  it("defines CRM-lite boundaries without replacing contacts", () => {
-    expect(CRM_LITE_BOUNDARIES).toEqual(
+  it("defines CRM boundaries without replacing contacts", () => {
+    expect(CRM_BOUNDARIES).toEqual(
       expect.arrayContaining([
-        "contacts",
+        "upcoming actions",
         "SOI categories and segmentation",
         "touch history",
         "follow-up tasks",
-        "import/export",
+        "CSV and VCF import/export entry points",
       ]),
     );
   });

@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.30.5-dev",
+    "currentVersion": "v4.31.0-dev",
     "lastDeployedVersion": "v4.26.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -1592,12 +1592,12 @@
       "lane": "crm",
       "milestoneId": "m1",
       "versionScope": "v4.31.0-dev",
-      "status": "todo",
+      "status": "done",
       "jiraKey": null,
-      "summary": "Build the user-specific CRM module for TC and agent users. CRM opens from the left nav to upcoming actions, supports today/week/month/quarter work views, reuses existing contacts and brokers, adds CRM subpages for follow-ups, SOI/lead segmentation, touch history, notes, reminders, relationships, import/export, and external CRM connection setup.",
+      "summary": "Build the user-specific internal CRM module for TC and agent users. CRM opens from the left nav to upcoming actions, supports today/week/month/quarter work views, reuses existing contacts and brokers by linking to them, and adds CRM subpages for follow-ups, SOI/lead segmentation, touch history, notes, reminders, relationships, import/export entry points, and internal calendar/reminders.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
+        "build": "passed",
+        "tests": "passed",
         "approval": "pending"
       },
       "acceptance": [
@@ -1606,7 +1606,9 @@
         "Upcoming actions aggregate CRM reminders, follow-up tasks, contact/broker touchpoints, transaction-related reminders where appropriate, and overdue items into clear time buckets.",
         "CRM data is user-specific within the tenant: TC users see their own CRM workspace, and agent users get the same CRM model in the agent login without seeing another user's private CRM activity.",
         "Contacts and brokers are reused from the existing contacts/brokers modules instead of duplicating canonical contact data.",
-        "CRM subpages exist for Upcoming Actions, Contacts/People, SOI and lead segments, Follow-up Tasks, Touch History, Notes, Reminders, Relationships, Import/Export, Calendar/Reminders, and External CRM Connections.",
+        "CRM does not create a Contacts/People subpage; existing Contacts and Brokers remain the canonical screens.",
+        "CRM can link activity to existing Choral Point contacts or brokers and can route users to the existing new-contact screen when they need to create a contact.",
+        "CRM subpages exist for Upcoming Actions, SOI and lead segments, Follow-up Tasks, Touch History, Notes, Reminders, Relationships, Import/Export entry points, Calendar/Reminders, and External CRM Connections.",
         "SOI and lead segmentation supports categories such as SOI, hot/warm/cold, vendor, broker client, prospect, and other practical CRM tags while preserving existing contact categories.",
         "Follow-up tasks support due dates, priority/status, assigned owner, related contact/broker/transaction where available, and completion history.",
         "Touch history captures calls, emails, texts, meetings, notes, and other interactions with date, direction, outcome, and next action.",
@@ -1617,9 +1619,10 @@
         "External CRM connection UX assumes users know normal login credentials, not API keys. The sprint must document and scaffold the blocker path: OAuth where supported, vendor/admin-assisted API key setup where required, CSV import/export fallback where no API is available, and encrypted credential storage only when necessary and approved.",
         "No external CRM sync is enabled until credentials, consent, field mapping, rate limits, duplicate handling, and error states are approved.",
         "Agent CRM pages match the TC CRM model where applicable, but agent permissions remain scoped to the agent user and their allowed contacts/transactions.",
-        "If calendar/provider/API credential work would require risky storage of raw third-party passwords or unsupported scraping, stop and document the risk plus a recommended safe path before implementing that part."
+        "If calendar/provider/API credential work would require risky storage of raw third-party passwords or unsupported scraping, stop and document the risk plus a recommended safe path before implementing that part.",
+        "CRM import/export entry points support both CSV and VCF/vCard paths by routing contact creation/update through the existing Contacts module."
       ],
-      "recommendedPrompt": "Implement P31 CRM build-out for TC and agent users. Open CRM to Upcoming Actions, add user-specific CRM subpages for contacts/people, SOI/lead segments, follow-up tasks, touch history, notes, reminders, relationships, import/export, calendar/reminder scaffolding, and external CRM connections. Reuse existing contacts/brokers, keep all CRM data tenant/user-scoped, use CRM in visible copy, and do not enable external sync until credentials/consent/mapping are approved. If provider credentials require API keys the user cannot obtain, document OAuth/vendor-assisted/CSV fallback options and stop before unsafe credential handling.",
+      "recommendedPrompt": "Implement P31 internal CRM build-out for TC and agent users. Open CRM to Upcoming Actions, add user-specific subpages for SOI/lead segments, follow-up tasks, touch history, notes, reminders, relationships, import/export entry points, calendar/reminders, and external CRM connection status. Do not create a Contacts/People subpage; link to existing contacts/brokers and route new-contact creation to the existing Contacts page. Include CSV and VCF import/export entry points. Keep all CRM data tenant/user-scoped, use CRM in visible copy, and do not enable external sync until a later provider-integration sprint.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
         "stableWhen": "P31 is fully tested only after typecheck, unit tests, build, focused browser smoke for TC CRM and agent CRM, role/RLS checks, and full QA prompt pass.",
@@ -1630,7 +1633,9 @@
         "Confirm CRM left-nav opens to Upcoming Actions for TC users.",
         "Confirm agent users have the same CRM model where applicable from the agent login/navigation.",
         "Confirm CRM data is scoped by tenant and user and does not leak between TC/agent users.",
-        "Confirm CRM pages reuse contacts and brokers rather than duplicating canonical person/broker data.",
+        "Confirm CRM links to existing contacts and brokers and does not add a duplicate Contacts/People subpage.",
+        "Confirm Add contact paths route to the existing Contacts page.",
+        "Confirm CSV and VCF import/export entry points are present without bypassing contact canonicalization.",
         "Confirm Upcoming Actions includes today, this week, this month, this quarter, overdue, and completed/closed behavior as designed.",
         "Confirm calendar/reminder scaffolding does not write to Outlook, Google, Apple, or any external provider without explicit setup and approval.",
         "Confirm external CRM connection page explains OAuth/vendor-assisted API-key/CSV fallback paths in plain language.",
@@ -1649,11 +1654,14 @@
         "Unit test CRM task/reminder/touchpoint validators.",
         "Unit test external CRM provider connection state helpers and disabled-sync behavior.",
         "Browser smoke TC /tc/crm upcoming actions and each CRM subpage.",
+        "Browser smoke CRM link-to-contact/broker flows and Add contact routing.",
+        "Browser smoke CSV/VCF import/export entry points.",
         "Browser smoke agent CRM route/navigation and confirm agent scoping.",
-        "Browser smoke contact/broker lookup from CRM without duplicating contact records.",
         "Verify no external CRM/calendar network calls occur without explicit configured credentials."
       ],
-      "fullQaPrompt": "Run full QA for P31 (CRM build-out: actions, follow-ups, contacts, calendar, and external CRM connections). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke for TC and agent CRM, role permissions/RLS, user-specific data isolation, contact/broker reuse, calendar/reminder disabled-provider behavior, external CRM connection blockers, and regression flows: login, TC dashboard, agent dashboard, contacts, brokers, transactions list, transaction detail, documents, First Pass, billing, AI configuration, and reports. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P31 (CRM build-out: actions, follow-ups, contacts, calendar, and external CRM connections). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke for TC and agent CRM, role permissions/RLS, user-specific data isolation, contact/broker reuse, calendar/reminder disabled-provider behavior, external CRM connection blockers, and regression flows: login, TC dashboard, agent dashboard, contacts, brokers, transactions list, transaction detail, documents, First Pass, billing, AI configuration, and reports. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+      "startedAt": "2026-05-14T21:09:43.309Z",
+      "completedAt": "2026-05-14T21:27:08.000Z"
     },
     {
       "id": "P32",
@@ -1854,6 +1862,58 @@
         "Run at least one browser smoke pass for the changed workflow."
       ],
       "fullQaPrompt": "Run full QA for P35 (Release hardening and stable rollback checkpoint). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P36",
+      "name": "External CRM and calendar provider integrations",
+      "lane": "integrations",
+      "milestoneId": "m2",
+      "versionScope": "v4.36.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Implement approved external CRM and calendar provider connection flows after the internal CRM is stable, including OAuth/provider setup, field mapping, duplicate handling, CSV/VCF fallback, sync logs, and safe error states.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Outlook/Microsoft 365 calendar connection path is implemented through approved OAuth/API scopes before any calendar writes are enabled.",
+        "Google Calendar connection path is implemented through approved OAuth/API scopes before any calendar writes are enabled.",
+        "Apple Calendar is supported through iCal/ICS export or CalDAV only if a safe supported setup is approved; no password scraping is introduced.",
+        "External CRM providers use OAuth where supported, vendor/admin-assisted API-key setup where required, and CSV/VCF import/export fallback where API access is unavailable.",
+        "DeltaNET/Delta Media Group remains vendor-gated until official API/OAuth/export terms are confirmed.",
+        "Lofty, Follow Up Boss, and MoxiWorks connection flows include consent, credential status, field mapping, duplicate handling, rate-limit handling, sync logs, and error recovery.",
+        "No raw third-party passwords are stored unless David explicitly approves after a security review.",
+        "External sync can be disabled per tenant and per user without breaking internal CRM."
+      ],
+      "recommendedPrompt": "Implement P36 external CRM and calendar provider integrations after P31-P35 are stable. Add approved OAuth/API/CSV/VCF connection flows for Outlook, Google Calendar, Apple/iCal/CalDAV strategy, DeltaNET, Lofty, Follow Up Boss, and MoxiWorks. Include consent, field mapping, duplicate handling, sync logs, rate-limit/error handling, and safe disable states. Stop before storing raw third-party passwords or unsupported scraping.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P36 is fully tested only after typecheck, unit tests, build, provider-mocked integration tests, browser smoke, security review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.36.0"
+      },
+      "reviewChecklist": [
+        "Confirm internal CRM remains usable when all external providers are disconnected.",
+        "Confirm provider credentials are encrypted and never exposed to clients.",
+        "Confirm OAuth scopes are minimal and documented.",
+        "Confirm CSV/VCF fallback is available where provider API access is unavailable.",
+        "Confirm no unsupported scraping or raw password storage is introduced.",
+        "Confirm sync logs and error states are visible and actionable.",
+        "Confirm tenant/user provider disable states work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Unit test provider connection state helpers.",
+        "Unit test CSV/VCF import/export parsing and duplicate matching.",
+        "Unit test sync-log/error-state behavior.",
+        "Mock provider OAuth/API tests without live credentials.",
+        "Browser smoke provider connection pages and disabled-provider fallback."
+      ],
+      "fullQaPrompt": "Run full QA for P36 (External CRM and calendar provider integrations). Verify provider connection acceptance, credentials/security, OAuth/API/CSV/VCF fallback behavior, field mapping, duplicate handling, sync logs, disabled-provider behavior, and regression flows. If any provider access would require unsupported scraping or raw password storage, stop and report the risk plus recommendations. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     }
   ],
   "blockers": [

@@ -34,6 +34,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/tc/contacts") return "Contacts";
   if (pathname === "/tc/brokers") return "Brokers";
   if (pathname === "/tc/crm") return "CRM";
+  if (pathname.startsWith("/tc/crm/")) return "CRM";
   if (pathname === "/tc/archive") return "Archive";
   if (pathname === "/tc/transactions") return "Transactions";
   if (pathname === "/tc/mls-entry/new") return "New MLS Entry";
@@ -51,6 +52,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/tc\/reports\/[^/]+$/)) return "Report";
   if (pathname === "/tc/settings") return "Settings";
   if (pathname === "/agent" || pathname === "/agent/") return "Broker dashboard";
+  if (pathname === "/agent/crm" || pathname.startsWith("/agent/crm/")) return "CRM";
   if (pathname.startsWith("/agent/profile")) return "Broker profile";
   if (pathname.match(/^\/agent\/[^/]+$/)) return "Broker transaction";
   if (pathname.match(/^\/buyer\/[^/]+$/)) return "Buyer Dashboard";

@@ -1,4 +1,5 @@
 import type { DashboardRole } from "@/types/roles";
+import { isWorkspaceTransactionId } from "@/lib/utils/workspace-id";
 
 export type NavItem = { href: string; label: string };
 
@@ -31,7 +32,7 @@ export function routeBase(pathname: string): string {
   if (role === "agent") {
     const parts = pathname.split("/").filter(Boolean);
     const seg = parts[1];
-    if (seg && seg !== "profile" && seg.length > 0) {
+    if (seg && isWorkspaceTransactionId(seg)) {
       return `/agent/${seg}`;
     }
     return "/agent";
@@ -86,6 +87,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
   if (role === "agent") {
     return [
       { href: "/agent", label: "Transactions" },
+      { href: "/agent/crm", label: "CRM" },
       { href: "/agent/profile", label: "Signing & profile" },
     ];
   }

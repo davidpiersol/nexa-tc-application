@@ -21,11 +21,11 @@ export type CrmProviderCatalogItem = {
 export const CRM_PROVIDER_CATALOG: CrmProviderCatalogItem[] = [
   {
     key: "manual",
-    label: "Choral Point CRM-lite",
+    label: "Choral Point CRM",
     status: "disabled",
     authModes: ["none"],
     summary:
-      "Internal CRM-lite features built on contacts, SOI categories, lead temperature, notes, reminders, and transaction relationships.",
+      "Internal CRM features built on contacts, SOI categories, lead temperature, notes, reminders, and transaction relationships.",
     guardrail: "No external sync. Contacts remain canonical inside Choral Point.",
   },
   {
@@ -67,8 +67,8 @@ export const CRM_PROVIDER_CATALOG: CrmProviderCatalogItem[] = [
   },
 ];
 
-export const CRM_LITE_BOUNDARIES = [
-  "contacts",
+export const CRM_BOUNDARIES = [
+  "upcoming actions",
   "SOI categories and segmentation",
   "lead temperature",
   "touch history",
@@ -76,10 +76,12 @@ export const CRM_LITE_BOUNDARIES = [
   "broker/client relationships",
   "notes",
   "reminders",
-  "import/export",
+  "calendar",
+  "CSV and VCF import/export entry points",
+  "external CRM connection status",
 ] as const;
 
-export type CrmLiteBoundary = (typeof CRM_LITE_BOUNDARIES)[number];
+export type CrmBoundary = (typeof CRM_BOUNDARIES)[number];
 
 export type CrmAdapterOperation = "pull_contacts" | "push_contact" | "push_task" | "record_touch";
 
