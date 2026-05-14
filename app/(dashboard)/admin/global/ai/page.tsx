@@ -6,6 +6,8 @@ import {
   AI_PROVIDER_CATALOG,
   defaultAiFeatureSettings,
 } from "@/lib/ai/catalog";
+import { listGlobalCredentialStatuses } from "@/lib/integrations/global-credentials-store";
+import { AiCredentialManager } from "./ai-credential-manager";
 
 export default async function GlobalAdminAiPage() {
   const actor = await loadActorContext();
@@ -13,6 +15,14 @@ export default async function GlobalAdminAiPage() {
   if (!isGlobalAdminRole(actor.role)) redirect("/forbidden");
 
   const settings = defaultAiFeatureSettings();
+  const credentialStatuses = await listGlobalCredentialStatuses();
+  const credentialProviders = AI_PROVIDER_CATALOG.filter((provider) => provider.credentialProvider)
+    .map((provider) => ({
+      key: provider.key,
+      label: provider.label,
+      credentialProvider: provider.credentialProvider!,
+      authMode: provider.authMode,
+    }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,6 +56,11 @@ export default async function GlobalAdminAiPage() {
           ))}
         </div>
       </section>
+
+      <AiCredentialManager
+        providers={credentialProviders}
+        initialStatuses={credentialStatuses}
+      />
 
       <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
         <h3 className="font-display text-heading-md text-brand-navy">Feature defaults</h3>

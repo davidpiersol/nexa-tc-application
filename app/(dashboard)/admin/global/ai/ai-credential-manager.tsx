@@ -1,0 +1,194 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
+
+type ProviderOption = {
+  key: string;
+  label: string;
+  credentialProvider: string;
+  authMode: string;
+};
+
+type CredentialStatus = {
+  provider: string;
+  configured: boolean;
+  settings: Record<string, unknown>;
+  updatedAt: string | null;
+};
+
+type AiCredentialManagerProps = {
+  providers: ProviderOption[];
+  initialStatuses: CredentialStatus[];
+};
+
+async function loadCsrfToken(): Promise<string> {
+  const response = await fetch("/api/csrf", { credentials: "include" });
+  const body = (await response.json()) as { csrfToken?: string };
+  if (!body.csrfToken) throw new Error("Missing CSRF token");
+  return body.csrfToken;
+}
+
+export function AiCredentialManager({
+  providers,
+  initialStatuses,
+}: AiCredentialManagerProps) {
+  const [selectedProvider, setSelectedProvider] = useState(providers[0]?.credentialProvider ?? "");
+  const [apiKey, setApiKey] = useState("");
+  const [defaultModel, setDefaultModel] = useState("");
+  const [notes, setNotes] = useState("");
+  const [statuses, setStatuses] = useState(initialStatuses);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const statusByProvider = useMemo(() => {
+    return new Map(statuses.map((status) => [status.provider, status]));
+  }, [statuses]);
+
+  async function refreshStatuses() {
+    const response = await fetch("/api/admin/global/ai/credentials", {
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Unable to refresh credential status");
+    const body = (await response.json()) as { items?: CredentialStatus[] };
+    setStatuses(body.items ?? []);
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setMessage(null);
+    setSaving(true);
+    try {
+      const csrfToken = await loadCsrfToken();
+      const response = await fetch("/api/admin/global/ai/credentials", {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          [CSRF_HEADER_NAME]: csrfToken,
+        },
+        body: JSON.stringify({
+          credentialProvider: selectedProvider,
+          apiKey,
+          defaultModel: defaultModel.trim() || undefined,
+          notes: notes.trim() || undefined,
+        }),
+      });
+      if (!response.ok) {
+        const body = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? "Unable to save credential");
+      }
+      setApiKey("");
+      setMessage("Credential saved. Secret value is encrypted and hidden after save.");
+      await refreshStatuses();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save credential");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
+      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h3 className="font-display text-heading-md text-brand-navy">Provider credentials</h3>
+          <p className="mt-2 max-w-3xl font-sans text-sm text-neutral-600">
+            Global admins can set provider API keys here. Saved keys are encrypted server-side and
+            never displayed back in the browser.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
+        {providers.map((provider) => {
+          const status = statusByProvider.get(provider.credentialProvider);
+          return (
+            <article
+              key={provider.credentialProvider}
+              className="rounded-brand-md border border-neutral-200 bg-neutral-50 p-3"
+            >
+              <p className="font-sans text-sm font-semibold text-brand-navy">{provider.label}</p>
+              <p className="mt-1 font-sans text-xs uppercase tracking-wide text-neutral-600">
+                {provider.credentialProvider} · {provider.authMode}
+              </p>
+              <p className="mt-2 font-sans text-sm text-neutral-700">
+                {status?.configured ? "Configured" : "Not configured"}
+              </p>
+              {status?.updatedAt ? (
+                <p className="mt-1 font-sans text-xs text-neutral-600">
+                  Updated {new Date(status.updatedAt).toLocaleString()}
+                </p>
+              ) : null}
+            </article>
+          );
+        })}
+      </div>
+
+      <form className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2" onSubmit={handleSubmit}>
+        <label className="flex flex-col gap-2 font-sans text-sm font-semibold text-brand-navy">
+          Provider
+          <select
+            className="rounded-brand-md border border-neutral-300 bg-white px-3 py-2 font-sans text-sm text-neutral-900"
+            value={selectedProvider}
+            onChange={(event) => setSelectedProvider(event.target.value)}
+            required
+          >
+            {providers.map((provider) => (
+              <option key={provider.credentialProvider} value={provider.credentialProvider}>
+                {provider.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-2 font-sans text-sm font-semibold text-brand-navy">
+          API key
+          <input
+            className="rounded-brand-md border border-neutral-300 px-3 py-2 font-sans text-sm text-neutral-900"
+            type="password"
+            value={apiKey}
+            onChange={(event) => setApiKey(event.target.value)}
+            autoComplete="off"
+            placeholder="Paste the provider key"
+            required
+          />
+        </label>
+
+        <label className="flex flex-col gap-2 font-sans text-sm font-semibold text-brand-navy">
+          Default model override
+          <input
+            className="rounded-brand-md border border-neutral-300 px-3 py-2 font-sans text-sm text-neutral-900"
+            value={defaultModel}
+            onChange={(event) => setDefaultModel(event.target.value)}
+            placeholder="Optional"
+          />
+        </label>
+
+        <label className="flex flex-col gap-2 font-sans text-sm font-semibold text-brand-navy">
+          Admin notes
+          <input
+            className="rounded-brand-md border border-neutral-300 px-3 py-2 font-sans text-sm text-neutral-900"
+            value={notes}
+            onChange={(event) => setNotes(event.target.value)}
+            placeholder="Optional setup note"
+          />
+        </label>
+
+        <div className="lg:col-span-2">
+          <button
+            className="rounded-brand-md bg-brand-navy px-4 py-2 font-sans text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+            type="submit"
+            disabled={saving || !selectedProvider || apiKey.length < 8}
+          >
+            {saving ? "Saving..." : "Save encrypted credential"}
+          </button>
+          {message ? <p className="mt-3 font-sans text-sm text-green-700">{message}</p> : null}
+          {error ? <p className="mt-3 font-sans text-sm text-red-700">{error}</p> : null}
+        </div>
+      </form>
+    </section>
+  );
+}

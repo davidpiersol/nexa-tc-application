@@ -4,6 +4,14 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.30.2-dev] - 2026-05-14
+
+### Added
+
+- **Global AI credential management** — added a global-admin dashboard credential form for AI provider keys, including masked provider status and encrypted server-side storage.
+- **Global provider credential schema** — added a platform-level encrypted credential table guarded by global-admin-only RLS and Data API grants.
+- **AI credential API tests** — added coverage confirming secret values are not returned and unsupported providers are rejected.
+
 ## [v4.30.1-dev] - 2026-05-14
 
 ### Added
