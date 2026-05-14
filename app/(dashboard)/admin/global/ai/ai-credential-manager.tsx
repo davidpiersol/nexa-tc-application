@@ -41,6 +41,7 @@ export function AiCredentialManager({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
 
   const statusByProvider = useMemo(() => {
     return new Map(statuses.map((status) => [status.provider, status]));
@@ -88,6 +89,37 @@ export function AiCredentialManager({
       setError(err instanceof Error ? err.message : "Unable to save credential");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleTestKey() {
+    setError(null);
+    setMessage(null);
+    setTesting(true);
+    try {
+      const csrfToken = await loadCsrfToken();
+      const response = await fetch("/api/admin/global/ai/credentials/test", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          [CSRF_HEADER_NAME]: csrfToken,
+        },
+        body: JSON.stringify({ credentialProvider: selectedProvider }),
+      });
+      const body = (await response.json().catch(() => ({}))) as {
+        result?: { message?: string };
+        error?: string;
+      };
+      if (!response.ok) {
+        throw new Error(body.result?.message ?? body.error ?? "Credential test failed");
+      }
+      setMessage(body.result?.message ?? "Credential test passed.");
+      await refreshStatuses();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Credential test failed");
+    } finally {
+      setTesting(false);
     }
   }
 
@@ -163,13 +195,23 @@ export function AiCredentialManager({
         </label>
 
         <div className="lg:col-span-2">
-          <button
-            className="rounded-brand-md bg-brand-navy px-4 py-2 font-sans text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-            type="submit"
-            disabled={saving || !selectedProvider || apiKey.length < 8}
-          >
-            {saving ? "Saving..." : "Save encrypted credential"}
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              className="rounded-brand-md bg-brand-navy px-4 py-2 font-sans text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              type="submit"
+              disabled={saving || !selectedProvider || apiKey.length < 8}
+            >
+              {saving ? "Saving..." : "Save encrypted credential"}
+            </button>
+            <button
+              className="rounded-brand-md border border-brand-navy px-4 py-2 font-sans text-sm font-semibold text-brand-navy disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+              disabled={testing || saving || !selectedProvider || !selectedStatus?.configured}
+              onClick={handleTestKey}
+            >
+              {testing ? "Testing..." : "Test saved key"}
+            </button>
+          </div>
           {message ? <p className="mt-3 font-sans text-sm text-green-700">{message}</p> : null}
           {error ? <p className="mt-3 font-sans text-sm text-red-700">{error}</p> : null}
         </div>

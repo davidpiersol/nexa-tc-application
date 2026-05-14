@@ -4,6 +4,13 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.30.4-dev] - 2026-05-14
+
+### Added
+
+- **AI credential testing** — added a Global Admin “Test saved key” action that decrypts the saved provider key server-side and validates it against each supported provider’s model-list endpoint without exposing the secret.
+- **Provider validation tests** — added unit coverage for successful key validation, missing keys, provider rejections, and the credential test API response shape.
+
 ## [v4.30.3-dev] - 2026-05-14
 
 ### Changed

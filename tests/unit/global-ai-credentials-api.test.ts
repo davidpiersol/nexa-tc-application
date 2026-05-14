@@ -3,7 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const requireGlobalAdmin = vi.fn();
 const listGlobalCredentialStatuses = vi.fn();
 const upsertGlobalCredentials = vi.fn();
+const getGlobalCredentials = vi.fn();
 const auditInsert = vi.fn(async () => ({ error: null }));
+const testSavedAiProviderKey = vi.fn();
 
 vi.mock("@/lib/auth/admin-guard", () => ({
   requireGlobalAdmin,
@@ -18,8 +20,13 @@ vi.mock("@/lib/security/csrf-server", () => ({
 }));
 
 vi.mock("@/lib/integrations/global-credentials-store", () => ({
+  getGlobalCredentials,
   listGlobalCredentialStatuses,
   upsertGlobalCredentials,
+}));
+
+vi.mock("@/lib/ai/provider-key-test", () => ({
+  testSavedAiProviderKey,
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -46,6 +53,15 @@ describe("global AI credentials API", () => {
       },
     ]);
     upsertGlobalCredentials.mockResolvedValue(undefined);
+    getGlobalCredentials.mockResolvedValue({ apiKey: "xai-test-key" });
+    testSavedAiProviderKey.mockResolvedValue({
+      ok: true,
+      provider: "ai_xai_grok",
+      checkedAt: "2026-05-14T00:00:00.000Z",
+      status: 200,
+      modelCount: 2,
+      message: "Key validated. Provider returned 2 models.",
+    });
   });
 
   it("returns masked credential status without secret values", async () => {
@@ -98,5 +114,27 @@ describe("global AI credentials API", () => {
 
     expect(response.status).toBe(400);
     expect(upsertGlobalCredentials).not.toHaveBeenCalled();
+  });
+
+  it("tests a saved provider credential without returning the secret", async () => {
+    const { POST } = await import("@/app/api/admin/global/ai/credentials/test/route");
+    const response = await POST(
+      new Request("http://localhost/api/admin/global/ai/credentials/test", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          credentialProvider: "ai_xai_grok",
+        }),
+      }) as any,
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(getGlobalCredentials).toHaveBeenCalledWith("ai_xai_grok");
+    expect(testSavedAiProviderKey).toHaveBeenCalledWith("ai_xai_grok", {
+      apiKey: "xai-test-key",
+    });
+    expect(JSON.stringify(body)).not.toContain("xai-test-key");
+    expect(body.result.message).toContain("Key validated");
   });
 });

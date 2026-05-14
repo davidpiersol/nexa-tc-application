@@ -16,8 +16,9 @@ Use **AI Configuration** to save provider keys for the platform. The settings pa
 
 1. Stores the key in encrypted server-side storage.
 2. Shows only configured/not configured status after save.
-3. Never displays the saved key back in the browser.
-4. Keeps AI outputs as suggestions that require human review.
+3. Lets the admin test a saved key with the provider's model-list endpoint where available.
+4. Never displays the saved key back in the browser.
+5. Keeps AI outputs as suggestions that require human review.
 
 ## What it does not do yet
 
@@ -29,3 +30,5 @@ Use **AI Configuration** to save provider keys for the platform. The settings pa
 ## Setup notes
 
 Use the provider's own dashboard to create and rotate API keys. If a key is replaced in Choral Point, the new value becomes the active platform credential for future AI calls that use that provider.
+
+After saving a key, use **Test saved key**. A passing test means the provider accepted the key and returned a model-list response. A failed test usually means the key is invalid, revoked, missing provider access, blocked by network policy, or the provider needs a service-account/OAuth validator instead of an API key validator.
