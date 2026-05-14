@@ -9,6 +9,8 @@ import type {
 } from "@/components/dashboard/tc-pipeline-kanban";
 import { StatCountUp } from "@/components/motion/stat-count-up";
 import { BillingRemindersModal } from "@/components/tc/billing-reminders-modal";
+import { OperationalNotificationCenter } from "@/components/tc/operational-notification-center";
+import { ScorecardSummaryCard } from "@/components/tc/scorecard-summary-card";
 import { StatsCard } from "@/components/ui/stats-card";
 import { updateTransactionPipelineStage } from "@/app/actions/tc-pipeline";
 import { TcTasksInteractive } from "@/components/tc/tc-tasks-interactive";
@@ -18,6 +20,8 @@ import type {
   TcStats,
   TcTaskRow,
 } from "@/lib/queries/tc-dashboard";
+import type { OperationalNotification } from "@/lib/operations/notifications";
+import type { ScorecardSummary } from "@/lib/operations/scorecard";
 import { tcTransactionListHref } from "@/lib/tc-transaction-list-filter";
 
 export function TcDashboardClient(props: {
@@ -26,8 +30,18 @@ export function TcDashboardClient(props: {
   deadlines: TcDeadlineRow[];
   tasks: TcTaskRow[];
   billingReminders: BillingReminderItem[];
+  scorecard: ScorecardSummary;
+  operationalNotifications: OperationalNotification[];
 }) {
-  const { stats, pipeline: initialPipeline, deadlines, tasks, billingReminders } = props;
+  const {
+    stats,
+    pipeline: initialPipeline,
+    deadlines,
+    tasks,
+    billingReminders,
+    scorecard,
+    operationalNotifications,
+  } = props;
 
   async function onPipelineDrop(cardId: string, targetColumn: PipelineColumnId) {
     const res = await updateTransactionPipelineStage(cardId, targetColumn);
@@ -69,6 +83,15 @@ export function TcDashboardClient(props: {
             label="Signatures needed"
             icon={<FileSignature aria-hidden />}
           />
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-5 lg:gap-8">
+        <div className="lg:col-span-2">
+          <ScorecardSummaryCard scorecard={scorecard} />
+        </div>
+        <div className="lg:col-span-3">
+          <OperationalNotificationCenter notifications={operationalNotifications} />
         </div>
       </section>
 

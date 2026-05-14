@@ -35,6 +35,9 @@ test.describe("TC dashboard", () => {
     await expect(page.getByText(/Desert Willow/i).first()).toBeVisible({
       timeout: 30_000,
     });
+    await expect(page.getByText("Operations center")).toBeVisible();
+    await expect(page.getByText("Scorecard setup blocked")).toBeVisible();
+    await expect(page.getByText("AI pass").first()).toBeVisible();
     expect(errs).toEqual([]);
   });
 
@@ -53,6 +56,20 @@ test.describe("TC dashboard", () => {
     await expect(
       page.getByRole("link", { name: "First Pass" }).first(),
     ).toBeVisible();
+    await expect(page.getByText("AI pass").first()).toBeVisible();
+    await expect(page.getByText("Human pass").first()).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
+  test("scorecard page keeps blocked operational placeholder visible", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, "/tc/scorecard");
+    await expect(page.getByRole("heading", { level: 2, name: "Scorecard" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText(/scorecard task definitions have not been supplied/i)).toBeVisible();
+    await expect(page.getByText("Slack", { exact: true })).toBeVisible();
+    await expect(page.getByText("Microsoft Outlook / Calendar", { exact: true })).toBeVisible();
     expect(errs).toEqual([]);
   });
 

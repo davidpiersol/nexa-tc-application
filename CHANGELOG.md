@@ -4,6 +4,14 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.27.0-dev] - 2026-05-14
+
+### Added
+
+- **Operations center scaffold** — added dashboard notification scaffolding for invoice reminders, open TC tasks, scorecard blockers, and AI pass / Human pass activity labels.
+- **Scorecard placeholder** — added a TC Scorecard page and navigation entry with blocked placeholder metrics until final team scorecard rules are supplied.
+- **Communication integration plan** — documented Slack as optional/provider-scoped and Outlook/Google calendar as later OAuth/provider integrations that do not send externally yet.
+
 ## [v4.26.3-dev] - 2026-05-14
 
 ### Added

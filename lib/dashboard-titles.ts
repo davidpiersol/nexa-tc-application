@@ -44,6 +44,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/tc/billing/print") return "Print Invoices";
   if (pathname.match(/^\/tc\/billing\/[^/]+\/edit$/)) return "Edit Invoice";
   if (pathname.match(/^\/tc\/billing\/[^/]+$/)) return "Invoice Detail";
+  if (pathname === "/tc/scorecard") return "Scorecard";
   if (pathname === "/tc/reports") return "Reports";
   if (pathname === "/tc/reports/billing") return "Billing Report";
   if (pathname.match(/^\/tc\/reports\/[^/]+$/)) return "Report";

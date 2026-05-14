@@ -4,6 +4,14 @@ import {
   transactionStatusToColumn,
   type PipelineColumnKey,
 } from "@/lib/data/pipeline-map";
+import {
+  buildOperationalNotifications,
+  type OperationalNotification,
+} from "@/lib/operations/notifications";
+import {
+  buildScorecardPlaceholder,
+  type ScorecardSummary,
+} from "@/lib/operations/scorecard";
 import { createClient } from "@/lib/supabase/server";
 
 function initials(name: string | null | undefined): string {
@@ -78,9 +86,12 @@ export async function getTcDashboardData(): Promise<{
   deadlines: TcDeadlineRow[];
   tasks: TcTaskRow[];
   billingReminders: BillingReminderItem[];
+  scorecard: ScorecardSummary;
+  operationalNotifications: OperationalNotification[];
 }> {
   const supabase = await createClient();
   const pipeline = emptyPipelineColumns();
+  const emptyScorecard = buildScorecardPlaceholder();
 
   const { data: txRows, error: txErr } = await supabase
     .from("transactions")
@@ -103,6 +114,12 @@ export async function getTcDashboardData(): Promise<{
       deadlines: [],
       tasks: [],
       billingReminders: [],
+      scorecard: emptyScorecard,
+      operationalNotifications: buildOperationalNotifications({
+        tasks: [],
+        billingReminders: [],
+        scorecard: emptyScorecard,
+      }),
     };
   }
 
@@ -249,6 +266,12 @@ export async function getTcDashboardData(): Promise<{
       reminderStatus: reminder.status,
     };
   });
+  const scorecard = buildScorecardPlaceholder();
+  const operationalNotifications = buildOperationalNotifications({
+    tasks,
+    billingReminders,
+    scorecard,
+  });
 
   return {
     pipeline,
@@ -261,5 +284,7 @@ export async function getTcDashboardData(): Promise<{
     deadlines: deadlineCandidates.slice(0, 12),
     tasks,
     billingReminders,
+    scorecard,
+    operationalNotifications,
   };
 }
