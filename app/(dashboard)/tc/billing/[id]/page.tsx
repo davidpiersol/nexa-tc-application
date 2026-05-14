@@ -1,12 +1,19 @@
 import Link from "next/link";
+import { Download, Eye, Mail, Pencil } from "lucide-react";
+import { BillingWorkspaceNav } from "@/components/tc/billing-workspace-nav";
 import { Button } from "@/components/ui/button";
-import { getBillingInvoiceDetail } from "@/lib/queries/billing-invoice-detail";
+import { type BillingInvoiceDetail, getBillingInvoiceDetail } from "@/lib/queries/billing-invoice-detail";
 
 export default async function BillingInvoiceDetailPage({ params }: { params: { id: string } }) {
   const invoice = await getBillingInvoiceDetail(params.id);
+  const previewHref = `/tc/billing/print?ids=${encodeURIComponent(invoice.id)}`;
+  const downloadHref = `/api/billing/invoices/${encodeURIComponent(invoice.id)}/pdf`;
+  const emailHref = buildInvoiceEmailHref(invoice, previewHref);
 
   return (
     <div className="flex flex-col gap-6">
+      <BillingWorkspaceNav />
+
       <header className="border-b border-neutral-300 pb-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -18,9 +25,35 @@ export default async function BillingInvoiceDetailPage({ params }: { params: { i
               {invoice.receivableStatusLabel}
             </p>
           </div>
-          <Button asChild variant="secondary">
-            <Link href="/tc/billing">Back to billing</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="secondary">
+              <Link href={`/tc/billing/${invoice.id}/edit`}>
+                <Pencil className="size-4" aria-hidden="true" />
+                Edit
+              </Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <a href={downloadHref}>
+                <Download className="size-4" aria-hidden="true" />
+                Download PDF
+              </a>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href={previewHref} target="_blank">
+                <Eye className="size-4" aria-hidden="true" />
+                Preview Invoice
+              </Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <a href={emailHref}>
+                <Mail className="size-4" aria-hidden="true" />
+                Email
+              </a>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/tc/billing">Back to billing</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -74,6 +107,45 @@ export default async function BillingInvoiceDetailPage({ params }: { params: { i
       ) : null}
     </div>
   );
+}
+
+function buildInvoiceEmailHref(invoice: BillingInvoiceDetail, printHref: string): string {
+  const lineItems = invoice.lineItems.length
+    ? invoice.lineItems
+        .map(
+          (item) =>
+            `- ${item.quantity} x ${item.description}: ${item.unitAmountLabel} (${item.lineTotalLabel})`,
+        )
+        .join("\n")
+    : "- Choral Point service";
+  const body = [
+    "Hello,",
+    "",
+    "Please find the invoice details below.",
+    "",
+    `Invoice: ${invoice.invoiceNumber ?? "Draft invoice"}`,
+    `To: ${invoice.brokerName ?? "Client"}`,
+    `Issue date: ${invoice.issueDate}`,
+    `Due date: ${invoice.dueDate ?? invoice.issueDate}`,
+    `Payment terms: ${invoice.paymentTerms}`,
+    "",
+    "Line items:",
+    lineItems,
+    "",
+    `Subtotal: ${invoice.subtotalLabel}`,
+    `Tax: ${invoice.taxLabel}`,
+    `Total: ${invoice.totalLabel}`,
+    `Balance due: ${invoice.balanceLabel}`,
+    "",
+    "Printable invoice:",
+    printHref,
+    "",
+    "Thank you for your business.",
+  ].join("\n");
+  const to = invoice.brokerEmail ? encodeURIComponent(invoice.brokerEmail) : "";
+  return `mailto:${to}?subject=${encodeURIComponent(
+    `Choral Point invoice ${invoice.invoiceNumber ?? ""}`.trim(),
+  )}&body=${encodeURIComponent(body)}`;
 }
 
 function Metric({ label, value }: { label: string; value: string }) {

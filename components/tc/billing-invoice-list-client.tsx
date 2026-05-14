@@ -75,13 +75,13 @@ export function BillingInvoiceListClient({ invoices }: { invoices: BillingInvoic
     selectedIds.length > 0 ? `/tc/billing/print?ids=${encodeURIComponent(selectedIds.join(","))}` : null;
   const emailHref =
     selectedInvoices.length > 0
-      ? `mailto:?subject=${encodeURIComponent("Choral Point invoice follow-up")}&body=${encodeURIComponent(
+      ? `mailto:${encodeURIComponent(
           selectedInvoices
-            .map(
-              (invoice) =>
-                `${invoice.invoiceNumber ?? "Draft invoice"} - ${invoice.brokerName ?? "Broker TBD"} - ${invoice.totalLabel} - Balance ${invoice.balanceLabel}`,
-            )
-            .join("\n"),
+            .map((invoice) => invoice.brokerEmail)
+            .filter(Boolean)
+            .join(","),
+        )}?subject=${encodeURIComponent("Choral Point invoice")}&body=${encodeURIComponent(
+          buildInvoiceEmailBody(selectedInvoices),
         )}`
       : null;
 
@@ -214,4 +214,46 @@ export function BillingInvoiceListClient({ invoices }: { invoices: BillingInvoic
       </ul>
     </div>
   );
+}
+
+function buildInvoiceEmailBody(invoices: BillingInvoiceListItem[]): string {
+  const ids = invoices.map((invoice) => invoice.id).join(",");
+  const printPath = `/tc/billing/print?ids=${ids}`;
+  const sections = invoices.map((invoice) => {
+    const lines = invoice.lineItems.length
+      ? invoice.lineItems
+          .map(
+            (item) =>
+              `- ${item.quantity} x ${item.description}: ${item.unitAmountLabel} (${item.lineTotalLabel})`,
+          )
+          .join("\n")
+      : `- Choral Point service: ${invoice.totalLabel}`;
+    return [
+      `Invoice: ${invoice.invoiceNumber ?? "Draft invoice"}`,
+      `To: ${invoice.brokerName ?? "Client"}`,
+      `Source: ${invoice.sourceLabel}`,
+      `Issue date: ${invoice.issueDate}`,
+      `Due date: ${invoice.dueDate ?? invoice.issueDate}`,
+      `Payment terms: ${invoice.paymentTerms}`,
+      "",
+      "Line items:",
+      lines,
+      "",
+      `Tax: ${invoice.taxLabel}`,
+      `Total: ${invoice.totalLabel}`,
+      `Amount received: ${invoice.receivedLabel}`,
+      `Balance due: ${invoice.balanceLabel}`,
+    ].join("\n");
+  });
+
+  return [
+    "Hello,",
+    "",
+    "Please find the invoice details below. The printable invoice view is available in Choral Point at:",
+    printPath,
+    "",
+    sections.join("\n\n---\n\n"),
+    "",
+    "Thank you for your business.",
+  ].join("\n");
 }

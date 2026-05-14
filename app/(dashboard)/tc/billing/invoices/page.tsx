@@ -1,4 +1,5 @@
 import { BillingInvoiceListClient } from "@/components/tc/billing-invoice-list-client";
+import { BillingWorkspaceNav } from "@/components/tc/billing-workspace-nav";
 import { getBillingDashboardData } from "@/lib/queries/billing-dashboard";
 
 export default async function TcBillingInvoicesPage() {
@@ -6,6 +7,8 @@ export default async function TcBillingInvoicesPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <BillingWorkspaceNav />
+
       <header className="border-b border-neutral-300 pb-5">
         <h2 className="font-display text-heading-lg text-brand-navy">Invoices</h2>
         <p className="mt-1 max-w-3xl font-sans text-ui-body text-neutral-600">

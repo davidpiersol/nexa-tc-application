@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BarChart3, BriefcaseBusiness, ContactRound, FileText, Home } from "lucide-react";
+import { BillingWorkspaceNav } from "@/components/tc/billing-workspace-nav";
 import { getBillingDashboardData } from "@/lib/queries/billing-dashboard";
 
 const plannedReports = [
@@ -38,6 +39,8 @@ export default async function TcReportsPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <BillingWorkspaceNav />
+
       <header className="border-b border-neutral-300 pb-5">
         <h2 className="font-display text-heading-lg text-brand-navy">Reports</h2>
         <p className="mt-1 max-w-3xl font-sans text-ui-body text-neutral-600">
@@ -74,7 +77,12 @@ function ReportMetric({
   href,
 }: {
   title: string;
-  summary?: { totalLabel: string; receivedLabel: string; taxOnReceivedLabel: string };
+  summary?: {
+    totalLabel: string;
+    receivedLabel: string;
+    taxLabel: string;
+    taxOnReceivedLabel: string;
+  };
   href: string;
 }) {
   return (
@@ -87,7 +95,10 @@ function ReportMetric({
         {summary?.totalLabel ?? "$0.00"}
       </p>
       <p className="mt-1 font-sans text-sm text-neutral-700">
-        Received {summary?.receivedLabel ?? "$0.00"} · Tax {summary?.taxOnReceivedLabel ?? "$0.00"}
+        Received {summary?.receivedLabel ?? "$0.00"} · Tax billed {summary?.taxLabel ?? "$0.00"}
+      </p>
+      <p className="mt-1 font-sans text-sm text-neutral-700">
+        Tax on received {summary?.taxOnReceivedLabel ?? "$0.00"}
       </p>
     </Link>
   );

@@ -310,13 +310,23 @@ test.describe("TC dashboard", () => {
     await page.getByLabel("Quantity").fill("1");
     await page.getByLabel("Unit amount").fill("250.00");
     await page.getByRole("button", { name: "Create invoice" }).click();
-    await expect(page).toHaveURL(/\/tc\/billing\?created=/, { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/tc\/billing\/[a-f0-9-]+$/, { timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: /CP-/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /edit/i })).toHaveAttribute("href", /\/tc\/billing\/[a-f0-9-]+\/edit$/);
+    await expect(page.getByRole("link", { name: /download pdf/i })).toHaveAttribute(
+      "href",
+      /\/api\/billing\/invoices\/[a-f0-9-]+\/pdf$/,
+    );
+    await expect(page.getByRole("link", { name: /preview invoice/i })).toHaveAttribute(
+      "href",
+      /\/tc\/billing\/print\?ids=[a-f0-9-]+$/,
+    );
     await gotoApp(page, "/tc/billing/invoices");
     await expect(page.getByRole("heading", { level: 2, name: "Invoices" })).toBeVisible();
     await page.getByPlaceholder("Broker, invoice, status, source, amount").fill(marker);
     await expect(page.getByText(marker)).toBeVisible({ timeout: 15_000 });
     await page.getByRole("combobox", { name: "Sort" }).selectOption("total_desc");
-    await expect(page.getByText("$262.19").first()).toBeVisible();
+    await expect(page.getByText("$271.06").first()).toBeVisible();
     await expect(page.getByText(/Sync: not configured/i).first()).toBeVisible();
     await page.locator("li", { hasText: marker }).getByRole("link").first().click();
     await expect(page).toHaveURL(/\/tc\/billing\/[a-f0-9-]+$/);

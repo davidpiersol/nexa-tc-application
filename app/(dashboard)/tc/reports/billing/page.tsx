@@ -1,4 +1,5 @@
 import { BillingReportTable } from "@/components/tc/billing-report-table";
+import { BillingWorkspaceNav } from "@/components/tc/billing-workspace-nav";
 import { invoicePeriodKey } from "@/lib/billing/invoices";
 import { getBillingDashboardData, type BillingPeriodSummary } from "@/lib/queries/billing-dashboard";
 
@@ -19,6 +20,8 @@ export default async function TcBillingReportPage({
 
   return (
     <div className="flex flex-col gap-6">
+      <BillingWorkspaceNav />
+
       <header className="border-b border-neutral-300 pb-5">
         <h2 className="font-display text-heading-lg text-brand-navy">Billing report</h2>
         <p className="mt-1 max-w-3xl font-sans text-ui-body text-neutral-600">
@@ -33,9 +36,10 @@ export default async function TcBillingReportPage({
         <PeriodPill href="/tc/reports/billing?period=year" active={period === "year"} label="Yearly" />
       </div>
 
-      <section className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-4">
         <Metric title="Total billed" value={activeSummary?.totalLabel ?? "$0.00"} />
         <Metric title="Total received" value={activeSummary?.receivedLabel ?? "$0.00"} />
+        <Metric title="Tax billed" value={activeSummary?.taxLabel ?? "$0.00"} />
         <Metric title="Taxes on received" value={activeSummary?.taxOnReceivedLabel ?? "$0.00"} />
       </section>
 
@@ -95,7 +99,10 @@ function PeriodSummary({ summary }: { summary: BillingPeriodSummary }) {
       </p>
       <p className="mt-2 font-display text-heading-sm text-brand-navy">{summary.totalLabel}</p>
       <p className="mt-1 font-sans text-sm text-neutral-700">
-        Received {summary.receivedLabel} · Tax {summary.taxOnReceivedLabel}
+        Received {summary.receivedLabel} · Tax billed {summary.taxLabel}
+      </p>
+      <p className="mt-1 font-sans text-sm text-neutral-700">
+        Tax on received {summary.taxOnReceivedLabel}
       </p>
       <p className="mt-1 font-sans text-xs text-neutral-600">
         {summary.invoiceCount} invoice(s) · Open {summary.balanceLabel}

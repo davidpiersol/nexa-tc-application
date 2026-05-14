@@ -24,6 +24,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const title = dashboardTitleForPath(pathname);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  if (pathname.startsWith("/tc/billing/print")) {
+    return (
+      <main className="min-h-screen bg-white p-4 print:p-0">
+        {children}
+      </main>
+    );
+  }
+
   const homeHref = role ? routeBase(pathname) : "/";
   const tcPrimaryAction = (() => {
     if (!pathname.startsWith("/tc")) return null;

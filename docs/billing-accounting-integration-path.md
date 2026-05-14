@@ -23,7 +23,7 @@ P24 does not implement:
 - Profit Power, QuickBooks, or payment-provider credential storage.
 - Provider-delivered invoice email sending.
 
-P24.1 adds a TC-editable default tax rate used to calculate invoice tax at creation time. The default is New Mexico's current state gross receipts base rate, but New Mexico combines state, county, and municipal rates by reporting location. Treat the in-app value as a working billing default until a provider/API or CPA-reviewed location-rate process is approved.
+P24.1 adds a TC-editable default tax rate used to calculate invoice tax at creation time. The working default is Los Lunas, NM GRT at 8.425%, but New Mexico combines state, county, and municipal rates by reporting location. Treat the in-app value as a working billing default until a provider/API or CPA-reviewed location-rate process is approved.
 
 ## Provider Candidates
 

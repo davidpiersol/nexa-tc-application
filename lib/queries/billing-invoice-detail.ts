@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import {
   formatCurrencyFromCents,
   formatInvoiceStatus,
+  formatPaymentTerms,
   formatReceivableStatus,
   nextInvoiceReminder,
 } from "@/lib/billing/invoices";
@@ -15,27 +16,22 @@ type BillingLineRow = {
   line_total_cents: number | null;
 };
 
-function formatPaymentTerms(value: unknown): string {
-  switch (String(value ?? "")) {
-    case "due_on_receipt":
-      return "Payable upon receipt";
-    case "net_30":
-      return "Net 30";
-    case "custom":
-      return "Custom terms";
-    default:
-      return "Payable upon receipt";
-  }
-}
-
 export type BillingInvoiceDetail = {
   id: string;
   invoiceNumber: string | null;
+  brokerContactId: string | null;
   brokerName: string | null;
+  brokerEmail: string | null;
+  status: string;
   statusLabel: string;
+  receivableStatus: string;
   receivableStatusLabel: string;
   issueDate: string;
   dueDate: string | null;
+  subtotalCents: number;
+  taxCents: number;
+  totalCents: number;
+  balanceCents: number;
   subtotalLabel: string;
   taxLabel: string;
   totalLabel: string;
@@ -78,15 +74,31 @@ export async function getBillingInvoiceDetail(id: string): Promise<BillingInvoic
   const lineRows: BillingLineRow[] = Array.isArray(data.billing_invoice_line_items)
     ? (data.billing_invoice_line_items as BillingLineRow[])
     : [];
+  const brokerContactId = (data.broker_contact_id as string | null) ?? null;
+  const { data: brokerContact } = brokerContactId
+    ? await supabase
+        .from("contacts")
+        .select("email")
+        .eq("id", brokerContactId)
+        .maybeSingle()
+    : { data: null };
 
   return {
     id: data.id as string,
     invoiceNumber: (data.invoice_number as string | null) ?? null,
+    brokerContactId,
     brokerName: (data.broker_name as string | null) ?? null,
+    brokerEmail: (brokerContact?.email as string | null) ?? null,
+    status: data.status as string,
     statusLabel: formatInvoiceStatus(data.status as string),
+    receivableStatus: data.receivable_status as string,
     receivableStatusLabel: formatReceivableStatus(data.receivable_status as string),
     issueDate: data.issue_date as string,
     dueDate: (data.due_date as string | null) ?? null,
+    subtotalCents: Number(data.subtotal_cents ?? 0),
+    taxCents: Number(data.tax_cents ?? 0),
+    totalCents: Number(data.total_cents ?? 0),
+    balanceCents,
     subtotalLabel: formatCurrencyFromCents(Number(data.subtotal_cents ?? 0)),
     taxLabel: formatCurrencyFromCents(Number(data.tax_cents ?? 0)),
     totalLabel: formatCurrencyFromCents(Number(data.total_cents ?? 0)),

@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { updateTcSettings } from "@/app/actions/tc-settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DEFAULT_NM_GRT_RATE_PERCENT } from "@/lib/billing/invoices";
 import {
   TC_DATE_FORMAT_OPTIONS,
   TC_TIMEZONE_OPTIONS,
@@ -39,7 +40,9 @@ export function TcSettingsForm({ initial }: { initial: TcSettingsData }) {
       timezone: timezone as (typeof TC_TIMEZONE_OPTIONS)[number],
       dateFormat: dateFormat as (typeof TC_DATE_FORMAT_OPTIONS)[number],
       autoArchiveDays: Number.isFinite(autoArchiveDays) ? autoArchiveDays : 30,
-      billingTaxRatePercent: Number.isFinite(billingTaxRatePercent) ? billingTaxRatePercent : 4.875,
+      billingTaxRatePercent: Number.isFinite(billingTaxRatePercent)
+        ? billingTaxRatePercent
+        : DEFAULT_NM_GRT_RATE_PERCENT,
     });
 
     if (!res.ok) {

@@ -32,7 +32,7 @@ export type InvoiceLineInput = {
   unitAmountCents: number;
 };
 
-export const DEFAULT_NM_GRT_RATE_PERCENT = 4.875;
+export const DEFAULT_NM_GRT_RATE_PERCENT = 8.425;
 export const DEFAULT_INVOICE_REMINDER_DAYS = [0, 30, 60, 90] as const;
 
 export type InvoiceReminderStatus = "none" | "due_now" | "past_due" | "upcoming";
@@ -80,6 +80,18 @@ export function formatReceivableStatus(status: string | null | undefined): strin
     case "not_sent":
     default:
       return "Not sent";
+  }
+}
+
+export function formatPaymentTerms(value: string | null | undefined): string {
+  switch (value) {
+    case "net_30":
+      return "Net 30";
+    case "custom":
+      return "Custom terms";
+    case "due_on_receipt":
+    default:
+      return "Payable upon receipt";
   }
 }
 

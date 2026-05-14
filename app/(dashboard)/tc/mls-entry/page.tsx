@@ -43,11 +43,14 @@ export default async function MlsEntryJobsPage() {
         {jobs.map((job) => (
           <li
             key={job.id}
-            className="rounded-brand-lg border border-neutral-300 bg-white p-4 shadow-brand-sm"
+            className="rounded-brand-lg border border-neutral-300 bg-white shadow-brand-sm transition-colors hover:bg-neutral-50"
           >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <Link
+              href={`/tc/mls-entry/${job.id}`}
+              className="flex flex-col gap-3 p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 sm:flex-row sm:items-start sm:justify-between"
+            >
               <div>
-                <p className="font-sans font-semibold text-brand-navy">
+                <p className="font-sans font-semibold text-brand-navy underline-offset-4 hover:underline">
                   {job.propertyAddress ?? "Property address TBD"}
                 </p>
                 <p className="mt-1 font-sans text-sm text-neutral-600">
@@ -68,7 +71,7 @@ export default async function MlsEntryJobsPage() {
               <span className="rounded-full bg-neutral-100 px-3 py-1 font-sans text-xs font-semibold text-neutral-700">
                 MLS-only
               </span>
-            </div>
+            </Link>
           </li>
         ))}
       </ul>

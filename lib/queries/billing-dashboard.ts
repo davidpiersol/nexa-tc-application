@@ -2,6 +2,7 @@ import {
   formatBillingServiceCode,
   formatCurrencyFromCents,
   formatInvoiceStatus,
+  formatPaymentTerms,
   formatReceivableStatus,
   nextInvoiceReminder,
   invoicePeriodKey,
@@ -34,6 +35,7 @@ export type BillingInvoiceListItem = {
   invoiceNumber: string | null;
   brokerContactId: string | null;
   brokerName: string | null;
+  brokerEmail: string | null;
   status: string;
   statusLabel: string;
   receivableStatus: string;
@@ -59,6 +61,13 @@ export type BillingInvoiceListItem = {
   reminderStatus: string;
   nextReminderDate: string | null;
   emailDeliveryStatus: string;
+  lineItems: Array<{
+    id: string;
+    description: string;
+    quantity: string;
+    unitAmountLabel: string;
+    lineTotalLabel: string;
+  }>;
 };
 
 export type BillingPeriodSummary = {
@@ -91,6 +100,13 @@ export type BillingDashboardData = {
     nmQuarterly: BillingPeriodSummary[];
     federalQuarterly: BillingPeriodSummary[];
     yearEnd: BillingPeriodSummary[];
+  };
+  sender: {
+    name: string;
+    company: string | null;
+    email: string | null;
+    phone: string | null;
+    address: string | null;
   };
 };
 
@@ -125,7 +141,7 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
     supabase
       .from("billing_invoices")
       .select(
-        "id, invoice_number, broker_contact_id, broker_name, status, receivable_status, issue_date, due_date, paid_at, subtotal_cents, tax_cents, tax_rate_percent, total_cents, balance_cents, source_transaction_id, source_mls_entry_job_id, accounting_sync_status, payment_terms, reminder_schedule, next_reminder_due_at, email_delivery_status",
+        "id, invoice_number, broker_contact_id, broker_name, status, receivable_status, issue_date, due_date, paid_at, subtotal_cents, tax_cents, tax_rate_percent, total_cents, balance_cents, source_transaction_id, source_mls_entry_job_id, accounting_sync_status, payment_terms, reminder_schedule, next_reminder_due_at, email_delivery_status, billing_invoice_line_items(id, description, quantity, unit_amount_cents, line_total_cents, service_code)",
       )
       .order("updated_at", { ascending: false })
       .limit(200),
@@ -176,6 +192,7 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
       };
     })
     .sort((a, b) => Number(b.isBroker) - Number(a.isBroker) || a.name.localeCompare(b.name));
+  const contactsById = new Map(contacts.map((contact) => [contact.id, contact]));
 
   const invoices: BillingInvoiceListItem[] = (invoicesRes.data ?? []).map((row) => {
     const transactionId = row.source_transaction_id as string | null;
@@ -200,11 +217,24 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
         ? (row.reminder_schedule as number[])
         : undefined,
     });
+    const brokerContact = row.broker_contact_id
+      ? contactsById.get(row.broker_contact_id as string)
+      : undefined;
+    const lineRows = Array.isArray(row.billing_invoice_line_items)
+      ? (row.billing_invoice_line_items as Array<{
+          id: string;
+          description: string | null;
+          quantity: string | number | null;
+          unit_amount_cents: number | null;
+          line_total_cents: number | null;
+        }>)
+      : [];
     return {
       id: row.id as string,
       invoiceNumber: (row.invoice_number as string | null) ?? null,
       brokerContactId: (row.broker_contact_id as string | null) ?? null,
-      brokerName: (row.broker_name as string | null) ?? null,
+      brokerName: (row.broker_name as string | null) ?? brokerContact?.name ?? null,
+      brokerEmail: brokerContact?.email ?? null,
       status: row.status as string,
       statusLabel: formatInvoiceStatus(row.status as string),
       receivableStatus: row.receivable_status as string,
@@ -225,11 +255,18 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
       taxOnReceivedLabel: formatCurrencyFromCents(taxOnReceivedCents),
       sourceLabel,
       accountingSyncStatus: (row.accounting_sync_status as string | null) ?? "not_configured",
-      paymentTerms: (row.payment_terms as string | null) ?? "due_on_receipt",
+      paymentTerms: formatPaymentTerms((row.payment_terms as string | null) ?? "due_on_receipt"),
       reminderLabel: reminder.label,
       reminderStatus: reminder.status,
       nextReminderDate: (row.next_reminder_due_at as string | null) ?? reminder.nextDate,
       emailDeliveryStatus: (row.email_delivery_status as string | null) ?? "not_configured",
+      lineItems: lineRows.map((line) => ({
+        id: line.id,
+        description: String(line.description ?? "Choral Point service"),
+        quantity: String(line.quantity ?? "1"),
+        unitAmountLabel: formatCurrencyFromCents(Number(line.unit_amount_cents ?? 0)),
+        lineTotalLabel: formatCurrencyFromCents(Number(line.line_total_cents ?? 0)),
+      })),
     };
   });
   const quarterSummary = summarizeByPeriod(invoices, "quarter");
@@ -266,6 +303,49 @@ export async function getBillingDashboardData(): Promise<BillingDashboardData> {
       federalQuarterly: quarterSummary,
       yearEnd: yearSummary,
     },
+    sender: await getBillingSender(supabase),
+  };
+}
+
+async function getBillingSender(supabase: Awaited<ReturnType<typeof createClient>>): Promise<BillingDashboardData["sender"]> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return {
+      name: "Choral Point",
+      company: null,
+      email: null,
+      phone: null,
+      address: null,
+    };
+  }
+
+  const { data: profile } = await supabase
+    .from("users")
+    .select("full_name, email, phone, tenant_id")
+    .eq("id", user.id)
+    .maybeSingle();
+  const tenantId = profile?.tenant_id as string | undefined;
+  const { data: tenant } = tenantId
+    ? await supabase.from("tenants").select("name, settings").eq("id", tenantId).maybeSingle()
+    : { data: null };
+  const settings = tenant?.settings && typeof tenant.settings === "object" ? tenant.settings as Record<string, unknown> : {};
+  const addressParts = [
+    settings.billingAddress,
+    settings.billingCity,
+    settings.billingState,
+    settings.billingZip,
+  ]
+    .map((value) => (typeof value === "string" ? value.trim() : ""))
+    .filter(Boolean);
+
+  return {
+    name: String(profile?.full_name ?? "").trim() || "Choral Point",
+    company: String(settings.billingName ?? tenant?.name ?? "").trim() || null,
+    email: String(settings.billingEmail ?? profile?.email ?? user.email ?? "").trim() || null,
+    phone: String(settings.billingPhone ?? profile?.phone ?? "").trim() || null,
+    address: addressParts.length ? addressParts.join(" | ") : null,
   };
 }
 

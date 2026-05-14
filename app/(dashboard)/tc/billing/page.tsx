@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BillingInvoiceForm } from "@/components/tc/billing-invoice-form";
-import { Button } from "@/components/ui/button";
+import { BillingWorkspaceNav } from "@/components/tc/billing-workspace-nav";
+import { DEFAULT_NM_GRT_RATE_PERCENT } from "@/lib/billing/invoices";
 import { getBillingDashboardData } from "@/lib/queries/billing-dashboard";
 import { getTcSettingsForCurrentUser } from "@/lib/queries/tc-settings";
 
@@ -9,10 +10,12 @@ export default async function TcBillingPage() {
     getBillingDashboardData(),
     getTcSettingsForCurrentUser(),
   ]);
-  const taxRatePercent = settings?.billingTaxRatePercent ?? 4.875;
+  const taxRatePercent = settings?.billingTaxRatePercent ?? DEFAULT_NM_GRT_RATE_PERCENT;
 
   return (
     <div className="flex flex-col gap-6">
+      <BillingWorkspaceNav />
+
       <header className="border-b border-neutral-300 pb-5">
         <h2 className="font-display text-heading-lg text-brand-navy">Billing</h2>
         <p className="mt-1 max-w-3xl font-sans text-ui-body text-neutral-600">
@@ -35,34 +38,6 @@ export default async function TcBillingPage() {
         contacts={data.contacts}
         taxRatePercent={taxRatePercent}
       />
-
-      <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="font-display text-heading-sm text-brand-navy">Invoices</h3>
-            <p className="font-sans text-sm text-neutral-600">
-              Search, sort, print, email, and open invoice details from the invoice workspace.
-            </p>
-          </div>
-          <Button asChild variant="secondary">
-            <Link href="/tc/billing/invoices">Open invoices</Link>
-          </Button>
-        </div>
-      </section>
-
-      <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="font-display text-heading-sm text-brand-navy">Reports</h3>
-            <p className="font-sans text-sm text-neutral-600">
-              Quickly review billing collections, taxes on received amounts, and year-end totals.
-            </p>
-          </div>
-          <Button asChild variant="secondary">
-            <Link href="/tc/reports">Open reports</Link>
-          </Button>
-        </div>
-      </section>
 
       <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 font-sans text-sm text-neutral-700 shadow-brand-sm">
         <h3 className="font-display text-heading-sm text-brand-navy">Tax settings</h3>
@@ -97,6 +72,7 @@ function SummaryCard({
     totalLabel: string;
     receivedLabel: string;
     taxOnReceivedLabel: string;
+    taxLabel: string;
   };
   href: string;
 }) {
@@ -110,7 +86,10 @@ function SummaryCard({
         {summary?.totalLabel ?? "$0.00"}
       </p>
       <p className="mt-1 font-sans text-sm text-neutral-700">
-        Received {summary?.receivedLabel ?? "$0.00"} · Tax on received{" "}
+        Received {summary?.receivedLabel ?? "$0.00"} · Tax billed {summary?.taxLabel ?? "$0.00"}
+      </p>
+      <p className="mt-1 font-sans text-sm text-neutral-700">
+        Tax on received{" "}
         {summary?.taxOnReceivedLabel ?? "$0.00"}
       </p>
       <p className="mt-1 font-sans text-xs text-neutral-600">

@@ -4,6 +4,36 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.26.3-dev] - 2026-05-14
+
+### Added
+
+- **Invoice PDF download** — added an authenticated server-generated invoice PDF download alongside the browser invoice preview.
+
+## [v4.26.2-dev] - 2026-05-13
+
+### Added
+
+- **Billing workspace navigation** — added Billing, Invoices, and Reports buttons with active-page highlighting at the top of billing/report pages.
+- **Invoice print and email detail** — reformatted printable invoices using the provided sample invoice structure and expanded invoice email bodies with line items, totals, balance, and printable invoice links.
+- **Clickable MLS and contact records** — made contact rows open their detail pages and added MLS-only job detail pages from the MLS entry list.
+- **Invoice detail actions** — added invoice-specific Print and Email buttons to the invoice detail page while preserving Billing tab highlighting.
+- **Invoice editing** — added an invoice edit screen and API update path for bill-to, status, dates, line item, tax, and notes.
+
+### Changed
+
+- **Billing tax summaries** — monthly, quarterly, and yearly billing cards now show tax billed separately from tax on received money.
+- **Billing landing page** — removed duplicate invoice/report cards now covered by the top Billing, Invoices, and Reports navigation.
+- **Invoice tax default** — changed the fallback NM GRT invoice rate from the state base rate to Los Lunas at 8.425%, while preserving the TC settings override.
+- **Invoice create flow** — creating an invoice now routes directly to the new invoice detail page.
+
+## [v4.26.1-dev] - 2026-05-13
+
+### Added
+
+- **Supabase Data API grants** — added an explicit grant migration for Choral Point public tables and policy helper functions ahead of Supabase's May/October 2026 Data API default-grant changes.
+- **Supabase migration guidance** — documented the required grant/RLS/policy pattern for future public tables and confirmed Choral Point should avoid broad anonymous table access.
+
 ## [v4.26.0] - 2026-05-13
 
 ### Changed

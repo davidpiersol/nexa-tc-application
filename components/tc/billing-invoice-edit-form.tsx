@@ -5,20 +5,19 @@ import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { centsFromCurrencyInput, calculateLineTotalCents, taxCentsFromRate } from "@/lib/billing/invoices";
-import type {
-  BillingContactOption,
-  BillingServiceTypeOption,
-  BillingSourceOption,
-} from "@/lib/queries/billing-dashboard";
+import {
+  calculateLineTotalCents,
+  centsFromCurrencyInput,
+  taxCentsFromRate,
+} from "@/lib/billing/invoices";
+import type { BillingInvoiceDetail } from "@/lib/queries/billing-invoice-detail";
+import type { BillingContactOption, BillingServiceTypeOption } from "@/lib/queries/billing-dashboard";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
 type Props = {
+  invoice: BillingInvoiceDetail;
   serviceTypes: BillingServiceTypeOption[];
-  transactions: BillingSourceOption[];
-  mlsJobs: BillingSourceOption[];
   contacts: BillingContactOption[];
-  taxRatePercent: number;
 };
 
 async function getCsrfToken(): Promise<string | null> {
@@ -31,45 +30,35 @@ function dollarsFromCents(cents: number): string {
   return (cents / 100).toFixed(2);
 }
 
-export function BillingInvoiceForm({
-  serviceTypes,
-  transactions,
-  mlsJobs,
-  contacts,
-  taxRatePercent,
-}: Props) {
+function decimalQuantity(value: string): string {
+  return value.endsWith(".00") ? value.slice(0, -3) : value;
+}
+
+export function BillingInvoiceEditForm({ invoice, serviceTypes, contacts }: Props) {
   const router = useRouter();
+  const firstLine = invoice.lineItems[0];
   const [serviceCode, setServiceCode] = useState(serviceTypes[0]?.code ?? "custom");
-  const [quantity, setQuantity] = useState("1");
-  const [unitAmount, setUnitAmount] = useState("0.00");
-  const [taxAmount, setTaxAmount] = useState("0.00");
+  const [quantity, setQuantity] = useState(decimalQuantity(firstLine?.quantity ?? "1"));
+  const [unitAmount, setUnitAmount] = useState(firstLine?.unitAmountLabel.replace(/[$,]/g, "") ?? "0.00");
+  const [taxAmount, setTaxAmount] = useState(dollarsFromCents(invoice.taxCents));
+  const [taxRatePercent, setTaxRatePercent] = useState(String(invoice.taxRatePercent));
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const selectedService = useMemo(
-    () => serviceTypes.find((service) => service.code === serviceCode),
-    [serviceCode, serviceTypes],
-  );
-  const defaultAmount = ((selectedService?.defaultAmountCents ?? 0) / 100).toFixed(2);
   const contactByLabel = useMemo(() => new Map(contacts.map((contact) => [contact.label, contact])), [contacts]);
-
-  useEffect(() => {
-    setUnitAmount(defaultAmount);
-  }, [defaultAmount]);
 
   useEffect(() => {
     const lineTotalCents = calculateLineTotalCents(
       Number(quantity),
       centsFromCurrencyInput(unitAmount),
     );
-    setTaxAmount(dollarsFromCents(taxCentsFromRate(lineTotalCents, taxRatePercent)));
+    setTaxAmount(dollarsFromCents(taxCentsFromRate(lineTotalCents, Number(taxRatePercent))));
   }, [quantity, unitAmount, taxRatePercent]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = event.currentTarget;
     setError(null);
     setPending(true);
-    const formData = new FormData(form);
+    const formData = new FormData(event.currentTarget);
     const token = await getCsrfToken();
     if (!token) {
       setPending(false);
@@ -77,18 +66,10 @@ export function BillingInvoiceForm({
       return;
     }
     const read = (key: string) => String(formData.get(key) ?? "").trim();
-    const sourceTransactionId = read("source_transaction_id");
-    const sourceMlsJobId = read("source_mls_entry_job_id");
     const brokerName = read("broker_name");
     const brokerContact = contactByLabel.get(brokerName) ?? contacts.find((contact) => contact.name === brokerName);
-    if (sourceTransactionId && sourceMlsJobId) {
-      setPending(false);
-      setError("Choose either a transaction source or an MLS-only source, not both.");
-      return;
-    }
-
-    const res = await fetch("/api/billing/invoices", {
-      method: "POST",
+    const res = await fetch(`/api/billing/invoices/${invoice.id}`, {
+      method: "PATCH",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +77,7 @@ export function BillingInvoiceForm({
       },
       body: JSON.stringify({
         broker_name: brokerContact?.name ?? brokerName,
-        broker_contact_id: brokerContact?.id ?? null,
+        broker_contact_id: brokerContact?.id ?? invoice.brokerContactId,
         service_code: serviceCode,
         description: read("description"),
         quantity,
@@ -107,38 +88,25 @@ export function BillingInvoiceForm({
         receivable_status: read("receivable_status"),
         issue_date: read("issue_date"),
         due_date: read("due_date"),
-        source_transaction_id: sourceTransactionId || null,
-        source_mls_entry_job_id: sourceMlsJobId || null,
         notes: read("notes"),
       }),
     });
     setPending(false);
     if (!res.ok) {
       const body = (await res.json().catch(() => ({}))) as { error?: string };
-      setError(body.error ?? "Could not create invoice.");
+      setError(body.error ?? "Could not update invoice.");
       return;
     }
 
-    const body = (await res.json().catch(() => ({}))) as { invoice?: { id?: string } };
-    const invoiceId = body.invoice?.id;
-    if (invoiceId) {
-      router.push(`/tc/billing/${invoiceId}`);
-      return;
-    }
-
-    form.reset();
-    setServiceCode(serviceTypes[0]?.code ?? "custom");
-    setQuantity("1");
-    setUnitAmount(((serviceTypes[0]?.defaultAmountCents ?? 0) / 100).toFixed(2));
-    router.replace(`/tc/billing?created=${Date.now()}`);
+    router.push(`/tc/billing/${invoice.id}`);
+    router.refresh();
   }
 
   return (
     <form
-      id="new-invoice"
       onSubmit={onSubmit}
       className="grid grid-cols-1 gap-4 rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm lg:grid-cols-2"
-      >
+    >
       <label className="flex flex-col gap-1.5">
         <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
           Service type
@@ -159,23 +127,18 @@ export function BillingInvoiceForm({
       <Input
         label="Broker / client to invoice"
         name="broker_name"
-        list="billing-contact-options"
-        helperText="Start typing to fill from broker and contact records; new names can still be typed manually."
+        list="billing-edit-contact-options"
+        defaultValue={invoice.brokerName ?? ""}
         required
       />
-      <datalist id="billing-contact-options">
+      <datalist id="billing-edit-contact-options">
         {contacts.map((contact) => (
           <option key={contact.id} value={contact.label}>
             {contact.name}
           </option>
         ))}
       </datalist>
-      <Input
-        label="Description"
-        name="description"
-        defaultValue={selectedService?.name ?? "Choral Point service"}
-        required
-      />
+      <Input label="Description" name="description" defaultValue={firstLine?.description ?? ""} required />
       <Input
         label="Quantity"
         name="quantity"
@@ -193,12 +156,19 @@ export function BillingInvoiceForm({
         required
       />
       <Input
+        label="Tax rate (%)"
+        name="tax_rate_percent"
+        value={taxRatePercent}
+        onChange={(event) => setTaxRatePercent(event.target.value)}
+        inputMode="decimal"
+        required
+      />
+      <Input
         label="Tax amount"
         name="tax_amount"
         value={taxAmount}
         onChange={(event) => setTaxAmount(event.target.value)}
         inputMode="decimal"
-        helperText={`Auto-calculated at ${taxRatePercent}% from TC settings; edit if the location-specific rate differs.`}
       />
       <label className="flex flex-col gap-1.5">
         <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
@@ -206,12 +176,14 @@ export function BillingInvoiceForm({
         </span>
         <select
           name="status"
-          defaultValue="draft"
+          defaultValue={invoice.status}
           className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
         >
           <option value="draft">Draft</option>
           <option value="sent">Sent</option>
           <option value="paid">Paid</option>
+          <option value="void">Void</option>
+          <option value="cancelled">Cancelled</option>
         </select>
       </label>
       <label className="flex flex-col gap-1.5">
@@ -220,54 +192,19 @@ export function BillingInvoiceForm({
         </span>
         <select
           name="receivable_status"
-          defaultValue="not_sent"
+          defaultValue={invoice.receivableStatus}
           className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
         >
           <option value="not_sent">Not sent</option>
           <option value="sent">Sent</option>
           <option value="partially_paid">Partially paid</option>
           <option value="paid">Paid</option>
+          <option value="overdue">Overdue</option>
+          <option value="void">Void</option>
         </select>
       </label>
-      <Input label="Issue date" name="issue_date" type="date" />
-      <Input
-        label="Due date"
-        name="due_date"
-        type="date"
-        helperText="Defaults to the issue date, making invoices payable upon receipt."
-      />
-      <label className="flex flex-col gap-1.5">
-        <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
-          Transaction source
-        </span>
-        <select
-          name="source_transaction_id"
-          className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
-        >
-          <option value="">None</option>
-          {transactions.map((transaction) => (
-            <option key={transaction.id} value={transaction.id}>
-              {transaction.label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col gap-1.5">
-        <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
-          MLS-only source
-        </span>
-        <select
-          name="source_mls_entry_job_id"
-          className="h-10 rounded-brand-md border border-neutral-300 px-3 font-sans text-ui-body"
-        >
-          <option value="">None</option>
-          {mlsJobs.map((job) => (
-            <option key={job.id} value={job.id}>
-              {job.label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <Input label="Issue date" name="issue_date" type="date" defaultValue={invoice.issueDate} />
+      <Input label="Due date" name="due_date" type="date" defaultValue={invoice.dueDate ?? invoice.issueDate} />
       <label className="flex flex-col gap-1.5 lg:col-span-2">
         <span className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
           Notes
@@ -275,6 +212,7 @@ export function BillingInvoiceForm({
         <textarea
           name="notes"
           rows={3}
+          defaultValue={invoice.notes ?? ""}
           className="rounded-brand-md border border-neutral-300 px-3 py-2 font-sans text-ui-body"
         />
       </label>
@@ -283,9 +221,12 @@ export function BillingInvoiceForm({
           {error}
         </p>
       ) : null}
-      <div className="flex justify-end lg:col-span-2">
+      <div className="flex justify-end gap-2 lg:col-span-2">
+        <Button type="button" variant="secondary" onClick={() => router.push(`/tc/billing/${invoice.id}`)}>
+          Cancel
+        </Button>
         <Button type="submit" variant="gold" disabled={pending}>
-          {pending ? "Creating…" : "Create invoice"}
+          {pending ? "Saving..." : "Save invoice"}
         </Button>
       </div>
     </form>

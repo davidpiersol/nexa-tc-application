@@ -70,7 +70,7 @@ describe("billing invoice helpers", () => {
   it("calculates and normalizes invoice tax rates", () => {
     expect(taxCentsFromRate(10000, 4.875)).toBe(488);
     expect(normalizeTaxRatePercent("7.625")).toBe(7.625);
-    expect(normalizeTaxRatePercent("bad")).toBe(4.875);
+    expect(normalizeTaxRatePercent("bad")).toBe(8.425);
   });
 
   it("summarizes payable-upon-receipt invoice reminders", () => {
