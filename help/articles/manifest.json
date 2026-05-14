@@ -217,6 +217,13 @@
     "file": "title/closing-coordination.md"
   },
   {
+    "slug": "global-admin-ai-provider-setup",
+    "title": "Global Admin: AI Provider Setup",
+    "route": "/admin/global/ai",
+    "role": "all",
+    "file": "all/global-admin-ai-provider-setup.md"
+  },
+  {
     "slug": "global-admin-supabase-oauth-setup",
     "title": "Global Admin: Supabase OAuth Setup Checklist",
     "route": "(global admin · auth setup)",

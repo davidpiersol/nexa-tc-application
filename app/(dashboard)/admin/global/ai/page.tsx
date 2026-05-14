@@ -38,25 +38,6 @@ export default async function GlobalAdminAiPage() {
         </p>
       </header>
 
-      <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
-        <h3 className="font-display text-heading-md text-brand-navy">Provider catalog</h3>
-        <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
-          {AI_PROVIDER_CATALOG.map((provider) => (
-            <article
-              key={provider.key}
-              className="rounded-brand-md border border-neutral-200 bg-neutral-50 p-3"
-            >
-              <p className="font-sans text-sm font-semibold text-brand-navy">{provider.label}</p>
-              <p className="mt-1 font-sans text-xs uppercase tracking-wide text-neutral-600">
-                {provider.authMode}
-                {provider.credentialProvider ? ` · ${provider.credentialProvider}` : ""}
-              </p>
-              <p className="mt-2 font-sans text-sm text-neutral-700">{provider.notes}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
       <AiCredentialManager
         providers={credentialProviders}
         initialStatuses={credentialStatuses}

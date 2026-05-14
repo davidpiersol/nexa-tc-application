@@ -45,6 +45,7 @@ export function AiCredentialManager({
   const statusByProvider = useMemo(() => {
     return new Map(statuses.map((status) => [status.provider, status]));
   }, [statuses]);
+  const selectedStatus = statusByProvider.get(selectedProvider);
 
   async function refreshStatuses() {
     const response = await fetch("/api/admin/global/ai/credentials", {
@@ -94,37 +95,12 @@ export function AiCredentialManager({
     <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
       <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
         <div>
-          <h3 className="font-display text-heading-md text-brand-navy">Provider credentials</h3>
+          <h3 className="font-display text-heading-md text-brand-navy">AI Credentials</h3>
           <p className="mt-2 max-w-3xl font-sans text-sm text-neutral-600">
-            Global admins can set provider API keys here. Saved keys are encrypted server-side and
-            never displayed back in the browser.
+            Save or replace a provider key. Saved keys are encrypted server-side and never displayed
+            back in the browser.
           </p>
         </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
-        {providers.map((provider) => {
-          const status = statusByProvider.get(provider.credentialProvider);
-          return (
-            <article
-              key={provider.credentialProvider}
-              className="rounded-brand-md border border-neutral-200 bg-neutral-50 p-3"
-            >
-              <p className="font-sans text-sm font-semibold text-brand-navy">{provider.label}</p>
-              <p className="mt-1 font-sans text-xs uppercase tracking-wide text-neutral-600">
-                {provider.credentialProvider} · {provider.authMode}
-              </p>
-              <p className="mt-2 font-sans text-sm text-neutral-700">
-                {status?.configured ? "Configured" : "Not configured"}
-              </p>
-              {status?.updatedAt ? (
-                <p className="mt-1 font-sans text-xs text-neutral-600">
-                  Updated {new Date(status.updatedAt).toLocaleString()}
-                </p>
-              ) : null}
-            </article>
-          );
-        })}
       </div>
 
       <form className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2" onSubmit={handleSubmit}>
@@ -142,6 +118,15 @@ export function AiCredentialManager({
               </option>
             ))}
           </select>
+          <span className="font-sans text-xs font-normal text-neutral-600">
+            {selectedStatus?.configured
+              ? `Configured${
+                  selectedStatus.updatedAt
+                    ? ` · updated ${new Date(selectedStatus.updatedAt).toLocaleString()}`
+                    : ""
+                }`
+              : "Not configured"}
+          </span>
         </label>
 
         <label className="flex flex-col gap-2 font-sans text-sm font-semibold text-brand-navy">

@@ -4,6 +4,13 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.30.3-dev] - 2026-05-14
+
+### Changed
+
+- **AI configuration cleanup** — removed the provider catalog and provider credential status card grids from the Global Admin AI page while keeping the encrypted credential form.
+- **AI provider help** — moved provider reference details into the Global Admin wiki/help article for AI provider setup.
+
 ## [v4.30.2-dev] - 2026-05-14
 
 ### Added
