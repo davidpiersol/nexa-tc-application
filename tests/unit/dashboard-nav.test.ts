@@ -57,4 +57,8 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
   it("includes scorecard in the TC navigation", () => {
     expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/scorecard");
   });
+
+  it("includes CRM in the TC navigation", () => {
+    expect(navItemsForPath("/tc").map((item) => item.href)).toContain("/tc/crm");
+  });
 });

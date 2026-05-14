@@ -73,6 +73,20 @@ test.describe("TC dashboard", () => {
     expect(errs).toEqual([]);
   });
 
+  test("CRM page shows disabled external CRM scaffolding", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, "/tc/crm");
+    await expect(page.getByRole("heading", { level: 2, name: "CRM" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText("DeltaNET / Delta Media Group")).toBeVisible();
+    await expect(page.getByText("Lofty")).toBeVisible();
+    await expect(page.getByText("Follow Up Boss")).toBeVisible();
+    await expect(page.getByText("MoxiWorks")).toBeVisible();
+    await expect(page.getByText(/no provider sync is active/i)).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
   test("transaction list address link opens detail", async ({ page }) => {
     await gotoApp(page, "/tc/transactions");
     const firstAddressLink = page

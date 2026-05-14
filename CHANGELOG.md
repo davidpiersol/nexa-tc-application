@@ -4,6 +4,14 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.29.0-dev] - 2026-05-14
+
+### Added
+
+- **CRM-lite scaffold** — added a TC CRM page and navigation entry defining contacts, SOI segmentation, lead temperature, touch history, follow-up tasks, notes, reminders, relationships, and import/export as the CRM-lite module boundary.
+- **External CRM adapter catalog** — added disabled-by-default provider scaffolding for DeltaNET / Delta Media Group, Lofty, Follow Up Boss, and MoxiWorks, with Delta marked investigation-only until official API/export access is confirmed.
+- **CRM data scaffold** — added tenant-scoped CRM touchpoint and external-link tables so future sync can track consented provider IDs and disabled sync state without duplicating contact records.
+
 ## [v4.28.0-dev] - 2026-05-14
 
 ### Added

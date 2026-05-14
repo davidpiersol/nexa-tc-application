@@ -54,6 +54,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
       { href: "/tc/mls-entry", label: "MLS entry" },
       { href: "/tc/contacts", label: "Contacts" },
       { href: "/tc/brokers", label: "Brokers" },
+      { href: "/tc/crm", label: "CRM" },
       { href: "/tc/billing", label: "Billing" },
       { href: "/tc/scorecard", label: "Scorecard" },
       { href: "/tc/reports", label: "Reports" },

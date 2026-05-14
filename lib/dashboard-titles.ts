@@ -33,6 +33,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/tc\/contacts\/[^/]+$/)) return "Contact Profile";
   if (pathname === "/tc/contacts") return "Contacts";
   if (pathname === "/tc/brokers") return "Brokers";
+  if (pathname === "/tc/crm") return "CRM";
   if (pathname === "/tc/archive") return "Archive";
   if (pathname === "/tc/transactions") return "Transactions";
   if (pathname === "/tc/mls-entry/new") return "New MLS Entry";
