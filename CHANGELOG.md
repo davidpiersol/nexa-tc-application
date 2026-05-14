@@ -4,6 +4,13 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+## [v4.30.5-dev] - 2026-05-14
+
+### Changed
+
+- **Roadmap sprint insertion** — inserted new P31 for full CRM build-out across TC and agent workspaces, then shifted UI/UX, statewide property lookup, final hardening, and release hardening to P32-P35.
+- **CRM credential blocker** — added a blocker requiring OAuth, vendor/admin-assisted setup, or CSV fallback for external CRM connections where users cannot obtain API keys.
+
 ## [v4.30.4-dev] - 2026-05-14
 
 ### Added

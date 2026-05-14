@@ -148,10 +148,11 @@ Use these MSP scopes:
 - `P28`: `v4.28.0-dev` - AI insertion architecture and assistive workflows
 - `P29`: `v4.29.0-dev` - CRM module and external CRM integration assessment
 - `P30`: `v4.30.0-dev` - hardening gate: AI, CRM, privacy, cost, and provider adapters
-- `P31`: `v4.31.0-dev` - UI/UX polish, graphics, and design system button-up
-- `P32`: `v4.32.0-dev` - statewide New Mexico property data lookup
-- `P33`: `v4.33.0-dev` - hardening gate: statewide property data, UI/UX, and final pre-release cleanup
-- `P34`: `v4.34.0-dev` - release hardening and stable rollback checkpoint
+- `P31`: `v4.31.0-dev` - CRM build-out: actions, follow-ups, contacts, calendar, and external CRM connections
+- `P32`: `v4.32.0-dev` - UI/UX polish, graphics, and design system button-up
+- `P33`: `v4.33.0-dev` - statewide New Mexico property data lookup
+- `P34`: `v4.34.0-dev` - hardening gate: statewide property data, UI/UX, and final pre-release cleanup
+- `P35`: `v4.35.0-dev` - release hardening and stable rollback checkpoint
 
 Do not mark any of these sprints `done` until Cursor has implemented the code and build/test validation is complete. Do not mark them `approved` until you review the work.
 

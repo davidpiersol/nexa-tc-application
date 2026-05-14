@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.30.4-dev",
+    "currentVersion": "v4.30.5-dev",
     "lastDeployedVersion": "v4.26.0",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -220,12 +220,12 @@
       "recommendedPrompt": "Read the Choral Point BuildTrack directions and roadmap docs in this repo. Do not change application code. Confirm that the BuildTrack plan is wired correctly, summarize the current sprint order, and give me the exact next Cursor prompt for P6.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
-        "stableWhen": "P5 is fully tested when Cursor confirms the roadmap is readable, .progress/project-plan.json is valid, BuildTrack can see P5-P34, and no application code was changed.",
+        "stableWhen": "P5 is fully tested when Cursor confirms the roadmap is readable, .progress/project-plan.json is valid, BuildTrack can see P5-P35, and no application code was changed.",
         "suggestedRollbackTag": "stable/choral-point-v4.5.0"
       },
       "reviewChecklist": [
         "Verify .progress/project-plan.json remains valid JSON.",
-        "Confirm BuildTrack shows P5-P34 in order.",
+        "Confirm BuildTrack shows P5-P35 in order.",
         "Confirm syncPolicy.mode remains dashboard_only.",
         "Confirm docs/choral-point-roadmap exists and includes the prompt package.",
         "Confirm Cursor did not change application behavior or UI files.",
@@ -236,7 +236,7 @@
         "BuildTrack dashboard can discover the repo and display the appended prompt sprints.",
         "No app build is required for P5 unless Cursor unexpectedly changes code."
       ],
-      "fullQaPrompt": "Run full QA for P5 (Cursor orientation and Choral Point roadmap handoff). Verify the project plan JSON is valid, BuildTrack displays the roadmap sprints P5-P34, dashboard_only sync remains enabled, docs/choral-point-roadmap is present, blockers are visible, and no application behavior changed. If all checks pass, leave P5 ready for David review and provide the exact P6 prompt. Do not mark human approval.",
+      "fullQaPrompt": "Run full QA for P5 (Cursor orientation and Choral Point roadmap handoff). Verify the project plan JSON is valid, BuildTrack displays the roadmap sprints P5-P35, dashboard_only sync remains enabled, docs/choral-point-roadmap is present, blockers are visible, and no application behavior changed. If all checks pass, leave P5 ready for David review and provide the exact P6 prompt. Do not mark human approval.",
       "updatedAt": "2026-05-10T10:34:35.568Z"
     },
     {
@@ -1430,13 +1430,13 @@
       "lane": "ai",
       "milestoneId": "m1",
       "versionScope": "v4.28.0-dev",
-      "status": "done",
+      "status": "approved",
       "jiraKey": null,
       "summary": "Design a provider-neutral AI layer for OpenAI, Anthropic, Google Gemini/Vertex AI, OpenRouter-style aggregators, and future providers, with cost controls and safe assistive workflows.",
       "validation": {
         "build": "passed",
         "tests": "passed",
-        "approval": "pending"
+        "approval": "approved"
       },
       "acceptance": [
         "AI provider abstraction supports at least OpenAI, Anthropic, Google Gemini/Vertex AI, and OpenRouter-compatible gateways as configurable providers.",
@@ -1474,7 +1474,8 @@
         "Run at least one browser smoke pass for the changed workflow."
       ],
       "fullQaPrompt": "Run full QA for P28 (AI insertion architecture and assistive workflows). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-      "completedAt": "2026-05-14T17:52:36.559Z"
+      "completedAt": "2026-05-14T17:52:36.559Z",
+      "updatedAt": "2026-05-14T20:15:04.827Z"
     },
     {
       "id": "P29",
@@ -1587,10 +1588,79 @@
     },
     {
       "id": "P31",
+      "name": "CRM build-out: actions, follow-ups, contacts, calendar, and external CRM connections",
+      "lane": "crm",
+      "milestoneId": "m1",
+      "versionScope": "v4.31.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Build the user-specific CRM module for TC and agent users. CRM opens from the left nav to upcoming actions, supports today/week/month/quarter work views, reuses existing contacts and brokers, adds CRM subpages for follow-ups, SOI/lead segmentation, touch history, notes, reminders, relationships, import/export, and external CRM connection setup.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Visible app copy uses CRM, not CRM-lite.",
+        "The existing left-nav CRM item opens to an Upcoming Actions page focused on what the user needs to do today, this week, this month, and this quarter.",
+        "Upcoming actions aggregate CRM reminders, follow-up tasks, contact/broker touchpoints, transaction-related reminders where appropriate, and overdue items into clear time buckets.",
+        "CRM data is user-specific within the tenant: TC users see their own CRM workspace, and agent users get the same CRM model in the agent login without seeing another user's private CRM activity.",
+        "Contacts and brokers are reused from the existing contacts/brokers modules instead of duplicating canonical contact data.",
+        "CRM subpages exist for Upcoming Actions, Contacts/People, SOI and lead segments, Follow-up Tasks, Touch History, Notes, Reminders, Relationships, Import/Export, Calendar/Reminders, and External CRM Connections.",
+        "SOI and lead segmentation supports categories such as SOI, hot/warm/cold, vendor, broker client, prospect, and other practical CRM tags while preserving existing contact categories.",
+        "Follow-up tasks support due dates, priority/status, assigned owner, related contact/broker/transaction where available, and completion history.",
+        "Touch history captures calls, emails, texts, meetings, notes, and other interactions with date, direction, outcome, and next action.",
+        "Notes support user-private CRM notes linked to contacts, brokers, or relationships as appropriate.",
+        "Reminders can feed Upcoming Actions and are designed so a later Outlook/Google/Apple/internal calendar integration can subscribe or sync without rewriting CRM data.",
+        "Calendar/reminder design starts with an internal calendar/reminder layer and provider connector stubs for Outlook, Google Calendar, and Apple Calendar/iCal export; no external calendar write happens without explicit credentials and approval.",
+        "External CRM Connections page lists approved candidates such as DeltaNET/Delta Media Group, Lofty, Follow Up Boss, MoxiWorks, and import/export fallback with plain-language connection status.",
+        "External CRM connection UX assumes users know normal login credentials, not API keys. The sprint must document and scaffold the blocker path: OAuth where supported, vendor/admin-assisted API key setup where required, CSV import/export fallback where no API is available, and encrypted credential storage only when necessary and approved.",
+        "No external CRM sync is enabled until credentials, consent, field mapping, rate limits, duplicate handling, and error states are approved.",
+        "Agent CRM pages match the TC CRM model where applicable, but agent permissions remain scoped to the agent user and their allowed contacts/transactions.",
+        "If calendar/provider/API credential work would require risky storage of raw third-party passwords or unsupported scraping, stop and document the risk plus a recommended safe path before implementing that part."
+      ],
+      "recommendedPrompt": "Implement P31 CRM build-out for TC and agent users. Open CRM to Upcoming Actions, add user-specific CRM subpages for contacts/people, SOI/lead segments, follow-up tasks, touch history, notes, reminders, relationships, import/export, calendar/reminder scaffolding, and external CRM connections. Reuse existing contacts/brokers, keep all CRM data tenant/user-scoped, use CRM in visible copy, and do not enable external sync until credentials/consent/mapping are approved. If provider credentials require API keys the user cannot obtain, document OAuth/vendor-assisted/CSV fallback options and stop before unsafe credential handling.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P31 is fully tested only after typecheck, unit tests, build, focused browser smoke for TC CRM and agent CRM, role/RLS checks, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.31.0"
+      },
+      "reviewChecklist": [
+        "Confirm visible app copy says CRM and does not expose CRM-lite wording.",
+        "Confirm CRM left-nav opens to Upcoming Actions for TC users.",
+        "Confirm agent users have the same CRM model where applicable from the agent login/navigation.",
+        "Confirm CRM data is scoped by tenant and user and does not leak between TC/agent users.",
+        "Confirm CRM pages reuse contacts and brokers rather than duplicating canonical person/broker data.",
+        "Confirm Upcoming Actions includes today, this week, this month, this quarter, overdue, and completed/closed behavior as designed.",
+        "Confirm calendar/reminder scaffolding does not write to Outlook, Google, Apple, or any external provider without explicit setup and approval.",
+        "Confirm external CRM connection page explains OAuth/vendor-assisted API-key/CSV fallback paths in plain language.",
+        "Confirm no raw third-party passwords are stored unless explicitly required, encrypted, and approved.",
+        "Confirm DeltaNET remains connection/investigation-safe until official API/OAuth/export access is confirmed.",
+        "Review database migrations, RLS, API routes, and UI entry points touched by the sprint.",
+        "Confirm existing TC transaction creation, login, dashboard, contacts, brokers, document upload, and First Pass flows still work.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Unit test CRM permission helpers and user-scoped query filters.",
+        "Unit test upcoming-actions bucketing for today, week, month, quarter, overdue, and completed items.",
+        "Unit test CRM task/reminder/touchpoint validators.",
+        "Unit test external CRM provider connection state helpers and disabled-sync behavior.",
+        "Browser smoke TC /tc/crm upcoming actions and each CRM subpage.",
+        "Browser smoke agent CRM route/navigation and confirm agent scoping.",
+        "Browser smoke contact/broker lookup from CRM without duplicating contact records.",
+        "Verify no external CRM/calendar network calls occur without explicit configured credentials."
+      ],
+      "fullQaPrompt": "Run full QA for P31 (CRM build-out: actions, follow-ups, contacts, calendar, and external CRM connections). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke for TC and agent CRM, role permissions/RLS, user-specific data isolation, contact/broker reuse, calendar/reminder disabled-provider behavior, external CRM connection blockers, and regression flows: login, TC dashboard, agent dashboard, contacts, brokers, transactions list, transaction detail, documents, First Pass, billing, AI configuration, and reports. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P32",
       "name": "UI/UX polish, graphics, and design system button-up",
       "lane": "ui",
       "milestoneId": "m1",
-      "versionScope": "v4.31.0-dev",
+      "versionScope": "v4.32.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Button up Choral Point visual design, graphics, navigation polish, responsive layouts, copy, and design-token consistency after core workflows stabilize.",
@@ -1610,8 +1680,8 @@
       "recommendedPrompt": "Polish Choral Point UI/UX and incorporate approved graphics/design elements after core workflow sprints are stable.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
-        "stableWhen": "P31 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.31.0"
+        "stableWhen": "P32 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.32.0"
       },
       "reviewChecklist": [
         "Confirm the sprint changed only the intended feature area.",
@@ -1626,14 +1696,14 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P31 (UI/UX polish, graphics, and design system button-up). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P32 (UI/UX polish, graphics, and design system button-up). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     },
     {
-      "id": "P32",
+      "id": "P33",
       "name": "Statewide New Mexico property data lookup",
       "lane": "integrations",
       "milestoneId": "m1",
-      "versionScope": "v4.32.0-dev",
+      "versionScope": "v4.33.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Support property data lookup anywhere in New Mexico, not just Valencia County, using a provider-first statewide strategy with county-specific fallback connectors and manual/AI-assisted fallback where structured data is unavailable.",
@@ -1656,8 +1726,8 @@
       "recommendedPrompt": "Implement Choral Point statewide New Mexico property data lookup scaffolding with ATTOM/provider-first lookup, county connector registry, source tracking, and manual/AI-assisted fallback without assuming Valencia County only.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
-        "stableWhen": "P32 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.32.0"
+        "stableWhen": "P33 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.33.0"
       },
       "reviewChecklist": [
         "Confirm property lookup is statewide for New Mexico and not hard-coded to Valencia County.",
@@ -1682,14 +1752,14 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P32 (Statewide New Mexico property data lookup). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, source metadata, provider fallback behavior, and regression flows. Test at least one configured-provider lookup path and one manual/county-fallback path. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P33 (Statewide New Mexico property data lookup). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, source metadata, provider fallback behavior, and regression flows. Test at least one configured-provider lookup path and one manual/county-fallback path. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     },
     {
-      "id": "P33",
+      "id": "P34",
       "name": "Hardening gate: statewide property data, UI/UX, and final pre-release cleanup",
       "lane": "hardening",
       "milestoneId": "m1",
-      "versionScope": "v4.33.0-dev",
+      "versionScope": "v4.34.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "No-new-feature security, performance, UI/UX, and code-quality pass after statewide property lookup and UI polish before final release hardening.",
@@ -1714,8 +1784,8 @@
       "recommendedPrompt": "Run a no-new-feature hardening gate for statewide property data and final UI/UX cleanup before release hardening. Review source metadata, no-scrape rules, provider fallback, accessibility, responsive behavior, reusable UI components, and performance. If cleanup risks breaking property lookup or polished workflows, stop and provide recommendations first.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this hardening gate begins.",
-        "stableWhen": "P33 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.33.0"
+        "stableWhen": "P34 is fully tested only after typecheck, unit tests, build, focused browser smoke, security/RLS checks, performance review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.34.0"
       },
       "reviewChecklist": [
         "Confirm no new features were added.",
@@ -1740,14 +1810,14 @@
         "Verify accessibility basics for changed controls and forms.",
         "Smoke test final TC dashboard, transaction detail, document, AI, CRM, and property lookup flows."
       ],
-      "fullQaPrompt": "Run full QA for P33 (Hardening gate: statewide property data, UI/UX, and final pre-release cleanup). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P34 (Hardening gate: statewide property data, UI/UX, and final pre-release cleanup). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     },
     {
-      "id": "P34",
+      "id": "P35",
       "name": "Release hardening and stable rollback checkpoint",
       "lane": "release",
       "milestoneId": "m1",
-      "versionScope": "v4.34.0-dev",
+      "versionScope": "v4.35.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Perform full regression, security/RLS review, migration verification, seed verification, and create a known-good rollback marker after the roadmap pass is fully tested.",
@@ -1767,8 +1837,8 @@
       "recommendedPrompt": "Run Choral Point release hardening, full regression, and prepare a stable rollback checkpoint after human approval.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
-        "stableWhen": "P34 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.34.0"
+        "stableWhen": "P35 is fully tested only after typecheck, unit tests, build, focused browser smoke, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.35.0"
       },
       "reviewChecklist": [
         "Confirm the sprint changed only the intended feature area.",
@@ -1783,7 +1853,7 @@
         "Run focused unit tests for new helpers, validators, and permission logic.",
         "Run at least one browser smoke pass for the changed workflow."
       ],
-      "fullQaPrompt": "Run full QA for P34 (Release hardening and stable rollback checkpoint). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P35 (Release hardening and stable rollback checkpoint). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     }
   ],
   "blockers": [
@@ -1861,6 +1931,13 @@
       "id": "B11",
       "title": "Deferred from P19: cap generated/output PDF sizes if large templates spike memory; optionally block PATCH/revise uploads on rows where generated_from_template_version_id is set to preserve immutable history without a product decision.",
       "owner": "David / Cursor",
+      "eta": "TBD",
+      "status": "open"
+    },
+    {
+      "id": "B12",
+      "title": "External CRM connection setup is blocked by provider-specific auth reality: users usually know login credentials, not API keys. P31 must prefer OAuth, vendor/admin-assisted API setup, or CSV import/export fallback and must not store raw third-party passwords or automate unsupported login/scraping without explicit security approval.",
+      "owner": "David / CRM providers / Cursor",
       "eta": "TBD",
       "status": "open"
     }

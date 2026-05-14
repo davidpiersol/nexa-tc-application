@@ -35,7 +35,7 @@ Read the directions, confirm the roadmap is wired into BuildTrack, and provide t
 
 Implement P5 with:
 - Confirm project display name is Choral Point in `.progress/project-plan.json`.
-- Confirm full roadmap prompt sprints P5-P33 are present without deleting existing sprint history.
+- Confirm full roadmap prompt sprints P5-P35 are present without deleting existing sprint history.
 - Confirm existing dashboard-only sync mode is preserved.
 - Confirm discovery blockers are present.
 - Confirm roadmap docs exist in `docs/choral-point-roadmap`.
