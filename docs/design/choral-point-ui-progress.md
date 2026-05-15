@@ -29,3 +29,10 @@ This log tracks incremental UI review changes during the `P32` polish sprint. Ea
 - Kept the decision artifact separate from the live landing page so the next applied design change remains deliberate.
 
 [Open the B/C comparison page](./landing-flow-bc-comparison.html)
+
+## v4.32.6-dev - Full-screen flow variants
+
+- Split the two landing-flow candidates into separate full-screen HTML pages for honest side-by-side browser review.
+- Preserved the combined comparison page as a compact reference board.
+
+[Open option B](./landing-flow-b.html) | [Open option C](./landing-flow-c.html)
