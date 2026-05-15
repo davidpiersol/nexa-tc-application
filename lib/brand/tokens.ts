@@ -1,17 +1,19 @@
-export const nexaBrand = {
-  name: "NEXA",
+export const choralPointBrand = {
+  name: "Choral Point",
   tagline: "The Center of Every Deal.",
-  actionLine: "Connect. Coordinate. Close.",
+  actionLine: "One platform. Every participant. Perfectly in sync.",
   colors: {
-    navy: "#0B1F3A",
-    blue: "#1F6FEB",
-    lightBlue: "#E8F0FE",
-    slate: "#4B5563",
-    gray: "#9CA3AF",
-    offWhite: "#F9FAFB",
-    teal: "#14B8A6",
+    navy: "#0B1220",
+    blue: "#41566B",
+    lightBlue: "#A8B3C2",
+    slate: "#41566B",
+    gray: "#A8B3C2",
+    offWhite: "#FBF7F1",
+    teal: "#D4AF37",
   },
   font: {
-    primary: "Inter, system-ui, sans-serif",
+    primary: "Satoshi, Avenir Next, Inter, Arial, sans-serif",
   },
 } as const;
+
+export const nexaBrand = choralPointBrand;

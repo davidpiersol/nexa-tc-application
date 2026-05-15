@@ -5,47 +5,47 @@
 @layer base {
   :root {
     /* Font stacks (Next.js can override via next/font in layout.tsx) */
-    --font-display: "Playfair Display", Georgia, serif;
-    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Satoshi", "Avenir Next", "Inter", Arial, sans-serif;
+    --font-sans: "Satoshi", "Avenir Next", "Inter", Arial, sans-serif;
     --font-prose: Georgia, "Times New Roman", serif;
 
     /* Radius — guide: md = 8px default for components */
-    --radius: 8px;
+    --radius: 16px;
 
     /* Nexa warm canvas (neutral/50) */
-    --background: 40 33% 96%;
-    --foreground: 20 9% 11%;
+    --background: 36 43% 96%;
+    --foreground: 219 49% 8%;
 
     /* Primary action — brand navy */
-    --primary: 218 47% 20%;
-    --primary-foreground: 40 33% 96%;
+    --primary: 219 49% 8%;
+    --primary-foreground: 36 43% 96%;
 
     /* Secondary surfaces — parchment / cream */
-    --secondary: 35 43% 90%;
-    --secondary-foreground: 218 47% 20%;
+    --secondary: 36 100% 95%;
+    --secondary-foreground: 219 49% 8%;
 
     /* Muted — neutral/100, secondary text neutral/600 */
-    --muted: 35 21% 91%;
-    --muted-foreground: 30 6% 40%;
+    --muted: 36 35% 93%;
+    --muted-foreground: 211 24% 34%;
 
     /* Accent — brand gold (CTAs, highlights) */
-    --accent: 38 66% 47%;
-    --accent-foreground: 218 47% 20%;
+    --accent: 46 65% 52%;
+    --accent-foreground: 219 49% 8%;
 
     /* Destructive — status/danger */
     --destructive: 0 72% 36%;
     --destructive-foreground: 40 33% 96%;
 
     /* Cards & popovers */
-    --card: 40 33% 96%;
-    --card-foreground: 20 9% 11%;
-    --popover: 40 33% 96%;
-    --popover-foreground: 20 9% 11%;
+    --card: 36 43% 98%;
+    --card-foreground: 219 49% 8%;
+    --popover: 36 43% 98%;
+    --popover-foreground: 219 49% 8%;
 
     /* Borders & inputs — neutral/300 */
-    --border: 33 13% 74%;
-    --input: 33 13% 74%;
-    --ring: 38 66% 47%;
+    --border: 219 20% 82%;
+    --input: 219 20% 82%;
+    --ring: 46 65% 52%;
 
     /* Charts — navy / gold / steel / brown / success */
     --chart-1: 218 47% 20%;
@@ -106,6 +106,33 @@
 /* Login / forms: WebKit autofill often sets a light yellow bg but leaves -webkit-text-fill-color
    light-on-light or white — typed text looks invisible. Force readable ink + caret. */
 @layer components {
+  .choral-wave-surface {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      linear-gradient(135deg, #fffaf3 0%, #fbf4eb 34%, #dfe5ec 56%, #41566b 76%, #142033 100%);
+  }
+
+  .choral-wave-surface::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url("/brand/choral-point/wave.svg") center / cover no-repeat;
+    content: "";
+  }
+
+  .choral-panel {
+    border: 1px solid rgba(11, 18, 32, 0.1);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 24px 60px rgba(11, 18, 32, 0.1);
+    backdrop-filter: blur(12px);
+  }
+
+  .choral-app-background {
+    background: linear-gradient(135deg, #fbf7f1 0%, #f6f1ea 100%);
+  }
+
   input:not([type="checkbox"]):not([type="radio"]),
   textarea {
     color: rgb(28 25 23); /* neutral-900 */

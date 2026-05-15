@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import NexaIcon from "@/components/brand/NexaIcon";
-import NexaLogo from "@/components/brand/NexaLogo";
+import { ChoralPointLogo } from "@/components/brand/ChoralPointLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { nexaBrand } from "@/lib/brand/tokens";
@@ -81,12 +80,8 @@ export function LoginForm({ redirect: redirectProp = "/tc" }: LoginFormProps) {
 
   return (
     <div className="relative flex flex-col gap-8">
-      <NexaIcon
-        className="pointer-events-none absolute -right-1 -top-2 size-14 opacity-[0.14]"
-        aria-hidden
-      />
       <div className="flex flex-col gap-3">
-        <NexaLogo showTagline={false} className="max-w-[240px]" title="NEXA" />
+        <ChoralPointLogo compact />
         <p className="font-sans text-sm font-semibold leading-snug text-brand-navy">
           {nexaBrand.tagline}
         </p>

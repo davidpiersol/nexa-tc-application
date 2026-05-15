@@ -4,9 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import NexaIcon from "@/components/brand/NexaIcon";
-import NexaLogo from "@/components/brand/NexaLogo";
-import { PatternBg } from "@/components/graphics/PatternBg";
+import { ChoralPointLogo } from "@/components/brand/ChoralPointLogo";
 import { dashboardTitleForPath } from "@/lib/dashboard-titles";
 import {
   navItemsForPath,
@@ -59,14 +57,13 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
   })();
 
   return (
-    <div className="relative flex min-h-screen bg-neutral-50">
+    <div className="choral-app-background relative flex min-h-screen p-3">
       <aside
         className={cn(
-          "relative flex shrink-0 flex-col overflow-hidden border-r border-brand-navy bg-brand-navy-deep text-neutral-50 transition-[width] duration-200 ease-out",
+          "relative flex shrink-0 flex-col overflow-hidden rounded-l-[24px] border border-brand-navy/10 bg-white/75 text-brand-navy shadow-brand-lg backdrop-blur transition-[width] duration-200 ease-out",
           sidebarCollapsed ? "w-[4.5rem]" : "w-64",
         )}
       >
-        <PatternBg opacity={0.05} />
         <div
           className={cn(
             "relative z-[1] border-b border-brand-navy-mid",
@@ -85,22 +82,18 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
                 "min-w-0 shrink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-light focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep",
                 sidebarCollapsed && "flex justify-center",
               )}
-              aria-label="NEXA workspace home"
+              aria-label="Choral Point workspace home"
             >
               {sidebarCollapsed ? (
-                <NexaIcon className="size-8" aria-hidden />
+                <span className="text-lg font-semibold text-brand-gold-deep">C</span>
               ) : (
-                <NexaLogo
-                  showTagline={false}
-                  className="max-h-10 w-full max-w-[200px]"
-                  title="NEXA"
-                />
+                <ChoralPointLogo compact />
               )}
             </Link>
             <button
               type="button"
               className={cn(
-                "flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-brand-navy-mid bg-brand-navy/60 text-brand-gold-light transition-colors hover:bg-brand-navy-mid hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-light",
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-brand-navy/10 bg-white text-brand-gold-deep transition-colors hover:bg-brand-gold-pale focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-light",
                 sidebarCollapsed && "mt-2",
               )}
               onClick={() => setSidebarCollapsed((c) => !c)}
@@ -138,14 +131,14 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
                     ? cn(
                         "flex h-10 w-10 shrink-0 items-center justify-center border-0 text-sm",
                         active
-                          ? "bg-brand-navy-mid text-brand-gold-light ring-2 ring-brand-gold-light ring-offset-2 ring-offset-brand-navy-deep"
-                          : "text-neutral-100 hover:bg-brand-navy hover:text-brand-gold-light",
+                          ? "bg-brand-gold/15 text-brand-navy ring-2 ring-brand-gold-light ring-offset-2 ring-offset-white"
+                          : "text-brand-steel hover:bg-brand-gold-pale hover:text-brand-navy",
                       )
                     : cn(
                         "px-3 py-2 text-sm",
                         active
-                          ? "border-l-4 border-brand-gold-light bg-brand-navy-mid text-brand-gold-light"
-                          : "border-l-4 border-transparent text-neutral-100 hover:bg-brand-navy hover:text-brand-gold-light",
+                          ? "border-l-4 border-brand-gold bg-brand-gold/15 text-brand-navy"
+                          : "border-l-4 border-transparent text-brand-steel hover:bg-brand-gold-pale hover:text-brand-navy",
                       ),
                 )}
               >
@@ -156,19 +149,15 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
         </nav>
       </aside>
       {/* min-h-0 so nested flex children can shrink and establish overflow (avoid clipped / empty main) */}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-r-[24px] border-y border-r border-brand-navy/10 bg-white/70 shadow-brand-lg backdrop-blur">
         {/* Header above main stacking so account dropdown (absolute) receives clicks over page body */}
-        <header className="relative z-30 flex h-16 shrink-0 items-center gap-4 border-b-2 border-brand-gold bg-white px-4 sm:px-6">
+        <header className="relative z-30 flex h-16 shrink-0 items-center gap-4 border-b border-brand-navy/10 bg-white/80 px-4 sm:px-6">
           <Link
             href={homeHref}
             className="shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
-            aria-label="NEXA home"
+            aria-label="Choral Point home"
           >
-            <NexaLogo
-              showTagline={false}
-              className="h-9 max-w-[132px]"
-              title="NEXA"
-            />
+            <ChoralPointLogo compact />
           </Link>
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <h1 className="truncate font-display text-xl text-brand-navy">

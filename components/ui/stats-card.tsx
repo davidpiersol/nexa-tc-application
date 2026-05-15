@@ -40,7 +40,7 @@ function StatsCard({
   );
 
   const boxClass = cn(
-    "relative block rounded-brand-lg border border-neutral-300 bg-white pt-3 shadow-brand-sm transition-shadow",
+    "relative block rounded-brand-lg border border-brand-navy/10 bg-white/85 pt-3 shadow-brand-sm backdrop-blur transition-shadow",
     /* Grid safety: <Link> must span the full cell (anchors default narrower than divs in some layouts). */
     href && "w-full min-w-0 no-underline",
     href &&
