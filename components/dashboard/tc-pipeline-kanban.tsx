@@ -206,6 +206,7 @@ export function TcPipelineKanban({
 
   return (
     <DndContext
+      id="tc-pipeline"
       sensors={sensors}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}

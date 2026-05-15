@@ -11,7 +11,7 @@ export const CRM_SEGMENTS = [
   "prospect",
   "other",
 ] as const;
-export const CRM_TOUCH_TYPES = ["note", "call", "email", "meeting", "task", "import"] as const;
+export const CRM_TOUCH_TYPES = ["note", "call", "email", "text", "meeting", "task", "import"] as const;
 export const CRM_TOUCH_DIRECTIONS = ["inbound", "outbound", "internal"] as const;
 export const CRM_RELATIONSHIP_TYPES = [
   "referral_source",

@@ -21,6 +21,9 @@ const nextConfig = {
   },
   async headers() {
     const isProd = process.env.NODE_ENV === "production";
+    const localDevConnections = isProd
+      ? ""
+      : " http://127.0.0.1:54321 ws://127.0.0.1:54321 http://localhost:54321 ws://localhost:54321";
     /** @type {{ key: string; value: string }[]} */
     const securityHeaders = [
       { key: "X-Frame-Options", value: "DENY" },
@@ -38,7 +41,7 @@ const nextConfig = {
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' blob: data: https:",
           "font-src 'self' data:",
-          "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.postmarkapp.com",
+          `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.postmarkapp.com${localDevConnections}`,
           "frame-ancestors 'none'",
         ].join("; "),
       },

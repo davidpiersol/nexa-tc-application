@@ -5,6 +5,7 @@ import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import type { CrmContactOption, CrmRelationshipRow, CrmTaskRow, CrmTouchpointRow } from "@/lib/crm/queries";
 import {
@@ -28,7 +29,7 @@ function label(value: string): string {
   return crmStatusLabel(value);
 }
 
-function ContactSelect({
+function ContactSearchField({
   contacts,
   name,
   defaultValue,
@@ -40,22 +41,17 @@ function ContactSelect({
   required?: boolean;
 }) {
   return (
-    <label className="flex flex-col gap-1.5 font-sans text-sm text-neutral-800">
-      Contact
-      <select
-        name={name}
-        defaultValue={defaultValue ?? ""}
-        required={required}
-        className="rounded-brand-md border border-neutral-300 bg-white px-3 py-2"
-      >
-        <option value="">Select contact</option>
-        {contacts.map((contact) => (
-          <option key={contact.id} value={contact.id}>
-            {contact.label}
-          </option>
-        ))}
-      </select>
-    </label>
+    <SearchableSelect
+      label="Contact"
+      name={name}
+      defaultValue={defaultValue}
+      required={required}
+      placeholder="Search contacts"
+      options={contacts.map((contact) => ({
+        value: contact.id,
+        label: contact.label,
+      }))}
+    />
   );
 }
 
@@ -115,7 +111,7 @@ export function CrmTaskForm({
           Title
           <input name="title" defaultValue={task?.title ?? ""} required className="rounded-brand-md border border-neutral-300 px-3 py-2" />
         </label>
-        <ContactSelect contacts={contacts} name="contactId" defaultValue={task?.contactId} />
+        <ContactSearchField contacts={contacts} name="contactId" defaultValue={task?.contactId} />
         <label className="flex flex-col gap-1.5 font-sans text-sm text-neutral-800">
           Due
           <input name="dueAt" type="datetime-local" defaultValue={defaultDue} className="rounded-brand-md border border-neutral-300 px-3 py-2" />
@@ -204,7 +200,7 @@ export function CrmTouchpointForm({
       className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm"
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ContactSelect contacts={contacts} name="contactId" defaultValue={touchpoint?.contactId} required />
+        <ContactSearchField contacts={contacts} name="contactId" defaultValue={touchpoint?.contactId} required />
         <label className="flex flex-col gap-1.5 font-sans text-sm text-neutral-800">
           Date
           <input name="occurredAt" type="datetime-local" defaultValue={crmDateInputValue(touchpoint?.occurredAt)} className="rounded-brand-md border border-neutral-300 px-3 py-2" />
@@ -294,8 +290,8 @@ export function CrmRelationshipForm({
       className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm"
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ContactSelect contacts={contacts} name="primaryContactId" defaultValue={relationship?.primaryContactId} required />
-        <ContactSelect contacts={contacts} name="relatedContactId" defaultValue={relationship?.relatedContactId} />
+        <ContactSearchField contacts={contacts} name="primaryContactId" defaultValue={relationship?.primaryContactId} required />
+        <ContactSearchField contacts={contacts} name="relatedContactId" defaultValue={relationship?.relatedContactId} />
         <label className="flex flex-col gap-1.5 font-sans text-sm text-neutral-800">
           Relationship
           <select name="relationshipType" defaultValue={relationship?.relationshipType ?? "other"} className="rounded-brand-md border border-neutral-300 bg-white px-3 py-2">

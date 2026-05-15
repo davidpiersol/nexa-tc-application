@@ -17,7 +17,15 @@ import { cn } from "@/lib/utils/cn";
 import { AccountMenu } from "@/components/dashboard/account-menu";
 import { Button } from "@/components/ui/button";
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+type DashboardShellProps = {
+  children: React.ReactNode;
+  account?: {
+    email?: string | null;
+    role?: string | null;
+  };
+};
+
+export function DashboardShell({ children, account }: DashboardShellProps) {
   const pathname = usePathname();
   const role = roleFromPathname(pathname);
   const items = navItemsForPath(pathname);
@@ -171,7 +179,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <Link href={tcPrimaryAction.href}>{tcPrimaryAction.label}</Link>
               </Button>
             ) : null}
-            <AccountMenu />
+            <AccountMenu email={account?.email} role={account?.role} />
           </div>
         </header>
         <main className="relative z-0 min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>

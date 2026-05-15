@@ -2,7 +2,7 @@
 
 **Read next:** [`docs/session-next.md`](../../docs/session-next.md) — handoff, permissions checklist, **NEXT STEP**.
 
-**Last updated:** 2026-05-09  
+**Last updated:** 2026-05-14  
 **Guide:** [`nexa_build_guide.md`](../../nexa_build_guide.md)
 
 Update this file whenever you **finish a step**, **move to a new step**, or need to **correct** status. The AI assistant should treat this file as the source of truth for “where we are” in the build guide.
@@ -13,10 +13,10 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **User review application 80** |
-| **Completed** | Sprint work through **`v4.4.2`** is in place, including TC intake enhancements, buyer documents/messages routes, hosted auth/API hardening, and role-based access guard fixes (see [`CHANGELOG.md`](../../CHANGELOG.md)). |
-| **Next** | **Final Sprint — Client Required/Optional Mapping** from [`first-pass-changes.md`](../../first-pass-changes.md): review intake fields with client, mark required/optional by packet + stage, and capture approval. |
-| **After that** | Resume **Chapter 4 · Step 11** (external API integrations) after client mapping decisions are finalized. |
+| **Current position** | **Choral Point roadmap development through P31 follow-up hardening** |
+| **Completed** | Current work includes CRM build-out, MLS-only job scaffolding, billing/invoicing/report scaffolding, global AI configuration, template mapping work, and post-P31 QA fixes through **`v4.31.3-dev`**. |
+| **Next** | Continue the active Choral Point sprint sequence from the BuildTrack project plan, with user approval checkpoints and QA gates between milestones. |
+| **After that** | Use the remaining roadmap sprints for UI polish, provider integrations, and the later calendar/CRM connection work already documented in the Choral Point roadmap. |
 
 ---
 
@@ -77,8 +77,8 @@ Per the guide: Next.js 14 App Router scaffold (TypeScript strict), folder layout
 
 | Step | Title | Status |
 |------|--------|--------|
-| 14 | Build the in-app help panel | Not started |
-| 15 | Write all help articles — every role | Not started |
+| 14 | Build the in-app help panel | **Complete** |
+| 15 | Write all help articles — every role | **In progress** — original role coverage exists; new feature help is being added as roadmap surfaces ship |
 
 ---
 
@@ -88,6 +88,7 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-14 | Added help coverage for MLS entry, billing/invoices, reports, TC CRM, and agent CRM; refreshed wiki status for current Choral Point roadmap work. |
 | 2026-05-02 | **QA pass:** Vitest + `verify` + smoke script + Supabase empty-env fix + CI workflow + [`docs/session-next.md`](../../docs/session-next.md) — **`v2.1.1`**. |
 | 2026-05-02 | **Step 10 done:** Auth/MFA/middleware/CSRF/invites/security headers — **`v2.1.0`**. |
 | 2026-05-02 | **RLS follow-up:** Agent **`transactions` INSERT** policy + **`email_ingestion.from_email`** index — migration **`20260503120000_*`** · **`v2.0.2`**. |

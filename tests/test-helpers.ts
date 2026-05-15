@@ -11,18 +11,6 @@ import type { Page } from "@playwright/test";
  */
 const KNOWN_CONSOLE_NOISE: RegExp[] = [
   /favicon/i,
-  // CSP blocks Google Fonts @import in app/globals.css (tracked separately).
-  /fonts\.googleapis\.com.*Content Security Policy/i,
-  /style-src.*style-src-elem/i,
-  // dnd-kit generates a different aria-describedby id between server and client
-  // render. Hydration warning, not a behavioral bug.
-  /aria-describedby.*DndDescribedBy/i,
-  /Warning: Prop `%s` did not match.*aria-describedby/i,
-  // Local Supabase Studio (127.0.0.1:54321) is blocked by the production-shaped
-  // CSP during local dev; only matters when devs point .env at a remote project.
-  /127\.0\.0\.1:54321.*Content Security Policy/i,
-  /Refused to connect.*127\.0\.0\.1:54321/i,
-  /Failed to fetch[\s\S]*GoTrueClient/i,
 ];
 
 export function isKnownConsoleNoise(text: string): boolean {

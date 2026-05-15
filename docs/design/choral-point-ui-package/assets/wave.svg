@@ -1,0 +1,24 @@
+<svg width="1400" height="700" viewBox="0 0 1400 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="80" x2="1240" y2="650" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF6E8" stop-opacity="0"/>
+      <stop offset="0.55" stop-color="#A8B3C2" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#0B1220" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="2"/></filter>
+  </defs>
+  <rect width="1400" height="700" fill="url(#bg)"/>
+  <g stroke="#F2C979" stroke-opacity="0.78">
+    <path d="M40 530C220 440 332 445 466 487C624 537 724 540 879 445C1034 350 1167 325 1360 390"/>
+    <path d="M40 555C220 465 332 470 466 512C624 562 724 565 879 470C1034 375 1167 350 1360 415"/>
+    <path d="M40 580C220 490 332 495 466 537C624 587 724 590 879 495C1034 400 1167 375 1360 440"/>
+    <path d="M40 605C220 515 332 520 466 562C624 612 724 615 879 520C1034 425 1167 400 1360 465"/>
+    <path d="M40 630C220 540 332 545 466 587C624 637 724 640 879 545C1034 450 1167 425 1360 490"/>
+    <path d="M40 505C220 415 332 420 466 462C624 512 724 515 879 420C1034 325 1167 300 1360 365"/>
+  </g>
+  <g fill="#FFF6E8" filter="url(#blur)">
+    <circle cx="212" cy="514" r="5"/><circle cx="298" cy="495" r="4"/><circle cx="408" cy="516" r="5"/>
+    <circle cx="608" cy="556" r="5"/><circle cx="722" cy="548" r="4"/><circle cx="840" cy="480" r="5"/>
+    <circle cx="982" cy="392" r="5"/><circle cx="1136" cy="356" r="5"/><circle cx="1255" cy="386" r="4"/>
+  </g>
+</svg>

@@ -84,6 +84,34 @@
     "file": "tc/contact-delete-impact-check.md"
   },
   {
+    "slug": "tc-mls-entry",
+    "title": "MLS Entry Workspace",
+    "route": "/tc/mls-entry",
+    "role": "tc",
+    "file": "tc/mls-entry.md"
+  },
+  {
+    "slug": "tc-billing-and-invoices",
+    "title": "Billing and Invoices",
+    "route": "/tc/billing",
+    "role": "tc",
+    "file": "tc/billing-and-invoices.md"
+  },
+  {
+    "slug": "tc-reports",
+    "title": "Reports",
+    "route": "/tc/reports",
+    "role": "tc",
+    "file": "tc/reports.md"
+  },
+  {
+    "slug": "tc-crm",
+    "title": "CRM Workspace",
+    "route": "/tc/crm",
+    "role": "tc",
+    "file": "tc/crm.md"
+  },
+  {
     "slug": "agent-dashboard-overview",
     "title": "Agent Workspace — Stay Ahead of the Next Question",
     "route": "/agent/[id]",
@@ -103,6 +131,13 @@
     "route": "/agent/[id] · messages",
     "role": "agent",
     "file": "agent/messaging.md"
+  },
+  {
+    "slug": "agent-crm",
+    "title": "Agent CRM Workspace",
+    "route": "/agent/crm",
+    "role": "agent",
+    "file": "agent/crm.md"
   },
   {
     "slug": "buyer-welcome",

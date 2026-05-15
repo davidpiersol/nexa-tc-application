@@ -9,9 +9,6 @@ import { formatRoleLabel } from "@/components/dashboard/profile-body";
 import { profileHrefFromPathname, roleFromPathname } from "@/lib/dashboard-nav";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import { cn } from "@/lib/utils/cn";
-import { roleFromUser } from "@/lib/auth/mfa";
-import { createClient } from "@/lib/supabase/client";
-import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 function shortEmail(email: string | undefined) {
   if (!email) return "Account";
@@ -21,26 +18,17 @@ function shortEmail(email: string | undefined) {
   return `${trimmed}@${domain}`;
 }
 
-export function AccountMenu() {
+type AccountMenuProps = {
+  email?: string | null;
+  role?: string | null;
+};
+
+export function AccountMenu({ email, role }: AccountMenuProps) {
   const pathname = usePathname();
   const roleSeg = roleFromPathname(pathname);
   const profileHref = profileHrefFromPathname(pathname);
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<SupabaseUser | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-
-    void supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -50,8 +38,7 @@ export function AccountMenu() {
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  const jwtRole = user ? roleFromUser(user) : undefined;
-  const displayRole = jwtRole ?? roleSeg ?? "";
+  const displayRole = role ?? roleSeg ?? "";
   const roleLabel = displayRole ? formatRoleLabel(displayRole) : "Workspace";
 
   const logout = useCallback(async () => {
@@ -90,7 +77,7 @@ export function AccountMenu() {
       >
         <NexaIcon className="size-5 shrink-0 opacity-70" aria-hidden />
         <span className="hidden min-w-0 flex-1 flex-col truncate text-left sm:flex">
-          <span className="truncate normal-case text-neutral-900">{shortEmail(user?.email)}</span>
+          <span className="truncate normal-case text-neutral-900">{shortEmail(email ?? undefined)}</span>
           <span className="truncate text-[10px] text-neutral-500">{roleLabel}</span>
         </span>
         <span className="sm:hidden">Menu</span>

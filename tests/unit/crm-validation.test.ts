@@ -37,6 +37,13 @@ describe("CRM validation and permissions", () => {
     ).toBe(true);
     expect(crmTouchpointSchema.safeParse({ touchType: "note" }).success).toBe(false);
     expect(
+      crmTouchpointSchema.safeParse({
+        contactId,
+        touchType: "text",
+        direction: "inbound",
+      }).success,
+    ).toBe(true);
+    expect(
       crmRelationshipSchema.safeParse({
         primaryContactId: contactId,
         relationshipType: "referral_source",

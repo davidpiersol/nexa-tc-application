@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Single healthy dev server on :3000 — avoids two Next instances (.next churn + broken CSS).
+# Bash tip: never paste "npm run dev (or …" — the "(" starts a subshell and triggers a syntax error.
 # If webpack logs PackFileCacheStrategy / hasStartTime errors persist, retry with:
 #   NEXA_WEBPACK_DEV_MEMORY_CACHE=true npm run dev
 set -euo pipefail

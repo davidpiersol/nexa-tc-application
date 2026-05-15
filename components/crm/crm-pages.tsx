@@ -103,7 +103,7 @@ export async function CrmUpcomingPage({ workspace }: PageProps) {
   return (
     <CrmShell
       basePath={basePath}
-      title="CRM"
+      title="Upcoming Actions"
       subtitle="Start here for the people work that needs attention now, this week, this month, and this quarter."
       actions={
         <>
@@ -189,7 +189,7 @@ export async function CrmTaskListPage({ workspace, kind }: PageProps & { kind?: 
   return (
     <CrmShell
       basePath={basePath}
-      title={title}
+      title={kind === "reminder" ? title : "Follow-up Tasks"}
       subtitle="Open a row for read-only detail. Use edit when a record needs to change."
       actions={<Button asChild><Link href={`${basePath}/${listPath}/new`}><Plus className="size-4" aria-hidden />New {kind === "reminder" ? "reminder" : "task"}</Link></Button>}
     >
@@ -460,7 +460,7 @@ export async function CrmConnectionsPage({ workspace }: PageProps) {
   const basePath = crmPath(workspace);
   await requireCrmActor(workspace);
   return (
-    <CrmShell basePath={basePath} title="Connections" subtitle="Connection candidates are listed for planning. Tenant-admin setup and vendor-assisted credentials move to the later integration sprint.">
+    <CrmShell basePath={basePath} title="External CRM Connections" subtitle="Connection candidates are listed for planning. Tenant-admin setup and vendor-assisted credentials move to the later integration sprint.">
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {CRM_PROVIDER_CATALOG.map((provider) => (
           <article key={provider.key} className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">

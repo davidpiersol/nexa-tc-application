@@ -15,6 +15,14 @@ describe("resolveHelpSlugForPath", () => {
     expect(resolveHelpSlugForPath("/tc/contacts/new")).toBe("tc-contacts-directory");
     expect(resolveHelpSlugForPath("/tc/contacts/contact-1")).toBe("tc-contact-delete-impact-check");
     expect(resolveHelpSlugForPath("/tc/brokers/broker-1")).toBe("tc-broker-profiles");
+    expect(resolveHelpSlugForPath("/tc/crm/tasks")).toBe("tc-crm");
+    expect(resolveHelpSlugForPath("/agent/crm/connections")).toBe("agent-crm");
+  });
+
+  it("returns page-specific help for newer TC workspaces", () => {
+    expect(resolveHelpSlugForPath("/tc/mls-entry/new")).toBe("tc-mls-entry");
+    expect(resolveHelpSlugForPath("/tc/billing/invoices")).toBe("tc-billing-and-invoices");
+    expect(resolveHelpSlugForPath("/tc/reports/billing")).toBe("tc-reports");
   });
 
   it("returns page-specific global admin help", () => {
