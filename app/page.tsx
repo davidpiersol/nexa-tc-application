@@ -20,7 +20,7 @@ export default function HomePage() {
           </nav>
         </header>
 
-        <section className="choral-wave-surface min-h-[31rem] rounded-[28px] shadow-brand-lg">
+        <section className="choral-wave-surface choral-landing-hero min-h-[31rem] rounded-[28px] shadow-brand-lg">
           <div className="relative z-10 max-w-xl px-7 py-12 sm:px-12 sm:py-20">
             <h1 className="font-display text-[42px] font-semibold leading-[0.98] text-brand-navy sm:text-[54px]">
               {choralPointBrand.tagline}

@@ -122,6 +122,12 @@
     content: "";
   }
 
+  .choral-landing-hero {
+    background:
+      radial-gradient(circle at 100% 100%, rgba(11, 18, 32, 0.98) 0%, rgba(20, 32, 51, 0.94) 28%, transparent 58%),
+      linear-gradient(135deg, #fffaf3 0%, #fbf4eb 32%, #dfe5ec 54%, #41566b 72%, #142033 100%);
+  }
+
   .choral-panel {
     border: 1px solid rgba(11, 18, 32, 0.1);
     background: rgba(255, 255, 255, 0.82);
