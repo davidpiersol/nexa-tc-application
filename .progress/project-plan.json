@@ -26,7 +26,7 @@
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
     "currentVersion": "v4.31.5",
-    "lastDeployedVersion": "v4.26.0",
+    "lastDeployedVersion": "v4.31.5",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
       "netlify": "vM.S.P",
