@@ -15,3 +15,17 @@ This log tracks incremental UI review changes during the `P32` polish sprint. Ea
 - Added irregular sparkles and softened glow clustering so the motif reads more like the approved flowing reference.
 
 ![Organic wave snapshot](./choral-point-ui-progress/v4.32.3-dev-organic-wave.png)
+
+## v4.32.4-dev - Reference-close filament wave
+
+- Increased the filament count and widened the ribbon so the landing hero tracks much closer to the approved board.
+- Added layered glow clusters and more embedded sparkles to recreate the luminous, flowing reference treatment.
+
+![Reference-close wave snapshot](./choral-point-ui-progress/v4.32.4-dev-reference-close-wave.png)
+
+## v4.32.5-dev - B/C flow comparison artifact
+
+- Added a standalone comparison page for the two leading navy-flow directions.
+- Kept the decision artifact separate from the live landing page so the next applied design change remains deliberate.
+
+[Open the B/C comparison page](./landing-flow-bc-comparison.html)

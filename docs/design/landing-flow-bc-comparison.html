@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choral Point Landing Flow Comparison</title>
+  <style>
+    :root {
+      --navy: #0b1220;
+      --slate: #41566b;
+      --gold: #d4af37;
+      --paper: #fbf7f1;
+      --cream: #fff6e8;
+      --line: rgba(11, 18, 32, 0.1);
+      --shadow: 0 24px 60px rgba(11, 18, 32, 0.1);
+      --font: "Avenir Next", "Inter", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--navy);
+      font-family: var(--font);
+    }
+    main {
+      width: min(1240px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 38px 0 48px;
+    }
+    .eyebrow {
+      text-align: center;
+      color: #b97811;
+      font-size: 15px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 10px 0 28px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+    .variant h2 {
+      margin: 0 0 12px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 500;
+    }
+    .hero {
+      position: relative;
+      min-height: 470px;
+      overflow: hidden;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+    .hero::before,
+    .hero::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+    }
+    .hero::after {
+      z-index: -1;
+      background: url("../../public/brand/choral-point/wave.svg") center / cover no-repeat;
+    }
+    .hero-b {
+      background:
+        radial-gradient(circle at 100% 100%, rgba(11, 18, 32, 0.98) 0%, rgba(20, 32, 51, 0.9) 30%, transparent 59%),
+        linear-gradient(135deg, #fffaf3 0%, #fbf4eb 25%, #e8edf2 45%, #7b8798 66%, #142033 100%);
+    }
+    .hero-c {
+      background:
+        radial-gradient(circle at 100% 100%, rgba(11, 18, 32, 1) 0%, rgba(20, 32, 51, 0.98) 34%, transparent 64%),
+        linear-gradient(135deg, #fffaf3 0%, #f7f0e7 16%, #c8d0db 35%, #41566b 58%, #142033 100%);
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      width: min(360px, calc(100% - 48px));
+      padding: 58px 0 0 34px;
+    }
+    .brand {
+      margin-bottom: 74px;
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .brand span:last-child { color: #b97811; }
+    .star {
+      width: 20px;
+      height: 20px;
+      background: url("../../public/brand/choral-point/starburst.svg") center / contain no-repeat;
+    }
+    .copy {
+      margin: 0;
+      font-size: 39px;
+      font-weight: 600;
+      line-height: 0.98;
+    }
+    p {
+      margin: 18px 0 0;
+      color: var(--slate);
+      line-height: 1.6;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .button {
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: var(--gold);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .button.secondary {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--navy);
+    }
+    .note {
+      margin-top: 14px;
+      text-align: center;
+      color: var(--slate);
+      font-size: 14px;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Landing flow comparison</div>
+    <h1>Choose the navy-gradient direction</h1>
+    <section class="grid">
+      <article class="variant">
+        <h2>B</h2>
+        <div class="hero hero-b">
+          <div class="content">
+            <div class="brand"><span>Choral</span><i class="star"></i><span>Point</span></div>
+            <div class="copy">The Center of<br />Every Deal.</div>
+            <p>One platform. Every participant. Perfectly in sync.</p>
+            <div class="actions">
+              <span class="button">Sign in</span>
+              <span class="button secondary">Create account</span>
+            </div>
+          </div>
+        </div>
+        <div class="note">Balanced diagonal river of navy.</div>
+      </article>
+      <article class="variant">
+        <h2>C</h2>
+        <div class="hero hero-c">
+          <div class="content">
+            <div class="brand"><span>Choral</span><i class="star"></i><span>Point</span></div>
+            <div class="copy">The Center of<br />Every Deal.</div>
+            <p>One platform. Every participant. Perfectly in sync.</p>
+            <div class="actions">
+              <span class="button">Sign in</span>
+              <span class="button secondary">Create account</span>
+            </div>
+          </div>
+        </div>
+        <div class="note">More immersive navy field with stronger drama.</div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
