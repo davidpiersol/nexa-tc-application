@@ -1477,12 +1477,12 @@
     "lane": "integrations",
     "milestoneId": "m1",
     "versionScope": "v4.33.0-dev",
-    "status": "in_progress",
+    "status": "done",
     "jiraKey": null,
     "summary": "Support property data lookup anywhere in New Mexico, not just Valencia County, using a provider-first statewide strategy with county-specific fallback connectors and manual/AI-assisted fallback where structured data is unavailable.",
     "validation": {
-      "build": "not_run",
-      "tests": "not_run",
+      "build": "passed",
+      "tests": "passed",
       "approval": "pending"
     },
     "acceptance": [
@@ -1526,7 +1526,8 @@
       "Run at least one browser smoke pass for the changed workflow."
     ],
     "fullQaPrompt": "Run full QA for P33 (Statewide New Mexico property data lookup). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, source metadata, provider fallback behavior, and regression flows. Test at least one configured-provider lookup path and one manual/county-fallback path. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-    "startedAt": "2026-05-16T12:30:00.000Z"
+    "startedAt": "2026-05-16T12:30:00.000Z",
+    "completedAt": "2026-05-16T13:15:00.000Z"
   },
   {
     "id": "P34",
@@ -1534,12 +1535,12 @@
     "lane": "hardening",
     "milestoneId": "m1",
     "versionScope": "v4.34.0-dev",
-    "status": "in_progress",
+    "status": "done",
     "jiraKey": null,
     "summary": "No-new-feature security, performance, UI/UX, and code-quality pass after statewide property lookup and UI polish before final release hardening.",
     "validation": {
-      "build": "not_run",
-      "tests": "not_run",
+      "build": "passed",
+      "tests": "passed",
       "approval": "pending"
     },
     "acceptance": [
@@ -1585,7 +1586,8 @@
       "Smoke test final TC dashboard, transaction detail, document, AI, CRM, and property lookup flows."
     ],
     "fullQaPrompt": "Run full QA for P34 (Hardening gate: statewide property data, UI/UX, and final pre-release cleanup). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
-    "startedAt": "2026-05-16T12:35:00.000Z"
+    "startedAt": "2026-05-16T12:35:00.000Z",
+    "completedAt": "2026-05-16T13:15:00.000Z"
   },
   {
     "id": "P35",
@@ -1593,12 +1595,12 @@
     "lane": "release",
     "milestoneId": "m1",
     "versionScope": "v4.35.0-dev",
-    "status": "todo",
+    "status": "done",
     "jiraKey": null,
     "summary": "Perform full regression, security/RLS review, migration verification, seed verification, and create a known-good rollback marker after the roadmap pass is fully tested.",
     "validation": {
-      "build": "not_run",
-      "tests": "not_run",
+      "build": "passed",
+      "tests": "passed",
       "approval": "pending"
     },
     "acceptance": [
@@ -1628,7 +1630,8 @@
       "Run focused unit tests for new helpers, validators, and permission logic.",
       "Run at least one browser smoke pass for the changed workflow."
     ],
-    "fullQaPrompt": "Run full QA for P35 (Release hardening and stable rollback checkpoint). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    "fullQaPrompt": "Run full QA for P35 (Release hardening and stable rollback checkpoint). Verify all acceptance criteria, review checklist items, automated checks, focused browser smoke, role permissions, and regression flows. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+    "completedAt": "2026-05-16T13:15:00.000Z"
   },
   {
     "id": "P36",

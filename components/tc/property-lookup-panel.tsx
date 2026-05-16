@@ -31,6 +31,24 @@ export function PropertyLookupPanel({ transactionId, address }: { transactionId?
     setMessage(body.run?.status === "manual_required" ? "No structured provider is configured yet. Paste assessor or GIS text to generate reviewable suggestions." : "Suggestions ready for human review.");
   }
 
+  async function reviewSuggestion(id: string | undefined, accept: boolean) {
+    if (!id) return;
+    setPending(true);
+    setMessage(null);
+    const token = await csrf();
+    if (!token) { setMessage("Security token missing."); setPending(false); return; }
+    const res = await fetch(`/api/property-lookup/suggestions/${id}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json", [CSRF_HEADER_NAME]: token },
+      body: JSON.stringify({ accept }),
+    });
+    setPending(false);
+    if (!res.ok) { setMessage("Could not save review decision."); return; }
+    setSuggestions((current) => current.filter((item) => item.id !== id));
+    setMessage(accept ? "Suggestion accepted and saved." : "Suggestion rejected.");
+  }
+
   return <section className="rounded-brand-md border border-neutral-200 p-4">
     <h4 className="font-display text-heading-md text-brand-navy">Statewide property lookup</h4>
     <p className="mt-2 text-sm text-neutral-600">Use a reviewed statewide provider when configured; otherwise paste assessor or GIS text and confirm each suggestion before saving.</p>
@@ -40,6 +58,6 @@ export function PropertyLookupPanel({ transactionId, address }: { transactionId?
     </div>
     <div className="mt-4"><Button type="button" variant="secondary" onClick={lookup} loading={pending}>Research property</Button></div>
     {message ? <p className="mt-3 text-sm text-neutral-600">{message}</p> : null}
-    {suggestions.length ? <ul className="mt-4 flex flex-col gap-2">{suggestions.map((item)=> <li key={`${item.fieldKey}:${item.value}`} className="rounded-brand-md bg-neutral-50 px-3 py-2 text-sm"><span className="font-semibold">{item.fieldKey}</span>: {item.value} <span className="text-neutral-600">· review before saving</span></li>)}</ul> : null}
+    {suggestions.length ? <ul className="mt-4 flex flex-col gap-2">{suggestions.map((item)=> <li key={`${item.fieldKey}:${item.value}`} className="flex flex-col gap-3 rounded-brand-md bg-neutral-50 px-3 py-2 text-sm md:flex-row md:items-center md:justify-between"><span><span className="font-semibold">{item.fieldKey}</span>: {item.value} <span className="text-neutral-600">· review before saving</span></span>{item.id ? <span className="flex gap-2"><Button type="button" variant="secondary" size="sm" onClick={() => reviewSuggestion(item.id, true)} disabled={pending}>Accept</Button><Button type="button" variant="ghost" size="sm" onClick={() => reviewSuggestion(item.id, false)} disabled={pending}>Reject</Button></span> : null}</li>)}</ul> : null}
   </section>;
 }

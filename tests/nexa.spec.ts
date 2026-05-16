@@ -73,17 +73,18 @@ test.describe("TC dashboard", () => {
     expect(errs).toEqual([]);
   });
 
-  test("CRM page shows disabled external CRM scaffolding", async ({ page }) => {
+  test("CRM connections page shows disabled external CRM scaffolding", async ({ page }) => {
     const errs = attachConsoleCapture(page);
-    await gotoApp(page, "/tc/crm");
-    await expect(page.getByRole("heading", { level: 2, name: "CRM" })).toBeVisible({
+    await gotoApp(page, "/tc/crm/connections");
+    await expect(page.getByRole("heading", { level: 2, name: "External CRM Connections" })).toBeVisible({
       timeout: 30_000,
     });
     await expect(page.getByText("DeltaNET / Delta Media Group")).toBeVisible();
     await expect(page.getByText("Lofty")).toBeVisible();
     await expect(page.getByText("Follow Up Boss")).toBeVisible();
     await expect(page.getByText("MoxiWorks")).toBeVisible();
-    await expect(page.getByText(/no provider sync is active/i)).toBeVisible();
+    await expect(page.getByText(/No external sync/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Setup pending" }).first()).toBeDisabled();
     expect(errs).toEqual([]);
   });
 
@@ -197,12 +198,32 @@ test.describe("TC dashboard", () => {
     await expect(page).toHaveURL(/\/tc\/transactions$/);
   });
 
+  test("statewide property lookup supports manual review before saving", async ({ page }) => {
+    const id = UAT_TRANSACTION_ID;
+    await gotoApp(page, `/tc/transactions/${id}/edit`);
+
+    await page.getByPlaceholder("Valencia").fill("Catron");
+    await page
+      .getByPlaceholder(/Owner: Jane Doe/i)
+      .fill("Owner: QA Owner\nParcel number: QA-123\nCounty: Catron");
+    await page.getByRole("button", { name: "Research property" }).click();
+
+    await expect(page.getByText(/Suggestions ready for human review/i)).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByText(/owner_name: QA Owner/i)).toBeVisible();
+    await page.getByRole("button", { name: "Accept" }).first().click();
+    await expect(page.getByText(/Suggestion accepted and saved/i)).toBeVisible();
+  });
+
   test("assign and remove vendor from transaction", async ({ page }) => {
     const id = UAT_TRANSACTION_ID;
     const note = `QA vendor assignment ${Date.now()}`;
     await gotoApp(page, `/tc/transactions/${id}/vendors`);
 
-    await page.getByRole("combobox", { name: /^Contact/ }).selectOption({ index: 1 });
+    const contactCombobox = page.getByRole("combobox", { name: /^Contact/ });
+    await contactCombobox.click();
+    await page.locator('[id$="-options"] button').first().click();
     await page.getByRole("combobox", { name: "Assignment role" }).selectOption("other");
     await page.getByRole("combobox", { name: "Category context (optional)" }).selectOption("other");
     await page.getByLabel("Notes (optional)").fill(note);

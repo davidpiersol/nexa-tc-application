@@ -53,8 +53,42 @@ export async function POST(request: NextRequest) {
   const status = suggestions.length ? "success" : "manual_required";
   const { data: run, error: runError } = await supabase.from("property_lookup_runs").insert({ tenant_id: actor.tenantId, transaction_id: parsed.transactionId ?? null, requested_by: actor.userId, source_kind: providerSuggestions.length ? "attom" : manualSuggestions.length ? "manual_text" : "county_registry", source_label: providerSuggestions.length ? "ATTOM" : countySource?.county_name ?? "manual fallback", county_source_id: countySource?.id ?? null, query_type: parsed.address ? "address" : "manual", normalized_query: normalizedQuery, status, retrieved_fields: retrievedFields, missing_fields: missingPropertyFields(retrievedFields), raw_snapshot: rawSnapshot, source_notes: providerSuggestions.length ? "Configured statewide provider response normalized; human confirmation required." : manualSuggestions.length ? "Manual text extraction only; human confirmation required." : "No configured structured provider; use manual entry or reviewed county source." }).select("id, status, missing_fields").single();
   if (runError || !run) return NextResponse.json({ error: runError?.message ?? "lookup_run_failed" }, { status: 500 });
+  let storedSuggestions: Array<{
+    id: string;
+    field_key: string;
+    suggested_value: string;
+    source_kind: string;
+    confidence: number | null;
+    source_notes: string | null;
+  }> = [];
   if (suggestions.length) {
-    await supabase.from("property_lookup_suggestions").insert(suggestions.map((item) => ({ tenant_id: actor.tenantId, transaction_id: parsed.transactionId ?? null, lookup_run_id: run.id, field_key: item.fieldKey, suggested_value: item.value, source_kind: item.sourceKind, confidence: item.confidence, source_notes: item.sourceNotes })));
+    const { data } = await supabase
+      .from("property_lookup_suggestions")
+      .insert(
+        suggestions.map((item) => ({
+          tenant_id: actor.tenantId,
+          transaction_id: parsed.transactionId ?? null,
+          lookup_run_id: run.id,
+          field_key: item.fieldKey,
+          suggested_value: item.value,
+          source_kind: item.sourceKind,
+          confidence: item.confidence,
+          source_notes: item.sourceNotes,
+        })),
+      )
+      .select("id, field_key, suggested_value, source_kind, confidence, source_notes");
+    storedSuggestions = data ?? [];
   }
-  return NextResponse.json({ run, suggestions, countySource });
+  return NextResponse.json({
+    run,
+    suggestions: storedSuggestions.map((item) => ({
+      id: item.id,
+      fieldKey: item.field_key,
+      value: item.suggested_value,
+      sourceKind: item.source_kind,
+      confidence: item.confidence,
+      sourceNotes: item.source_notes,
+    })),
+    countySource,
+  });
 }
