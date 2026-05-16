@@ -36,3 +36,9 @@ This log tracks incremental UI review changes during the `P32` polish sprint. Ea
 - Preserved the combined comparison page as a compact reference board.
 
 [Open option B](./landing-flow-b.html) | [Open option C](./landing-flow-c.html)
+
+## v4.32.7-dev - Public marketing scaffold
+
+- Adopted the approved full-screen landing/login treatment in-app.
+- Added public-page scaffolds, login navigation, and the request-demo conversion path for later content refinement.
+

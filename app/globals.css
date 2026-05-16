@@ -156,3 +156,102 @@
     transition: background-color 99999s ease-out;
   }
 }
+
+@layer components {
+  .choral-marketing-page,
+  .choral-auth-page {
+    position: relative;
+    overflow: hidden;
+    background: #f5f1ea;
+    isolation: isolate;
+  }
+
+  .choral-marketing-page::before,
+  .choral-auth-page::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url("/brand/choral-point/hero-particles.jpg") center / cover no-repeat;
+    content: "";
+  }
+
+  .choral-marketing-shell,
+  .choral-auth-shell {
+    width: min(1280px, calc(100% - 64px));
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .choral-marketing-primary {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #e0a347 0%, #c88528 100%);
+    padding: 0 22px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 12px 24px rgba(164, 105, 26, 0.22);
+  }
+
+  .choral-marketing-secondary,
+  .choral-auth-back-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 0 18px;
+    font-weight: 600;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6), 0 8px 18px rgba(11, 18, 32, 0.08);
+  }
+
+  .choral-play-dot {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 999px;
+    background: #1a1d24;
+    color: white;
+    font-size: 11px;
+  }
+
+  .choral-auth-card {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.72);
+    padding: 30px;
+    box-shadow: 0 24px 70px rgba(11, 18, 32, 0.16);
+    backdrop-filter: blur(18px);
+  }
+
+  @media (max-width: 900px) {
+    .choral-marketing-shell,
+    .choral-auth-shell {
+      width: min(calc(100% - 32px), 1280px);
+    }
+  }
+}
+
+
+@layer components {
+  .choral-marketing-card {
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.72);
+    padding: 24px;
+    box-shadow: 0 24px 70px rgba(11, 18, 32, 0.12);
+    backdrop-filter: blur(18px);
+  }
+  .choral-request-form { display:flex; flex-direction:column; gap:18px; }
+  .choral-request-form label { display:flex; flex-direction:column; gap:8px; color:rgba(11,18,32,.78); font-size:13px; font-weight:600; }
+  .choral-request-form .hidden { display: none; }
+  .choral-request-form input, .choral-request-form textarea { width:100%; border:1px solid rgba(11,18,32,.12); border-radius:12px; background:rgba(255,255,255,.88); padding:12px 14px; color:#122033; font-size:15px; font-weight:400; }
+}

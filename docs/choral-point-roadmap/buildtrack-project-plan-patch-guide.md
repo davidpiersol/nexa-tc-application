@@ -153,6 +153,9 @@ Use these MSP scopes:
 - `P33`: `v4.33.0-dev` - statewide New Mexico property data lookup
 - `P34`: `v4.34.0-dev` - hardening gate: statewide property data, UI/UX, and final pre-release cleanup
 - `P35`: `v4.35.0-dev` - release hardening and stable rollback checkpoint
+- `P36`: `v4.36.0-dev` - external CRM and calendar provider integrations
+- `P37`: `v4.37.0-dev` - public marketing content expansion
+- `P38`: `v4.38.0-dev` - production launch for choralpoint.com
 
 Do not mark any of these sprints `done` until Cursor has implemented the code and build/test validation is complete. Do not mark them `approved` until you review the work.
 

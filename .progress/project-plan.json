@@ -1919,6 +1919,90 @@
         "Browser smoke provider connection pages and disabled-provider fallback."
       ],
       "fullQaPrompt": "Run full QA for P36 (External CRM and calendar provider integrations). Verify provider connection acceptance, credentials/security, OAuth/API/CSV/VCF fallback behavior, field mapping, duplicate handling, sync logs, disabled-provider behavior, and regression flows. If any provider access would require unsupported scraping or raw password storage, stop and report the risk plus recommendations. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    },
+    {
+      "id": "P37",
+      "name": "Public marketing content expansion",
+      "lane": "ui",
+      "milestoneId": "m1",
+      "versionScope": "v4.37.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Develop the public Choral Point website in detail after the core product and provider-integration sprints are stable, including final messaging, page-specific content, conversion paths, SEO basics, and launch-ready assets.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Platform, Solutions, Resources, Company, and How It Works pages contain approved final copy and page-specific content.",
+        "Landing-page messaging, CTA hierarchy, and public navigation are approved.",
+        "Public pages include responsive layouts, metadata, accessible headings, and coherent internal linking.",
+        "Request-demo flow copy, success/failure states, and anti-spam controls are reviewed.",
+        "Marketing assets and screenshots are approved for production use."
+      ],
+      "recommendedPrompt": "Develop the public Choral Point marketing site in detail using the approved landing-page direction and existing public-page scaffolds. Finalize messaging, content hierarchy, SEO metadata, conversion paths, and launch-ready assets without destabilizing the application workflows.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Core application workflows and provider-integration decisions are stable before detailed public-site work begins.",
+        "stableWhen": "P37 is fully tested only after content approval, responsive/browser smoke, accessibility review, and production-readiness review pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.37.0"
+      },
+      "reviewChecklist": [
+        "Confirm public-site copy is approved by the product owner.",
+        "Review responsive behavior, navigation, metadata, and request-demo flow.",
+        "Confirm no protected application data or internal-only copy leaks into public pages.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run browser smoke across all public routes and the request-demo flow.",
+        "Review accessibility basics and metadata for public pages."
+      ],
+      "fullQaPrompt": "Run full QA for P37 (public marketing content expansion). Verify approved copy, page hierarchy, navigation, request-demo flow, responsive behavior, metadata, accessibility, and regression safety. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+    },
+    {
+      "id": "P38",
+      "name": "Production launch for choralpoint.com",
+      "lane": "release",
+      "milestoneId": "m1",
+      "versionScope": "v4.38.0-dev",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Stand up the production Choral Point site at choralpoint.com with domain, hosting, environment, email, security, monitoring, and launch verification guidance.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Production hosting target is selected and documented.",
+        "choralpoint.com DNS, HTTPS, redirects, and canonical URLs are configured.",
+        "Production environment variables, Supabase, Postmark, and request-demo delivery are verified.",
+        "Deployment, rollback, monitoring, and incident-response steps are documented.",
+        "A production smoke pass confirms landing, login, public pages, request-demo flow, and protected app routing."
+      ],
+      "recommendedPrompt": "Prepare and execute the production launch plan for Choral Point at choralpoint.com. Document hosting, DNS, TLS, environment variables, Postmark/domain verification, deployment, rollback, monitoring, and launch-smoke steps before promoting the site.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Public marketing content and application release hardening are approved before production launch work begins.",
+        "stableWhen": "P38 is complete only after domain, HTTPS, email delivery, production environment, rollback, and launch-smoke checks pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.38.0"
+      },
+      "reviewChecklist": [
+        "Confirm domain ownership and DNS change window.",
+        "Review production environment separation, secrets, and email-domain verification.",
+        "Confirm rollback and monitoring instructions exist before cutover.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run production-like smoke checks before cutover.",
+        "Run live production smoke after DNS/TLS cutover."
+      ],
+      "fullQaPrompt": "Run full QA for P38 (production launch for choralpoint.com). Verify DNS, HTTPS, redirects, environment variables, Postmark delivery, request-demo submissions, login, public routes, protected routing, monitoring, and rollback readiness. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
     }
   ],
   "blockers": [

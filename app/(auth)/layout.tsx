@@ -1,26 +1,34 @@
+import Link from "next/link";
+import { ChoralPointLogo } from "@/components/brand/ChoralPointLogo";
+
 export default function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="choral-app-background flex min-h-screen items-center justify-center px-4 py-8 text-neutral-900">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-brand-navy/10 bg-white/80 shadow-brand-lg backdrop-blur md:grid-cols-[1fr_0.86fr]">
-        <section className="choral-wave-surface hidden min-h-[38rem] md:block">
-          <div className="relative z-10 max-w-sm p-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-brand-gold-deep">
-              Choral Point
-            </p>
-            <h2 className="mt-5 text-[42px] font-semibold leading-[1.02] text-brand-navy">
-              The operational core of every real estate deal.
-            </h2>
-            <p className="mt-5 leading-7 text-brand-steel">
-              Coordinate participants, documents, and milestones from one calm workspace.
+    <main className="choral-auth-page min-h-screen text-brand-navy">
+      <div className="choral-auth-shell">
+        <header className="flex items-center justify-between gap-4 py-7">
+          <ChoralPointLogo className="text-[15px] tracking-[0.34em]" />
+          <Link href="/" className="choral-auth-back-link">
+            Back to site
+          </Link>
+        </header>
+
+        <section className="grid flex-1 items-center gap-8 py-8 md:grid-cols-[minmax(360px,1fr)_minmax(420px,0.92fr)] md:gap-14">
+          <div className="max-w-xl">
+            <h1 className="font-display text-[42px] font-semibold leading-[1.02] tracking-[-0.045em] text-brand-navy sm:text-[62px]">
+              Welcome back.
+            </h1>
+            <p className="mt-5 max-w-lg text-lg leading-8 text-brand-navy/75 sm:text-[19px]">
+              Return to the shared center of every transaction — where participants, documents, and milestones stay aligned.
             </p>
           </div>
+
+          <div className="choral-auth-card justify-self-end">
+            {children}
+          </div>
         </section>
-        <div className="p-7 sm:p-10">
-          {children}
-        </div>
       </div>
-    </div>
+    </main>
   );
 }

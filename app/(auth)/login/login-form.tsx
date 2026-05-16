@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChoralPointLogo } from "@/components/brand/ChoralPointLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { nexaBrand } from "@/lib/brand/tokens";
 import { OAuthProviderButtons } from "@/components/auth/oauth-provider-buttons";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
@@ -79,18 +77,13 @@ export function LoginForm({ redirect: redirectProp = "/tc" }: LoginFormProps) {
   }
 
   return (
-    <div className="relative flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <ChoralPointLogo compact />
-        <p className="font-sans text-sm font-semibold leading-snug text-brand-navy">
-          {nexaBrand.tagline}
-        </p>
-        <p className="font-sans text-sm text-neutral-600">{nexaBrand.actionLine}</p>
-      </div>
+    <div className="relative flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-heading-lg text-brand-navy">Sign in</h1>
+        <h2 className="font-display text-[28px] font-semibold tracking-[-0.03em] text-brand-navy">
+          Sign in
+        </h2>
         <p className="mt-2 font-sans text-ui-body text-neutral-600">
-          Use your work email to access your scoped dashboard.
+          Access your Choral Point workspace
         </p>
       </div>
       <form className="flex flex-col gap-5" onSubmit={onSubmit}>
@@ -114,7 +107,7 @@ export function LoginForm({ redirect: redirectProp = "/tc" }: LoginFormProps) {
             {error}
           </p>
         ) : null}
-        <Button variant="gold" type="submit" className="w-full sm:w-auto" disabled={pending}>
+        <Button variant="gold" type="submit" className="w-full" disabled={pending}>
           {pending ? "Signing in…" : "Continue"}
         </Button>
       </form>

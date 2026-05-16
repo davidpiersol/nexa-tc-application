@@ -4,6 +4,15 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+### Added
+
+- **Public marketing scaffold** — added public Platform, Solutions, Resources, Company, How It Works, and Request a Demo pages aligned with the approved landing-page visual direction.
+- **Production launch planning** — appended future public-content and `choralpoint.com` launch sprints plus a starter production-launch guide.
+
+### Changed
+
+- **Landing and login entry points** — adopted the approved Choral Point landing/login visuals and added a public Login link plus demo-request routing.
+
 ## [v4.30.5-dev] - 2026-05-14
 
 ### Changed

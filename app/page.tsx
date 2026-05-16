@@ -4,58 +4,44 @@ import { choralPointBrand } from "@/lib/brand/tokens";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-neutral-50 px-4 py-6 text-brand-navy sm:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <header className="flex items-center justify-between gap-4 py-2">
-          <ChoralPointLogo />
-          <nav className="hidden items-center gap-7 text-sm text-brand-steel md:flex">
-            <Link href="/login">Sign in</Link>
-            <Link href="/signup">Create account</Link>
-            <Link
-              href="/login"
-              className="rounded-xl bg-brand-gold px-5 py-3 font-semibold text-white shadow-brand-md transition hover:bg-brand-gold-deep"
-            >
-              Open workspace
-            </Link>
+    <main className="choral-marketing-page min-h-screen text-brand-navy">
+      <div className="choral-marketing-shell">
+        <header className="flex items-center justify-between gap-4 py-7">
+          <ChoralPointLogo className="text-[15px] tracking-[0.34em]" />
+          <nav className="hidden items-center gap-9 text-sm text-brand-navy/80 md:flex">
+            <Link href="/platform">Platform</Link>
+            <Link href="/solutions">Solutions</Link>
+            <Link href="/resources">Resources</Link>
+            <Link href="/company">Company</Link>
+            <Link href="/login">Login</Link>
           </nav>
+          <Link href="/request-demo" className="choral-marketing-primary">
+            Request a Demo
+          </Link>
         </header>
 
-        <section className="choral-wave-surface choral-landing-hero min-h-[31rem] rounded-[28px] shadow-brand-lg">
-          <div className="relative z-10 max-w-xl px-7 py-12 sm:px-12 sm:py-20">
-            <h1 className="font-display text-[42px] font-semibold leading-[0.98] text-brand-navy sm:text-[54px]">
-              {choralPointBrand.tagline}
+        <section className="flex flex-1 items-center">
+          <div className="max-w-2xl pb-10">
+            <h1 className="font-display text-[46px] font-semibold leading-[1.03] tracking-[-0.045em] text-brand-navy sm:text-[72px]">
+              {choralPointBrand.tagline.split(" ").slice(0, 2).join(" ")}<br />
+              {choralPointBrand.tagline.split(" ").slice(2).join(" ")}
             </h1>
-            <p className="mt-5 max-w-md text-lg leading-8 text-brand-steel">
-              {choralPointBrand.actionLine}
+            <p className="mt-7 text-lg leading-8 text-brand-navy/75 sm:text-xl">
+              One platform. Every participant.<br />
+              Perfectly in sync.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/login"
-                className="rounded-xl bg-brand-gold px-5 py-3 font-semibold text-white shadow-brand-md transition hover:bg-brand-gold-deep"
-              >
-                Sign in
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <Link href="/request-demo" className="choral-marketing-primary">
+                Request a Demo
               </Link>
-              <Link
-                href="/signup"
-                className="rounded-xl border border-brand-navy/15 bg-white/80 px-5 py-3 font-semibold text-brand-navy backdrop-blur transition hover:bg-white"
-              >
-                Create account
+              <Link href="/how-it-works" className="choral-marketing-secondary">
+                See How It Works
+                <span className="choral-play-dot" aria-hidden>
+                  ▶
+                </span>
               </Link>
             </div>
           </div>
-        </section>
-
-        <section className="grid gap-4 pb-6 md:grid-cols-3">
-          {[
-            ["Transactions", "Coordinate documents, parties, milestones, and approvals in one workspace."],
-            ["CRM", "Keep the next touch, follow-up, and relationship context close to the work."],
-            ["Reporting", "See billing, tax, and operational activity without leaving the platform."],
-          ].map(([title, body]) => (
-            <article key={title} className="choral-panel rounded-[22px] p-6">
-              <h2 className="text-lg font-semibold text-brand-navy">{title}</h2>
-              <p className="mt-3 text-sm leading-6 text-brand-steel">{body}</p>
-            </article>
-          ))}
         </section>
       </div>
     </main>

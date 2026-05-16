@@ -13,8 +13,8 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Choral Point roadmap development through P31 follow-up hardening** |
-| **Completed** | Current work includes CRM build-out, MLS-only job scaffolding, billing/invoicing/report scaffolding, global AI configuration, template mapping work, and post-P31 QA fixes through **`v4.31.3-dev`**. |
+| **Current position** | **Choral Point roadmap development in active P32 UI/UX polish** |
+| **Completed** | Current work includes CRM build-out, MLS-only job scaffolding, billing/invoicing/report scaffolding, global AI configuration, template mapping work, and post-P31 QA fixes and active P32 UI polish through **`v4.32.6-dev`**. |
 | **Next** | Continue the active Choral Point sprint sequence from the BuildTrack project plan, with user approval checkpoints and QA gates between milestones. |
 | **After that** | Use the remaining roadmap sprints for UI polish, provider integrations, and the later calendar/CRM connection work already documented in the Choral Point roadmap. |
 
