@@ -1,5 +1,6 @@
 /** Top bar titles aligned with Figma frame names (fallback when route matches). */
 export function dashboardTitleForPath(pathname: string): string {
+  if (pathname === "/uat-issues") return "UAT issues";
   if (pathname === "/tc/profile") return "Profile";
   if (pathname.match(/^\/seller\/[^/]+\/profile$/)) return "Profile";
   if (pathname.match(/^\/mortgage\/[^/]+\/profile$/)) return "Profile";

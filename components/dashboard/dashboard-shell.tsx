@@ -29,6 +29,7 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
   const items = navItemsForPath(pathname);
   const title = dashboardTitleForPath(pathname);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const uatIssuesEnabled = process.env.NEXT_PUBLIC_UAT_ISSUES_ENABLED === "true";
 
   if (pathname.startsWith("/tc/billing/print")) {
     return (
@@ -166,6 +167,11 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
             {role === "tc" && tcPrimaryAction ? (
               <Button variant="gold" size="sm" type="button" asChild>
                 <Link href={tcPrimaryAction.href}>{tcPrimaryAction.label}</Link>
+              </Button>
+            ) : null}
+            {uatIssuesEnabled ? (
+              <Button variant="secondary" size="sm" type="button" asChild>
+                <Link href="/uat-issues">UAT issues</Link>
               </Button>
             ) : null}
             <AccountMenu email={account?.email} role={account?.role} />
