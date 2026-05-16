@@ -1534,7 +1534,7 @@
     "lane": "hardening",
     "milestoneId": "m1",
     "versionScope": "v4.34.0-dev",
-    "status": "todo",
+    "status": "in_progress",
     "jiraKey": null,
     "summary": "No-new-feature security, performance, UI/UX, and code-quality pass after statewide property lookup and UI polish before final release hardening.",
     "validation": {
@@ -1584,7 +1584,8 @@
       "Verify accessibility basics for changed controls and forms.",
       "Smoke test final TC dashboard, transaction detail, document, AI, CRM, and property lookup flows."
     ],
-    "fullQaPrompt": "Run full QA for P34 (Hardening gate: statewide property data, UI/UX, and final pre-release cleanup). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+    "fullQaPrompt": "Run full QA for P34 (Hardening gate: statewide property data, UI/UX, and final pre-release cleanup). This is a no-new-feature hardening gate. Verify security, code quality, reusable-code cleanup, performance, tests, RLS/role access, storage access where applicable, and regression flows. If any proposed cleanup could break existing behavior, stop and report the risk plus recommendations before making that change. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation.",
+    "startedAt": "2026-05-16T12:35:00.000Z"
   },
   {
     "id": "P35",
