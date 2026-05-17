@@ -287,6 +287,13 @@
     "file": "all/global-admin-tenants.md"
   },
   {
+    "slug": "tenant-admin-user-management",
+    "title": "Tenant Admin: User Management",
+    "route": "/admin/tenant/users",
+    "role": "all",
+    "file": "all/tenant-admin-user-management.md"
+  },
+  {
     "slug": "global-admin-wiki",
     "title": "Global Admin: Application Wiki",
     "route": "/admin/global/wiki",

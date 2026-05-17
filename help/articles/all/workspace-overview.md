@@ -17,3 +17,11 @@ NEXA is the shared table for a transaction—one place for documents, milestones
 - **Mortgage & title** — Condition-driven lanes that pair with your processor workflow.
 
 If something feels missing, ask whether **your invite matches the work you’re doing**—scope beats clutter.
+
+### If you have more than one login type
+
+Some users may be allowed to work in more than one lane, such as tenant admin plus TC or broker.
+
+1. Open the account menu in the top-right corner.
+2. If more than one login type is available to you, use **Active login type** to choose the workspace you want to act in now.
+3. Switch intentionally when your job changes; Choral Point keeps one active role at a time so permissions remain clear.

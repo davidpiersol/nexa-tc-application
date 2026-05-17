@@ -128,6 +128,10 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
     test: (p) => p === "/admin/global/tenants" || p.startsWith("/admin/global/tenants/"),
   },
   {
+    slug: "tenant-admin-user-management",
+    test: (p) => p === "/admin/tenant/users" || p.startsWith("/admin/tenant/users/"),
+  },
+  {
     slug: "global-admin-overview",
     test: (p) =>
       p === "/admin/global" ||
