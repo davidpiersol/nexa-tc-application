@@ -46,11 +46,30 @@ export async function GET(request: NextRequest) {
   if (error) return error;
 
   const admin = createServiceRoleClient();
+  const view = request.nextUrl.searchParams.get("view");
   let { data: tenants, error: tenantErr } = await admin
     .from("tenants")
-    .select("id, name, slug, settings, is_suspended, seat_limit, created_at")
+    .select("id, name, slug, settings, is_suspended, seat_limit, archived_at, created_at")
     .order("created_at", { ascending: false });
-  if (tenantErr && (missingColumn(tenantErr.message, "is_suspended") || missingColumn(tenantErr.message, "settings"))) {
+  if (view === "archived") {
+    ({ data: tenants, error: tenantErr } = await admin
+      .from("tenants")
+      .select("id, name, slug, settings, is_suspended, seat_limit, archived_at, created_at")
+      .not("archived_at", "is", null)
+      .order("created_at", { ascending: false }));
+  } else if (view !== "all") {
+    ({ data: tenants, error: tenantErr } = await admin
+      .from("tenants")
+      .select("id, name, slug, settings, is_suspended, seat_limit, archived_at, created_at")
+      .is("archived_at", null)
+      .order("created_at", { ascending: false }));
+  }
+  if (
+    tenantErr &&
+    (missingColumn(tenantErr.message, "is_suspended") ||
+      missingColumn(tenantErr.message, "settings") ||
+      missingColumn(tenantErr.message, "archived_at"))
+  ) {
     const fallback = await admin
       .from("tenants")
       .select("id, name, slug, seat_limit, created_at")

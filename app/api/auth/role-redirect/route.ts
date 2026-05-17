@@ -21,6 +21,9 @@ export async function GET(request: Request) {
   if (!profile) {
     return NextResponse.redirect(new URL("/auth/access-pending", base));
   }
+  if (!profile.tenantEnabled) {
+    return NextResponse.redirect(new URL("/forbidden", base));
+  }
 
   const role = profile.role;
 

@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.38.0-uat",
+    "currentVersion": "v4.39.0-uat",
     "lastDeployedVersion": "v4.31.5",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -1997,12 +1997,12 @@
       "lane": "uat",
       "milestoneId": "m1",
       "versionScope": "v4.39.0-uat",
-      "status": "in_progress",
+      "status": "done",
       "jiraKey": null,
       "summary": "Complete the global-admin tenant lifecycle requested during UAT: list-first tenant management, save-to-list behavior, read-only detail, edit, deactivate, archive, archived list, and tenant-admin assignment.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
+        "build": "passed",
+        "tests": "passed",
         "approval": "pending"
       },
       "acceptance": [
@@ -2032,7 +2032,8 @@
         "Add focused unit tests for tenant archive/status helpers and tenant payload validation.",
         "Run browser smoke for create, list, detail, edit, deactivate/reactivate, archive/restore."
       ],
-      "fullQaPrompt": "Run full QA for P39 (UAT tenant lifecycle management). Verify all tenant lifecycle acceptance criteria, global-admin boundaries, automated checks, browser smoke, and regression flows. If all checks pass, mark build/tests passed and status done, leaving approval pending."
+      "fullQaPrompt": "Run full QA for P39 (UAT tenant lifecycle management). Verify all tenant lifecycle acceptance criteria, global-admin boundaries, automated checks, browser smoke, and regression flows. If all checks pass, mark build/tests passed and status done, leaving approval pending.",
+      "completedAt": "2026-05-17T11:45:00.000Z"
     },
     {
       "id": "P40",

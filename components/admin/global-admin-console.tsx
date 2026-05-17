@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
+import { tenantLifecycleLabel } from "@/lib/tenants/lifecycle";
 
 type TenantRow = {
   id: string;
@@ -11,6 +12,7 @@ type TenantRow = {
   slug: string;
   settings?: Record<string, unknown>;
   is_suspended: boolean;
+  archived_at?: string | null;
   seat_limit: number;
   usage: { activeUsers: number; pendingRequests: number; tenantAdmins: number; seatsAssigned?: number };
 };
@@ -28,6 +30,7 @@ type TenantDetail = {
   slug: string;
   seat_limit: number;
   is_suspended: boolean;
+  archived_at?: string | null;
   settings: Record<string, unknown>;
   primaryContact: { id: string; email: string; full_name: string | null; role: string } | null;
   usage: { seatsAssigned: number; seatsPending: number };
@@ -50,6 +53,7 @@ export function GlobalAdminConsole() {
   const [sortKey, setSortKey] = useState<"name" | "assigned" | "limit">("name");
   const [sortAsc, setSortAsc] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [listView, setListView] = useState<"active" | "archived">("active");
   const [editingDetail, setEditingDetail] = useState(false);
   const [detailDraft, setDetailDraft] = useState<Record<string, string>>({});
   const [resetDrafts, setResetDrafts] = useState<Record<string, string>>({});
@@ -57,8 +61,9 @@ export function GlobalAdminConsole() {
   const [busy, setBusy] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  async function refresh() {
-    const res = await fetch("/api/admin/global/tenants", { credentials: "include" });
+  async function refresh(view = listView) {
+    const query = view === "archived" ? "?view=archived" : "";
+    const res = await fetch(`/api/admin/global/tenants${query}`, { credentials: "include" });
     const body = (await res.json().catch(() => ({}))) as { tenants?: TenantRow[]; error?: string };
     if (res.ok && body.tenants) setTenants(body.tenants);
     else setMsg(body.error ?? "Could not load tenants");
@@ -161,26 +166,6 @@ export function GlobalAdminConsole() {
     setMsg("Tenant created.");
   }
 
-  async function patchLicense(tenantId: string, seatLimit: number, suspended: boolean) {
-    setBusy(true);
-    setMsg("");
-    const headers = await csrfHeader();
-    if (!headers) return setBusy(false);
-
-    const res = await fetch("/api/admin/global/licenses", {
-      method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json", ...headers },
-      body: JSON.stringify({ tenantId, seatLimit, suspended }),
-    });
-    const body = (await res.json().catch(() => ({}))) as { error?: string };
-    setBusy(false);
-    if (!res.ok) {
-      setMsg(body.error ?? "License update failed");
-      return;
-    }
-    await refresh();
-  }
 
   async function assignTenantAdmin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -318,6 +303,29 @@ export function GlobalAdminConsole() {
     setMsg("Tenant updated.");
   }
 
+  async function patchTenantAction(action: "deactivate" | "reactivate" | "archive" | "restore") {
+    if (!tenantDetail) return;
+    setBusy(true);
+    setMsg("");
+    const headers = await csrfHeader();
+    if (!headers) return setBusy(false);
+    const res = await fetch(`/api/admin/global/tenants/${tenantDetail.id}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json", ...headers },
+      body: JSON.stringify({ action }),
+    });
+    const body = (await res.json().catch(() => ({}))) as { error?: string };
+    setBusy(false);
+    if (!res.ok) {
+      setMsg(body.error ?? "Tenant action failed");
+      return;
+    }
+    await refresh();
+    await refreshTenantDetail(tenantDetail.id);
+    setMsg(`Tenant ${action}d.`);
+  }
+
   const filtered = tenants.filter((t) => {
     const q = search.trim().toLowerCase();
     if (!q) return true;
@@ -338,6 +346,61 @@ export function GlobalAdminConsole() {
 
   return (
     <div className="space-y-6">
+      {selectedTenantId && tenantDetail ? (
+        <div className="space-y-4 rounded-brand-md border border-neutral-200 bg-white p-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="secondary" onClick={() => { setSelectedTenantId(""); setTenantDetail(null); setTenantUsers([]); setEditingDetail(false); }}>
+              Back to tenant list
+            </Button>
+            <h3 className="font-display text-lg text-brand-navy">Tenant detail</h3>
+            <Button size="sm" variant="secondary" onClick={() => setEditingDetail((v) => !v)}>
+              {editingDetail ? "Cancel Edit" : "Edit"}
+            </Button>
+            {editingDetail ? (
+              <Button size="sm" variant="gold" disabled={busy} onClick={() => void saveTenantDetail()}>
+                Save
+              </Button>
+            ) : null}
+            <Button size="sm" variant="secondary" disabled={busy} onClick={() => void patchTenantAction(tenantDetail.is_suspended ? "reactivate" : "deactivate")}>
+              {tenantDetail.is_suspended ? "Reactivate" : "Deactivate"}
+            </Button>
+            <Button size="sm" variant="secondary" disabled={busy} onClick={() => void patchTenantAction(tenantDetail.archived_at ? "restore" : "archive")}>
+              {tenantDetail.archived_at ? "Restore" : "Archive"}
+            </Button>
+          </div>
+          <p className="font-sans text-sm text-neutral-700">
+            <span className="font-semibold">{tenantDetail.name}</span> · status{" "}
+            <span className="font-semibold">{tenantLifecycleLabel(tenantDetail)}</span> · seat limit{" "}
+            <span className="font-semibold">{tenantDetail.seat_limit}</span> · assigned{" "}
+            <span className="font-semibold">{tenantDetail.usage.seatsAssigned}</span>
+          </p>
+          <p className="font-sans text-xs text-neutral-600">
+            Primary contact:{" "}
+            {tenantDetail.primaryContact
+              ? `${tenantDetail.primaryContact.full_name ?? "—"} (${tenantDetail.primaryContact.email})`
+              : "Not set"}
+          </p>
+          <p className="font-mono text-xs text-neutral-600">Tenant ID: {tenantDetail.id}</p>
+
+          <div className="grid gap-2">
+            <Input label="Company name" value={detailDraft.name ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, name: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Seat limit" type="number" value={detailDraft.seatLimit ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, seatLimit: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Company type" value={detailDraft.companyType ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, companyType: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Company email" value={detailDraft.companyEmail ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, companyEmail: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Company phone" value={detailDraft.companyPhone ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, companyPhone: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Website" value={detailDraft.website ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, website: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Address line 1" value={detailDraft.address1 ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, address1: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Address line 2" value={detailDraft.address2 ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, address2: e.target.value }))} disabled={!editingDetail} />
+            <Input label="City" value={detailDraft.city ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, city: e.target.value }))} disabled={!editingDetail} />
+            <Input label="State" value={detailDraft.state ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, state: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Postal code" value={detailDraft.postalCode ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, postalCode: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Country" value={detailDraft.country ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, country: e.target.value }))} disabled={!editingDetail} />
+            <Input label="Notes" value={detailDraft.notes ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, notes: e.target.value }))} disabled={!editingDetail} />
+          </div>
+          {/* Existing tenant-admin and user management remains below on the detail screen. */}
+        </div>
+      ) : (
+      <>
       <div className="flex flex-wrap items-center gap-2">
         <Button type="button" variant="gold" onClick={() => setShowCreate((v) => !v)}>
           {showCreate ? "Close Create Tenant" : "Create Tenant"}
@@ -349,6 +412,12 @@ export function GlobalAdminConsole() {
           placeholder="Company, tenant id, slug"
           className="max-w-md"
         />
+        <Button type="button" variant={listView === "active" ? "gold" : "secondary"} onClick={() => { setListView("active"); void refresh("active"); }}>
+          Active tenants
+        </Button>
+        <Button type="button" variant={listView === "archived" ? "gold" : "secondary"} onClick={() => { setListView("archived"); void refresh("archived"); }}>
+          Archived tenants
+        </Button>
       </div>
 
       {showCreate ? (
@@ -407,14 +476,9 @@ export function GlobalAdminConsole() {
                 {t.seat_limit}
               </p>
               <div className="mt-2 flex gap-2">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={busy}
-                  onClick={() => void patchLicense(t.id, t.seat_limit, !t.is_suspended)}
-                >
-                  {t.is_suspended ? "Reactivate" : "Suspend"}
-                </Button>
+                <span className="font-sans text-xs text-neutral-600">
+                  {tenantLifecycleLabel(t)}
+                </span>
               </div>
             </div>
           ))}
@@ -423,60 +487,11 @@ export function GlobalAdminConsole() {
           ) : null}
         </div>
       </div>
+      </>
+      )}
 
       {selectedTenantId && tenantDetail ? (
         <div className="space-y-4 rounded-brand-md border border-neutral-200 bg-white p-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-display text-lg text-brand-navy">Tenant detail (read-only)</h3>
-            <Button size="sm" variant="secondary" onClick={() => setEditingDetail((v) => !v)}>
-              {editingDetail ? "Cancel Edit" : "Edit"}
-            </Button>
-            {editingDetail ? (
-              <Button size="sm" variant="gold" disabled={busy} onClick={() => void saveTenantDetail()}>
-                Save
-              </Button>
-            ) : null}
-          </div>
-          <p className="font-sans text-sm text-neutral-700">
-            <span className="font-semibold">{tenantDetail.name}</span> · seat limit{" "}
-            <span className="font-semibold">{tenantDetail.seat_limit}</span> · assigned{" "}
-            <span className="font-semibold">{tenantDetail.usage.seatsAssigned}</span>
-          </p>
-          <p className="font-sans text-xs text-neutral-600">
-            Primary contact:{" "}
-            {tenantDetail.primaryContact
-              ? `${tenantDetail.primaryContact.full_name ?? "—"} (${tenantDetail.primaryContact.email})`
-              : "Not set"}
-          </p>
-          <p className="font-mono text-xs text-neutral-600">Tenant ID: {tenantDetail.id}</p>
-
-          <div className="grid gap-2">
-            <Input
-              label="Company name"
-              value={detailDraft.name ?? ""}
-              onChange={(e) => setDetailDraft((p) => ({ ...p, name: e.target.value }))}
-              disabled={!editingDetail}
-            />
-            <Input
-              label="Seat limit"
-              type="number"
-              value={detailDraft.seatLimit ?? ""}
-              onChange={(e) => setDetailDraft((p) => ({ ...p, seatLimit: e.target.value }))}
-              disabled={!editingDetail}
-            />
-            <Input label="Company type" value={detailDraft.companyType ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, companyType: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Company email" value={detailDraft.companyEmail ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, companyEmail: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Company phone" value={detailDraft.companyPhone ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, companyPhone: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Website" value={detailDraft.website ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, website: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Address line 1" value={detailDraft.address1 ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, address1: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Address line 2" value={detailDraft.address2 ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, address2: e.target.value }))} disabled={!editingDetail} />
-            <Input label="City" value={detailDraft.city ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, city: e.target.value }))} disabled={!editingDetail} />
-            <Input label="State" value={detailDraft.state ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, state: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Postal code" value={detailDraft.postalCode ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, postalCode: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Country" value={detailDraft.country ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, country: e.target.value }))} disabled={!editingDetail} />
-            <Input label="Notes" value={detailDraft.notes ?? ""} onChange={(e) => setDetailDraft((p) => ({ ...p, notes: e.target.value }))} disabled={!editingDetail} />
-          </div>
-
           <form onSubmit={assignTenantAdmin} className="grid gap-3 border border-neutral-200 rounded-brand-md p-3">
             <h4 className="font-display text-base text-brand-navy">Assign tenant admin candidate</h4>
             <input type="hidden" name="tenantId" value={selectedTenantId} />

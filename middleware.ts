@@ -74,6 +74,20 @@ export async function middleware(request: NextRequest) {
         }
       }
     }
+
+    const { data: tenantState } = await supabase
+      .from("tenants")
+      .select("is_suspended, archived_at")
+      .eq("id", tenant)
+      .maybeSingle();
+    if (tenantState?.is_suspended || tenantState?.archived_at) {
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json({ error: "tenant_inactive" }, { status: 403 });
+      }
+      if (isProtectedPath(pathname)) {
+        return NextResponse.redirect(new URL("/forbidden", request.url));
+      }
+    }
   }
 
   if (!user && isProtectedPath(pathname)) {

@@ -16,7 +16,7 @@ export async function loadActorContext(): Promise<ActorContext | null> {
   if (!user) return null;
 
   const profile = await loadPublicUserProfile(user.id);
-  if (!profile) return null;
+  if (!profile || !profile.tenantEnabled) return null;
 
   return {
     userId: user.id,
@@ -24,4 +24,3 @@ export async function loadActorContext(): Promise<ActorContext | null> {
     role: profile.role,
   };
 }
-
