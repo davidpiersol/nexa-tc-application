@@ -24,7 +24,7 @@ export function RequestDemoForm() {
       <label><span>Company</span><input name="company" /></label>
       <label><span>Phone</span><input name="phone" /></label>
     </div>
-    <label><span>Role</span><input name="role" placeholder="Transaction coordinator, broker, agent…" /></label>
+    <label><span>Role</span><input name="role" placeholder="Transaction coordinator, broker…" /></label>
     <label><span>What would you like to learn more about?</span><textarea name="message" rows={5} required /></label>
     <label className="hidden" aria-hidden><span>Website</span><input name="website" tabIndex={-1} autoComplete="off" /></label>
     {message ? <p className={state === "error" ? "text-status-danger" : "text-status-success"}>{message}</p> : null}

@@ -1,3 +1,6 @@
+import { ChangeOwnPasswordForm } from "@/components/dashboard/change-own-password-form";
+import { EditOwnProfileForm } from "@/components/dashboard/edit-own-profile-form";
+
 type ProfileBodyProps = {
   email: string | null;
   roleLabel: string;
@@ -6,7 +9,7 @@ type ProfileBodyProps = {
   workspaceTransactionId?: string;
 };
 
-/** Shared profile shell — session-backed fields only until extended profile API exists. */
+/** Shared profile shell for every signed-in role. */
 export function ProfileBody({
   email,
   roleLabel,
@@ -16,10 +19,7 @@ export function ProfileBody({
   return (
     <div className="mx-auto max-w-lg rounded-brand-md border border-neutral-200 bg-white p-6 shadow-sm">
       <h2 className="font-display text-heading-md text-brand-navy">Account</h2>
-      <p className="mt-2 text-sm text-neutral-600">
-        Signed-in identity from Supabase Auth. Extended profile fields can be wired when the API is
-        ready.
-      </p>
+      <p className="mt-2 text-sm text-neutral-600">Manage your own profile and password.</p>
       <dl className="mt-6 space-y-4 font-sans text-sm">
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Email</dt>
@@ -44,6 +44,8 @@ export function ProfileBody({
           </div>
         ) : null}
       </dl>
+      <EditOwnProfileForm />
+      <ChangeOwnPasswordForm />
     </div>
   );
 }
@@ -54,7 +56,7 @@ export function formatRoleLabel(role: string | undefined): string {
   const cap: Record<string, string> = {
     tc: "Transaction coordinator",
     broker: "Broker",
-    agent: "Agent",
+    agent: "Broker",
     buyer: "Buyer",
     seller: "Seller",
     mortgage: "Mortgage",

@@ -4,20 +4,25 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  assignableLoginType,
+  groupForRole,
+  TENANT_ASSIGNABLE_LOGIN_TYPES,
+  TENANT_GROUPS,
+  type TenantAssignableLoginType,
+  type TenantGroup,
+} from "@/lib/admin/user-groups";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
-const GROUPS = ["Admin", "TC", "Broker", "Client", "Title", "Mortgage"] as const;
-type GroupValue = (typeof GROUPS)[number];
-
-function roleForGroup(group: GroupValue, currentRole: string): string {
-  if (group === "Admin") return "admin";
-  if (group === "TC") return "tc";
-  if (group === "Broker") return "broker";
-  if (group === "Title") return "title";
-  if (group === "Mortgage") return "mortgage";
-  if (currentRole === "seller" || currentRole === "buyer") return currentRole;
-  return "buyer";
-}
+const LOGIN_TYPE_LABELS: Record<TenantAssignableLoginType, string> = {
+  admin: "Admin",
+  tc: "TC",
+  broker: "Broker",
+  buyer: "Buyer",
+  seller: "Seller",
+  mortgage: "Mortgage",
+  title: "Title",
+};
 
 type UserDetail = {
   id: string;
@@ -25,7 +30,7 @@ type UserDetail = {
   role: string;
   full_name: string | null;
   phone: string | null;
-  group: (typeof GROUPS)[number];
+  group: TenantGroup;
 };
 
 type Props = { userId: string };
@@ -47,7 +52,8 @@ export function TenantUserDetailConsole({ userId }: Props) {
     email: "",
     fullName: "",
     phone: "",
-    group: "TC" as GroupValue,
+    role: "tc" as TenantAssignableLoginType,
+    group: "TC" as TenantGroup,
   });
 
   const refresh = useCallback(async () => {
@@ -62,7 +68,8 @@ export function TenantUserDetailConsole({ userId }: Props) {
       email: body.user.email,
       fullName: body.user.full_name ?? "",
       phone: body.user.phone ?? "",
-      group: body.user.group as GroupValue,
+      role: assignableLoginType(body.user.role),
+      group: body.user.group as TenantGroup,
     });
   }, [userId]);
 
@@ -84,7 +91,7 @@ export function TenantUserDetailConsole({ userId }: Props) {
         email: form.email,
         fullName: form.fullName || null,
         phone: form.phone || null,
-        role: roleForGroup(form.group, user.role),
+        role: form.role,
         group: form.group,
       }),
     });
@@ -123,6 +130,18 @@ export function TenantUserDetailConsole({ userId }: Props) {
     setMsg("Password updated.");
   }
 
+  async function sendPasswordReset() {
+    setBusy(true);
+    setMsg("");
+    const res = await fetch("/api/auth/recovery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: user?.email }),
+    });
+    setBusy(false);
+    setMsg(res.ok ? "Password reset email sent." : "Password reset email failed.");
+  }
+
   if (!user) {
     return <div className="rounded-brand-md border border-neutral-200 bg-white p-4" />;
   }
@@ -151,7 +170,25 @@ export function TenantUserDetailConsole({ userId }: Props) {
           value={form.phone}
           onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
         />
-        <p className="font-sans text-xs text-neutral-600">Current role: {user.role}</p>
+        <div className="flex w-full flex-col gap-1.5">
+          <label className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
+            Login Type
+          </label>
+          <select
+            className="flex w-full rounded-brand-md border border-neutral-300 bg-white px-3 py-2 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+            value={form.role}
+            onChange={(e) => {
+              const role = e.target.value as TenantAssignableLoginType;
+              setForm((p) => ({ ...p, role, group: groupForRole(role) }));
+            }}
+          >
+            {TENANT_ASSIGNABLE_LOGIN_TYPES.map((role) => (
+              <option key={role} value={role}>
+                {LOGIN_TYPE_LABELS[role]}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="flex w-full flex-col gap-1.5">
           <label className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
             Role Group
@@ -159,9 +196,9 @@ export function TenantUserDetailConsole({ userId }: Props) {
           <select
             className="flex w-full rounded-brand-md border border-neutral-300 bg-white px-3 py-2 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
             value={form.group}
-            onChange={(e) => setForm((p) => ({ ...p, group: e.target.value as GroupValue }))}
+            onChange={(e) => setForm((p) => ({ ...p, group: e.target.value as TenantGroup }))}
           >
-            {GROUPS.map((group) => (
+            {TENANT_GROUPS.map((group) => (
               <option key={group} value={group}>
                 {group}
               </option>
@@ -185,10 +222,12 @@ export function TenantUserDetailConsole({ userId }: Props) {
         <Button variant="secondary" disabled={busy} onClick={() => void changePassword()}>
           Update password
         </Button>
+        <Button variant="secondary" disabled={busy} onClick={() => void sendPasswordReset()}>
+          Send password reset
+        </Button>
       </div>
 
       {msg ? <p className="font-sans text-sm text-neutral-700">{msg}</p> : null}
     </div>
   );
 }
-

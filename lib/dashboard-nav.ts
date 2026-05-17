@@ -103,7 +103,9 @@ export function navItemsForPath(pathname: string): NavItem[] {
 export function profileHrefFromPathname(pathname: string): string | null {
   const role = roleFromPathname(pathname);
   if (!role) return null;
-  if (role === "admin") return null;
+  if (role === "admin") {
+    return pathname.startsWith("/admin/global") ? "/admin/global/profile" : "/admin/tenant/profile";
+  }
   if (role === "tc") return "/tc/profile";
   if (role === "agent") return "/agent/profile";
 

@@ -31,10 +31,11 @@ describe("lib/dashboard-nav profileHrefFromPathname", () => {
     );
   });
 
-  it("uses admin route bases and no profile link", () => {
+  it("uses admin route bases and profile links", () => {
     expect(routeBase("/admin/global")).toBe("/admin/global/dashboard");
     expect(routeBase("/admin/tenant")).toBe("/admin/tenant/dashboard");
-    expect(profileHrefFromPathname("/admin/global")).toBeNull();
+    expect(profileHrefFromPathname("/admin/global")).toBe("/admin/global/profile");
+    expect(profileHrefFromPathname("/admin/tenant")).toBe("/admin/tenant/profile");
   });
 
   it("includes AI configuration in global admin navigation", () => {

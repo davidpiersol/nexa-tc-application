@@ -65,14 +65,15 @@ export function GlobalAdminConsole() {
   }
 
   async function refreshUsers(tenantId: string) {
-    const res = await fetch(`/api/admin/global/tenants/${tenantId}/users?candidates=1`, {
+    const res = await fetch(`/api/admin/global/tenants/${tenantId}/users`, {
       credentials: "include",
     });
     const body = (await res.json().catch(() => ({}))) as { users?: TenantUserRow[]; error?: string };
     if (res.ok && body.users) {
       const users = body.users;
       setTenantUsers(users);
-      setSelectedCandidateUserId((prev) => prev || users[0]?.id || "");
+      const firstCandidate = users.find((user) => user.role === "admin" || user.role === "tenant_admin");
+      setSelectedCandidateUserId((prev) => prev || firstCandidate?.id || "");
     }
     else setMsg(body.error ?? "Could not load tenant users");
   }
@@ -264,6 +265,18 @@ export function GlobalAdminConsole() {
       return;
     }
     setMsg("Password updated.");
+  }
+
+  async function sendPasswordReset(email: string) {
+    setBusy(true);
+    setMsg("");
+    const res = await fetch("/api/auth/recovery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    setBusy(false);
+    setMsg(res.ok ? "Password reset email sent." : "Password reset email failed.");
   }
 
   async function saveTenantDetail() {
@@ -477,7 +490,7 @@ export function GlobalAdminConsole() {
                 className="flex w-full rounded-brand-md border border-neutral-300 bg-white px-3 py-2 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
                 required
               >
-                {tenantUsers.map((u) => (
+                {tenantUsers.filter((u) => u.role === "admin" || u.role === "tenant_admin").map((u) => (
                   <option key={u.id} value={u.id}>
                     {u.full_name ? `${u.full_name} — ${u.email}` : u.email}
                   </option>
@@ -507,11 +520,13 @@ export function GlobalAdminConsole() {
           </form>
 
           <div className="space-y-2">
-            <h4 className="font-display text-base text-brand-navy">Tenant admin candidates</h4>
+            <h4 className="font-display text-base text-brand-navy">All users in this tenant</h4>
             {tenantUsers.map((u) => (
               <div key={u.id} className="rounded-brand-md border border-neutral-200 p-3">
                 <p className="font-sans text-sm font-semibold text-brand-navy">{u.email}</p>
-                <p className="font-sans text-xs text-neutral-600">{u.full_name || "—"}</p>
+                <p className="font-sans text-xs text-neutral-600">
+                  {u.full_name || "—"} · {u.role === "agent" ? "broker" : u.role}
+                </p>
                 <p className="font-mono text-xs text-neutral-500">{u.id}</p>
                 <div className="mt-2 flex gap-2">
                   <Input
@@ -540,6 +555,14 @@ export function GlobalAdminConsole() {
                     }}
                   >
                     Change password
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    disabled={busy}
+                    onClick={() => void sendPasswordReset(u.email)}
+                  >
+                    Send password reset
                   </Button>
                 </div>
               </div>

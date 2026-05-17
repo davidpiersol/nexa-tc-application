@@ -61,6 +61,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/mortgage\/[^/]+$/)) return "Mortgage Dashboard";
   if (pathname.match(/^\/title\/[^/]+$/)) return "Title Dashboard";
   if (pathname === "/admin/global" || pathname === "/admin/global/dashboard") return "Global Admin";
+  if (pathname === "/admin/global/profile") return "Profile";
   if (pathname === "/admin/global/tenants") return "Tenants";
   if (pathname === "/admin/global/templates") return "Templates";
   if (pathname === "/admin/global/package-rules") return "Package rules";
@@ -70,6 +71,7 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/admin/global/reports") return "Reports";
   if (pathname === "/admin/tenant" || pathname === "/admin/tenant/dashboard") return "Admin Console";
   if (pathname === "/admin/tenant/users") return "Users";
+  if (pathname === "/admin/tenant/profile") return "Profile";
   if (pathname === "/admin/tenant/groups") return "Groups";
   if (pathname === "/admin/tenant/uat-issues") return "UAT issues";
   if (pathname === "/admin/tenant/reports") return "Reports";

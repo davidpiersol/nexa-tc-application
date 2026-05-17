@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  groupForRole,
+  TENANT_ASSIGNABLE_LOGIN_TYPES,
+  TENANT_GROUPS,
+  type TenantAssignableLoginType,
+  type TenantGroup,
+} from "@/lib/admin/user-groups";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
 type TenantUserRow = {
@@ -15,16 +22,15 @@ type TenantUserRow = {
   group?: string;
 };
 
-const GROUPS = ["Admin", "TC", "Broker", "Client", "Title", "Mortgage"] as const;
-
-function roleForGroup(group: string): string {
-  if (group === "Admin") return "admin";
-  if (group === "TC") return "tc";
-  if (group === "Broker") return "broker";
-  if (group === "Title") return "title";
-  if (group === "Mortgage") return "mortgage";
-  return "buyer";
-}
+const LOGIN_TYPE_LABELS: Record<TenantAssignableLoginType, string> = {
+  admin: "Admin",
+  tc: "TC",
+  broker: "Broker",
+  buyer: "Buyer",
+  seller: "Seller",
+  mortgage: "Mortgage",
+  title: "Title",
+};
 
 async function csrfHeader(): Promise<Record<string, string> | null> {
   const res = await fetch("/api/csrf", { credentials: "include" });
@@ -37,6 +43,9 @@ export function TenantUsersConsole() {
   const [users, setUsers] = useState<TenantUserRow[]>([]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
+  const [createRole, setCreateRole] = useState<TenantAssignableLoginType>("tc");
+  const [createGroup, setCreateGroup] = useState<TenantGroup>("TC");
+  const [inviteRole, setInviteRole] = useState<TenantAssignableLoginType>("tc");
 
   async function refresh() {
     const usersRes = await fetch("/api/admin/tenant/users", { credentials: "include" });
@@ -66,7 +75,7 @@ export function TenantUsersConsole() {
       body: JSON.stringify({
         email: String(form.get("email") ?? ""),
         password: String(form.get("password") ?? ""),
-        role: roleForGroup(String(form.get("group") ?? "TC")),
+        role: String(form.get("role") ?? "tc"),
         fullName: String(form.get("fullName") ?? ""),
         phone: String(form.get("phone") ?? ""),
         group: String(form.get("group") ?? "TC"),
@@ -85,8 +94,7 @@ export function TenantUsersConsole() {
   async function sendInvite(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setBusy(true); setMsg("");
     const form=new FormData(e.currentTarget); const headers=await csrfHeader(); if(!headers)return setBusy(false);
-    const group=String(form.get("group") ?? "TC");
-    const res=await fetch("/api/admin/tenant/invites",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json",...headers},body:JSON.stringify({email:String(form.get("email")??""),role:roleForGroup(group)})});
+    const res=await fetch("/api/admin/tenant/invites",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json",...headers},body:JSON.stringify({email:String(form.get("email")??""),role:String(form.get("role") ?? "tc")})});
     setBusy(false); if(!res.ok)return setMsg("Invite email failed."); e.currentTarget.reset(); setMsg("Invite email sent.");
   }
 
@@ -98,14 +106,36 @@ export function TenantUsersConsole() {
         <Input label="Full name (optional)" name="fullName" />
         <div className="flex w-full flex-col gap-1.5">
           <label className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
+            Login Type
+          </label>
+          <select
+            name="role"
+            value={createRole}
+            onChange={(e) => {
+              const role = e.target.value as TenantAssignableLoginType;
+              setCreateRole(role);
+              setCreateGroup(groupForRole(role));
+            }}
+            className="flex w-full rounded-brand-md border border-neutral-300 bg-white px-3 py-2 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+          >
+            {TENANT_ASSIGNABLE_LOGIN_TYPES.map((role) => (
+              <option key={role} value={role}>
+                {LOGIN_TYPE_LABELS[role]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex w-full flex-col gap-1.5">
+          <label className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
             Role Group
           </label>
           <select
             name="group"
-            defaultValue="TC"
+            value={createGroup}
+            onChange={(e) => setCreateGroup(e.target.value as TenantGroup)}
             className="flex w-full rounded-brand-md border border-neutral-300 bg-white px-3 py-2 font-sans text-ui-body text-neutral-900 shadow-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
           >
-            {GROUPS.map((group) => (
+            {TENANT_GROUPS.map((group) => (
               <option key={group} value={group}>
                 {group}
               </option>
@@ -121,7 +151,7 @@ export function TenantUsersConsole() {
       <form onSubmit={sendInvite} className="grid gap-3 rounded-brand-md border border-neutral-200 bg-white p-4">
         <h3 className="font-display text-lg text-brand-navy">Send account invite email</h3>
         <Input label="Email" type="email" name="email" required />
-        <label className="flex flex-col gap-1.5 font-sans text-sm"><span>Role group</span><select name="group" defaultValue="TC" className="rounded border border-neutral-300 bg-white px-3 py-2">{GROUPS.map(g=><option key={g}>{g}</option>)}</select></label>
+        <label className="flex flex-col gap-1.5 font-sans text-sm"><span>Login type</span><select name="role" value={inviteRole} onChange={(e)=>setInviteRole(e.target.value as TenantAssignableLoginType)} className="rounded border border-neutral-300 bg-white px-3 py-2">{TENANT_ASSIGNABLE_LOGIN_TYPES.map((role)=><option key={role} value={role}>{LOGIN_TYPE_LABELS[role]}</option>)}</select></label>
         <Button variant="secondary" type="submit" disabled={busy}>Send invite email</Button>
       </form>
 
@@ -132,7 +162,7 @@ export function TenantUsersConsole() {
             <div key={u.id} className="rounded-brand-md border border-neutral-200 p-3">
               <p className="font-sans text-sm font-semibold text-brand-navy">{u.email}</p>
               <p className="font-sans text-xs text-neutral-600">
-                {u.full_name || "—"} · {u.role} · {u.group ?? "—"}
+                {u.full_name || "—"} · {u.role === "agent" ? "broker" : u.role} · {u.group ?? "—"}
               </p>
               <p className="font-mono text-xs text-neutral-500">{u.id}</p>
               <div className="mt-2">
