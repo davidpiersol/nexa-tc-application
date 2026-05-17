@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.38.0-dev",
+    "currentVersion": "v4.38.0-uat",
     "lastDeployedVersion": "v4.31.5",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -1993,10 +1993,95 @@
     },
     {
       "id": "P39",
+      "name": "UAT tenant lifecycle management",
+      "lane": "uat",
+      "milestoneId": "m1",
+      "versionScope": "v4.39.0-uat",
+      "status": "in_progress",
+      "jiraKey": null,
+      "summary": "Complete the global-admin tenant lifecycle requested during UAT: list-first tenant management, save-to-list behavior, read-only detail, edit, deactivate, archive, archived list, and tenant-admin assignment.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Tenant list is the default global-admin tenants view with search and create controls at the top.",
+        "Saving a new tenant returns the admin to the tenant list.",
+        "Clicking a tenant opens a read-only detail view with explicit edit controls.",
+        "Global admins can deactivate/reactivate a tenant, and deactivated tenants cannot use the app.",
+        "Global admins can archive/restore tenants; archived tenants are hidden from the default list and visible in an archive view.",
+        "Global admins can assign or change the tenant admin from tenant detail."
+      ],
+      "recommendedPrompt": "Implement P39 UAT tenant lifecycle management from the active UAT list without disturbing working application flows.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "v4.38.0-uat is stable aside from the three remaining UAT items.",
+        "stableWhen": "P39 is fully tested after typecheck, unit tests, build, focused browser smoke, and tenant-management regression pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.39.0"
+      },
+      "reviewChecklist": [
+        "Confirm tenant lifecycle changes are global-admin only.",
+        "Confirm tenant save returns to list.",
+        "Confirm deactivate and archive behaviors are distinct and reversible.",
+        "Confirm existing login, dashboard, invite, profile, and password flows still work."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Add focused unit tests for tenant archive/status helpers and tenant payload validation.",
+        "Run browser smoke for create, list, detail, edit, deactivate/reactivate, archive/restore."
+      ],
+      "fullQaPrompt": "Run full QA for P39 (UAT tenant lifecycle management). Verify all tenant lifecycle acceptance criteria, global-admin boundaries, automated checks, browser smoke, and regression flows. If all checks pass, mark build/tests passed and status done, leaving approval pending."
+    },
+    {
+      "id": "P40",
+      "name": "Multi-role users and active-role switching",
+      "lane": "uat",
+      "milestoneId": "m1",
+      "versionScope": "v4.40.0-uat",
+      "status": "todo",
+      "jiraKey": null,
+      "summary": "Support one account having multiple allowed roles while preserving one active role at a time and explicit role switching.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Users can hold more than one allowed role within a tenant.",
+        "Users have one active role at a time for routing and permissions.",
+        "A role switcher lets eligible users change active role intentionally.",
+        "Tenant admins can manage allowed tenant roles for their users within policy.",
+        "Existing single-role users continue to behave exactly as before."
+      ],
+      "recommendedPrompt": "Implement P40 multi-role users using one account, multiple allowed roles, and one active role at a time unless David directs a different model.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "P39 tenant lifecycle management is stable before role-model work begins.",
+        "stableWhen": "P40 is fully tested after migrations, role/RLS review, typecheck, unit tests, build, and browser smoke across role switching.",
+        "suggestedRollbackTag": "stable/choral-point-v4.40.0"
+      },
+      "reviewChecklist": [
+        "Confirm no blended implicit permissions are introduced.",
+        "Confirm active-role switching is explicit and auditable.",
+        "Confirm single-role users remain unchanged.",
+        "Confirm role-based navigation and route protection remain correct."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Add focused unit tests for role membership and role redirect logic.",
+        "Run browser smoke for role switching across admin, TC, and broker surfaces."
+      ],
+      "fullQaPrompt": "Run full QA for P40 (multi-role users and active-role switching). Verify membership storage, switcher UX, route redirects, RLS/permission behavior, automated checks, and regressions. If all checks pass, mark build/tests passed and status done, leaving approval pending."
+    },
+    {
+      "id": "P41",
       "name": "External CRM and calendar provider integrations",
       "lane": "integrations",
       "milestoneId": "m2",
-      "versionScope": "v4.39.0-dev",
+      "versionScope": "v4.41.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Implement approved external CRM and calendar provider connection flows after the internal CRM is stable, including OAuth/provider setup, field mapping, duplicate handling, CSV/VCF fallback, sync logs, and safe error states.",
@@ -2015,11 +2100,11 @@
         "No raw third-party passwords are stored unless David explicitly approves after a security review.",
         "External sync can be disabled per tenant and per user without breaking internal CRM."
       ],
-      "recommendedPrompt": "Implement P39 external CRM and calendar provider integrations after P31-P35 are stable. Add approved OAuth/API/CSV/VCF connection flows for Outlook, Google Calendar, Apple/iCal/CalDAV strategy, DeltaNET, Lofty, Follow Up Boss, and MoxiWorks. Include consent, field mapping, duplicate handling, sync logs, rate-limit/error handling, and safe disable states. Stop before storing raw third-party passwords or unsupported scraping.",
+      "recommendedPrompt": "Implement P41 external CRM and calendar provider integrations after P31-P35 are stable. Add approved OAuth/API/CSV/VCF connection flows for Outlook, Google Calendar, Apple/iCal/CalDAV strategy, DeltaNET, Lofty, Follow Up Boss, and MoxiWorks. Include consent, field mapping, duplicate handling, sync logs, rate-limit/error handling, and safe disable states. Stop before storing raw third-party passwords or unsupported scraping.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
         "stableWhen": "P39 is fully tested only after typecheck, unit tests, build, provider-mocked integration tests, browser smoke, security review, and full QA prompt pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.39.0"
+        "suggestedRollbackTag": "stable/choral-point-v4.41.0"
       },
       "reviewChecklist": [
         "Confirm internal CRM remains usable when all external providers are disconnected.",
@@ -2041,14 +2126,14 @@
         "Mock provider OAuth/API tests without live credentials.",
         "Browser smoke provider connection pages and disabled-provider fallback."
       ],
-      "fullQaPrompt": "Run full QA for P39 (External CRM and calendar provider integrations). Verify provider connection acceptance, credentials/security, OAuth/API/CSV/VCF fallback behavior, field mapping, duplicate handling, sync logs, disabled-provider behavior, and regression flows. If any provider access would require unsupported scraping or raw password storage, stop and report the risk plus recommendations. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P41 (External CRM and calendar provider integrations). Verify provider connection acceptance, credentials/security, OAuth/API/CSV/VCF fallback behavior, field mapping, duplicate handling, sync logs, disabled-provider behavior, and regression flows. If any provider access would require unsupported scraping or raw password storage, stop and report the risk plus recommendations. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     },
     {
-      "id": "P40",
+      "id": "P42",
       "name": "Public marketing content expansion",
       "lane": "ui",
       "milestoneId": "m1",
-      "versionScope": "v4.40.0-dev",
+      "versionScope": "v4.42.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Develop the public Choral Point website in detail after the core product and provider-integration sprints are stable, including final messaging, page-specific content, conversion paths, SEO basics, and launch-ready assets.",
@@ -2068,7 +2153,7 @@
       "milestoneMarker": {
         "baselineBeforeSprint": "Core application workflows and provider-integration decisions are stable before detailed public-site work begins.",
         "stableWhen": "P40 is fully tested only after content approval, responsive/browser smoke, accessibility review, and production-readiness review pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.40.0"
+        "suggestedRollbackTag": "stable/choral-point-v4.42.0"
       },
       "reviewChecklist": [
         "Confirm public-site copy is approved by the product owner.",
@@ -2083,14 +2168,14 @@
         "Run browser smoke across all public routes and the request-demo flow.",
         "Review accessibility basics and metadata for public pages."
       ],
-      "fullQaPrompt": "Run full QA for P40 (public marketing content expansion). Verify approved copy, page hierarchy, navigation, request-demo flow, responsive behavior, metadata, accessibility, and regression safety. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+      "fullQaPrompt": "Run full QA for P42 (public marketing content expansion). Verify approved copy, page hierarchy, navigation, request-demo flow, responsive behavior, metadata, accessibility, and regression safety. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
     },
     {
-      "id": "P41",
+      "id": "P43",
       "name": "Production launch for choralpoint.com",
       "lane": "release",
       "milestoneId": "m1",
-      "versionScope": "v4.41.0-dev",
+      "versionScope": "v4.43.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Stand up the production Choral Point site at choralpoint.com with domain, hosting, environment, email, security, monitoring, and launch verification guidance.",
@@ -2110,7 +2195,7 @@
       "milestoneMarker": {
         "baselineBeforeSprint": "Public marketing content and application release hardening are approved before production launch work begins.",
         "stableWhen": "P41 is complete only after domain, HTTPS, email delivery, production environment, rollback, and launch-smoke checks pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.41.0"
+        "suggestedRollbackTag": "stable/choral-point-v4.43.0"
       },
       "reviewChecklist": [
         "Confirm domain ownership and DNS change window.",
@@ -2125,7 +2210,7 @@
         "Run production-like smoke checks before cutover.",
         "Run live production smoke after DNS/TLS cutover."
       ],
-      "fullQaPrompt": "Run full QA for P41 (production launch for choralpoint.com). Verify DNS, HTTPS, redirects, environment variables, Postmark delivery, request-demo submissions, login, public routes, protected routing, monitoring, and rollback readiness. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+      "fullQaPrompt": "Run full QA for P43 (production launch for choralpoint.com). Verify DNS, HTTPS, redirects, environment variables, Postmark delivery, request-demo submissions, login, public routes, protected routing, monitoring, and rollback readiness. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
     }
   ],
   "blockers": [

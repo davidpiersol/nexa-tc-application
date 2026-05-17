@@ -2,7 +2,7 @@
 
 **Read next:** [`docs/session-next.md`](../../docs/session-next.md) — handoff, permissions checklist, **NEXT STEP**.
 
-**Last updated:** 2026-05-14  
+**Last updated:** 2026-05-17  
 **Guide:** [`nexa_build_guide.md`](../../nexa_build_guide.md)
 
 Update this file whenever you **finish a step**, **move to a new step**, or need to **correct** status. The AI assistant should treat this file as the source of truth for “where we are” in the build guide.
@@ -13,10 +13,10 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **Choral Point roadmap development in active P32 UI/UX polish** |
-| **Completed** | Current work includes CRM build-out, MLS-only job scaffolding, billing/invoicing/report scaffolding, global AI configuration, template mapping work, and post-P31 QA fixes and active P32 UI polish through **`v4.32.6-dev`**. |
-| **Next** | Continue the active Choral Point sprint sequence from the BuildTrack project plan, with user approval checkpoints and QA gates between milestones. |
-| **After that** | Use the remaining roadmap sprints for UI polish, provider integrations, and the later calendar/CRM connection work already documented in the Choral Point roadmap. |
+| **Current position** | **UAT remediation active at P39 — tenant lifecycle management, with P40 reserved for multi-role users** |
+| **Completed** | Core workflow sprints, UAT intake, onboarding, and password recovery are complete through **`v4.38.0-uat`**. Only three UAT items remain open: tenant lifecycle management, save-to-list retest, and multi-role users. |
+| **Next** | Complete **P39** tenant lifecycle management, then **P40** multi-role users with explicit role switching and version checkpoints between sprints. |
+| **After that** | After UAT remediation, continue with the deferred future roadmap sprints now shifted to **P41-P43**. |
 
 ---
 
