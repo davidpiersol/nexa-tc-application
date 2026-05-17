@@ -6,7 +6,8 @@ Use the Tenants page to review tenant records and manage platform-controlled ten
 
 1. Tenant identity, slug, status, and seat limits.
 2. Assigned tenant-admin users.
-3. Tenant-admin candidates for controlled access changes.
+3. Every user attached to the tenant, including role, password-reset, and support actions.
+4. Tenant-admin candidates for controlled access changes.
 
 ### Important guardrail
 

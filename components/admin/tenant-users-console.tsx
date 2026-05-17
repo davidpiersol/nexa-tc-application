@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +46,7 @@ export function TenantUsersConsole() {
   const [createRole, setCreateRole] = useState<TenantAssignableLoginType>("tc");
   const [createGroup, setCreateGroup] = useState<TenantGroup>("TC");
   const [inviteRole, setInviteRole] = useState<TenantAssignableLoginType>("tc");
+  const usersListRef = useRef<HTMLDivElement>(null);
 
   async function refresh() {
     const usersRes = await fetch("/api/admin/tenant/users", { credentials: "include" });
@@ -89,6 +90,7 @@ export function TenantUsersConsole() {
     }
     e.currentTarget.reset();
     await refresh();
+    usersListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     setMsg("User created.");
   }
   async function sendInvite(e: React.FormEvent<HTMLFormElement>) {
@@ -155,7 +157,7 @@ export function TenantUsersConsole() {
         <Button variant="secondary" type="submit" disabled={busy}>Send invite email</Button>
       </form>
 
-      <div className="rounded-brand-md border border-neutral-200 bg-white p-4">
+      <div ref={usersListRef} className="rounded-brand-md border border-neutral-200 bg-white p-4">
         <h3 className="mb-3 font-display text-lg text-brand-navy">All users in your tenant</h3>
         <div className="space-y-2">
           {users.map((u) => (

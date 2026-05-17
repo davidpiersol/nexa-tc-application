@@ -284,14 +284,14 @@ export const HELP_ARTICLES: HelpArticle[] = [
     "title": "Global Admin: Overview",
     "route": "/admin/global",
     "role": "all",
-    "content": "## Global Admin Overview\n\nThe Global Admin workspace is for platform-level operations across tenants.\n\n### Use this page to\n\n1. Review platform status and tenant operations.\n2. Navigate to tenant management, reports, and the application wiki.\n3. Confirm global-admin tools remain separate from tenant-admin tools.\n\n### Related pages\n\n- **Tenants** manages tenant records and tenant-admin assignment.\n- **Templates** manages global form versions, field mappings, and canonical picker approvals.\n- **Wiki** opens the searchable application documentation index.\n- **Reports** is reserved for platform-wide operational reporting.\n"
+    "content": "## Global Admin Overview\n\nThe Global Admin workspace is for platform-level operations across tenants.\n\n### Use this page to\n\n1. Review platform status and tenant operations.\n2. Navigate to tenant management, reports, UAT issues, and the application wiki.\n3. Open your own profile from the account menu to update personal details or change your password.\n4. Confirm global-admin tools remain separate from tenant-admin tools.\n\n### Related pages\n\n- **Tenants** manages tenant records and tenant-admin assignment.\n- **Templates** manages global form versions, field mappings, and canonical picker approvals.\n- **Wiki** opens the searchable application documentation index.\n- **Reports** is reserved for platform-wide operational reporting.\n"
   },
   {
     "slug": "global-admin-tenants",
     "title": "Global Admin: Tenant Management",
     "route": "/admin/global/tenants",
     "role": "all",
-    "content": "## Global Admin Tenant Management\n\nUse the Tenants page to review tenant records and manage platform-controlled tenant administration.\n\n### What to check\n\n1. Tenant identity, slug, status, and seat limits.\n2. Assigned tenant-admin users.\n3. Tenant-admin candidates for controlled access changes.\n\n### Important guardrail\n\nGlobal admins can manage tenants across the platform. Tenant admins remain scoped to their own tenant and should not see global tenant controls.\n"
+    "content": "## Global Admin Tenant Management\n\nUse the Tenants page to review tenant records and manage platform-controlled tenant administration.\n\n### What to check\n\n1. Tenant identity, slug, status, and seat limits.\n2. Assigned tenant-admin users.\n3. Every user attached to the tenant, including role, password-reset, and support actions.\n4. Tenant-admin candidates for controlled access changes.\n\n### Important guardrail\n\nGlobal admins can manage tenants across the platform. Tenant admins remain scoped to their own tenant and should not see global tenant controls.\n"
   },
   {
     "slug": "global-admin-wiki",

@@ -157,6 +157,7 @@ export function GlobalAdminConsole() {
     e.currentTarget.reset();
     await refresh();
     setShowCreate(false);
+    setSelectedTenantId("");
     setMsg("Tenant created.");
   }
 

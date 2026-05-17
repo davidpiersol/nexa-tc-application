@@ -20,13 +20,24 @@ function shortEmail(email: string | undefined) {
 
 type AccountMenuProps = {
   email?: string | null;
+  fullName?: string | null;
   role?: string | null;
 };
 
-export function AccountMenu({ email, role }: AccountMenuProps) {
+export function AccountMenu({ email, fullName, role }: AccountMenuProps) {
   const pathname = usePathname();
   const roleSeg = roleFromPathname(pathname);
-  const profileHref = profileHrefFromPathname(pathname);
+  const profileHref =
+    profileHrefFromPathname(pathname) ??
+    (role === "global_admin" || role === "superadmin"
+      ? "/admin/global/profile"
+      : role === "admin" || role === "tenant_admin"
+        ? "/admin/tenant/profile"
+        : role === "tc"
+          ? "/tc/profile"
+          : role === "broker" || role === "agent"
+            ? "/agent/profile"
+            : null);
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +88,7 @@ export function AccountMenu({ email, role }: AccountMenuProps) {
       >
         <NexaIcon className="size-5 shrink-0 opacity-70" aria-hidden />
         <span className="hidden min-w-0 flex-1 flex-col truncate text-left sm:flex">
-          <span className="truncate normal-case text-neutral-900">{shortEmail(email ?? undefined)}</span>
+          <span className="truncate normal-case text-neutral-900">{fullName || shortEmail(email ?? undefined)}</span>
           <span className="truncate text-[10px] text-neutral-500">{roleLabel}</span>
         </span>
         <span className="sm:hidden">Menu</span>

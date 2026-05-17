@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { ChoralPointLogo } from "@/components/brand/ChoralPointLogo";
 import { dashboardTitleForPath } from "@/lib/dashboard-titles";
 import {
@@ -14,19 +14,41 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { AccountMenu } from "@/components/dashboard/account-menu";
 import { Button } from "@/components/ui/button";
+import { DashboardGreeting } from "@/components/dashboard/dashboard-greeting";
 
 type DashboardShellProps = {
   children: React.ReactNode;
   account?: {
     email?: string | null;
     role?: string | null;
+    fullName?: string | null;
   };
 };
 
 export function DashboardShell({ children, account }: DashboardShellProps) {
   const pathname = usePathname();
-  const role = roleFromPathname(pathname);
-  const items = navItemsForPath(pathname);
+  const pathRole = roleFromPathname(pathname);
+  const role = pathRole ?? (account?.role === "global_admin" || account?.role === "superadmin" || account?.role === "admin" || account?.role === "tenant_admin"
+    ? "admin"
+    : account?.role === "broker"
+      ? "agent"
+      : (account?.role as ReturnType<typeof roleFromPathname>));
+  const roleHome = (() => {
+    if (pathRole) return routeBase(pathname);
+    if (account?.role === "global_admin" || account?.role === "superadmin") return "/admin/global/dashboard";
+    if (account?.role === "admin" || account?.role === "tenant_admin") return "/admin/tenant/dashboard";
+    if (account?.role === "tc") return "/tc";
+    if (account?.role === "broker" || account?.role === "agent") return "/agent";
+    return "/";
+  })();
+  const navContextPath = pathRole
+    ? pathname
+    : account?.role === "global_admin" || account?.role === "superadmin"
+      ? "/admin/global/dashboard"
+      : account?.role === "admin" || account?.role === "tenant_admin"
+        ? "/admin/tenant/dashboard"
+        : roleHome;
+  const items = navItemsForPath(navContextPath);
   const title = dashboardTitleForPath(pathname);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const uatIssuesEnabled = process.env.NEXT_PUBLIC_UAT_ISSUES_ENABLED === "true";
@@ -39,7 +61,13 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
     );
   }
 
-  const homeHref = role ? routeBase(pathname) : "/";
+  const homeHref = roleHome;
+  const showGreeting = [
+    "/admin/global/dashboard",
+    "/admin/tenant/dashboard",
+    "/tc",
+    "/agent",
+  ].includes(pathname);
   const tcPrimaryAction = (() => {
     if (!pathname.startsWith("/tc")) return null;
     if (pathname.startsWith("/tc/brokers")) {
@@ -161,6 +189,10 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
             <ChoralPointLogo compact />
           </Link>
           <div className="flex min-w-0 flex-1 items-center gap-3">
+            <Button variant="ghost" size="sm" type="button" onClick={() => history.back()}>
+              <ArrowLeft className="mr-1 size-4" aria-hidden />
+              Back
+            </Button>
             <h1 className="truncate font-display text-xl text-brand-navy">
               {title}
             </h1>
@@ -174,10 +206,27 @@ export function DashboardShell({ children, account }: DashboardShellProps) {
                 <Link href="/uat-issues">UAT issues</Link>
               </Button>
             ) : null}
-            <AccountMenu email={account?.email} role={account?.role} />
+            <AccountMenu email={account?.email} fullName={account?.fullName} role={account?.role} />
           </div>
         </header>
-        <main className="relative z-0 min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+        <main className="relative z-0 min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+          {showGreeting ? (
+            <div className="mb-5">
+              <DashboardGreeting fullName={account?.fullName} />
+            </div>
+          ) : null}
+          {children}
+        </main>
+        <footer className="border-t border-brand-navy/10 bg-white/70 px-4 py-3 text-xs text-neutral-600 sm:px-6">
+          © {new Date().getFullYear()} Choral Point™ ·{" "}
+          <a className="underline underline-offset-2" href="https://choralpoint.com">
+            choralpoint.com
+          </a>{" "}
+          ·{" "}
+          <a className="underline underline-offset-2" href="mailto:support@choralpoint.com">
+            support@choralpoint.com
+          </a>
+        </footer>
       </div>
     </div>
   );
