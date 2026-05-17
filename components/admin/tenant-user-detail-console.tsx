@@ -31,6 +31,7 @@ type UserDetail = {
   full_name: string | null;
   phone: string | null;
   group: TenantGroup;
+  allowedRoles: TenantAssignableLoginType[];
 };
 
 type Props = { userId: string };
@@ -54,6 +55,7 @@ export function TenantUserDetailConsole({ userId }: Props) {
     phone: "",
     role: "tc" as TenantAssignableLoginType,
     group: "TC" as TenantGroup,
+    allowedRoles: ["tc"] as TenantAssignableLoginType[],
   });
 
   const refresh = useCallback(async () => {
@@ -70,6 +72,7 @@ export function TenantUserDetailConsole({ userId }: Props) {
       phone: body.user.phone ?? "",
       role: assignableLoginType(body.user.role),
       group: body.user.group as TenantGroup,
+      allowedRoles: body.user.allowedRoles.length ? body.user.allowedRoles : [assignableLoginType(body.user.role)],
     });
   }, [userId]);
 
@@ -93,6 +96,7 @@ export function TenantUserDetailConsole({ userId }: Props) {
         phone: form.phone || null,
         role: form.role,
         group: form.group,
+        allowedRoles: form.allowedRoles,
       }),
     });
     const body = (await res.json().catch(() => ({}))) as { error?: string };
@@ -189,6 +193,28 @@ export function TenantUserDetailConsole({ userId }: Props) {
             ))}
           </select>
         </div>
+        <fieldset className="grid gap-2 rounded-brand-md border border-neutral-200 p-3">
+          <legend className="px-1 font-sans text-ui-label uppercase tracking-wide text-neutral-900">
+            Allowed Login Types
+          </legend>
+          {TENANT_ASSIGNABLE_LOGIN_TYPES.map((role) => (
+            <label key={role} className="flex items-center gap-2 font-sans text-sm text-neutral-700">
+              <input
+                type="checkbox"
+                checked={form.allowedRoles.includes(role)}
+                onChange={(e) =>
+                  setForm((p) => ({
+                    ...p,
+                    allowedRoles: e.target.checked
+                      ? [...p.allowedRoles, role]
+                      : p.allowedRoles.filter((item) => item !== role),
+                  }))
+                }
+              />
+              {LOGIN_TYPE_LABELS[role]}
+            </label>
+          ))}
+        </fieldset>
         <div className="flex w-full flex-col gap-1.5">
           <label className="font-sans text-ui-label uppercase tracking-wide text-neutral-900">
             Role Group

@@ -9,6 +9,7 @@ import { formatRoleLabel } from "@/components/dashboard/profile-body";
 import { profileHrefFromPathname, roleFromPathname } from "@/lib/dashboard-nav";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import { cn } from "@/lib/utils/cn";
+import { createClient } from "@/lib/supabase/client";
 
 function shortEmail(email: string | undefined) {
   if (!email) return "Account";
@@ -39,6 +40,8 @@ export function AccountMenu({ email, fullName, role }: AccountMenuProps) {
             ? "/agent/profile"
             : null);
   const [open, setOpen] = useState(false);
+  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
+  const [switchingRole, setSwitchingRole] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,6 +50,13 @@ export function AccountMenu({ email, fullName, role }: AccountMenuProps) {
     }
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  useEffect(() => {
+    void fetch("/api/me/roles", { credentials: "include" })
+      .then(async (res) => (res.ok ? ((await res.json()) as { roles?: string[] }) : null))
+      .then((body) => setAvailableRoles(body?.roles ?? []))
+      .catch(() => setAvailableRoles([]));
   }, []);
 
   const displayRole = role ?? roleSeg ?? "";
@@ -71,6 +81,28 @@ export function AccountMenu({ email, fullName, role }: AccountMenuProps) {
       window.location.assign("/login");
     }
   }, []);
+
+  async function switchRole(nextRole: string) {
+    if (!nextRole || nextRole === role) return;
+    setSwitchingRole(true);
+    const csrfRes = await fetch("/api/csrf", { credentials: "include" });
+    const csrfJson = (await csrfRes.json().catch(() => ({}))) as { csrfToken?: string };
+    const res = await fetch("/api/me/roles", {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(csrfJson.csrfToken ? { [CSRF_HEADER_NAME]: csrfJson.csrfToken } : {}),
+      },
+      body: JSON.stringify({ role: nextRole }),
+    });
+    if (res.ok) {
+      await createClient().auth.refreshSession();
+      window.location.assign("/api/auth/role-redirect");
+      return;
+    }
+    setSwitchingRole(false);
+  }
 
   if (!roleSeg) return null;
 
@@ -110,6 +142,23 @@ export function AccountMenu({ email, fullName, role }: AccountMenuProps) {
               <UserIcon className="size-4 shrink-0 opacity-70" aria-hidden />
               Profile
             </Link>
+          ) : null}
+          {availableRoles.length > 1 ? (
+            <label className="flex flex-col gap-1 border-t border-neutral-200 px-3 py-2 text-xs text-neutral-600">
+              Active login type
+              <select
+                value={role ?? ""}
+                disabled={switchingRole}
+                onChange={(event) => void switchRole(event.target.value)}
+                className="rounded-brand-md border border-neutral-300 bg-white px-2 py-1 text-sm text-neutral-900"
+              >
+                {availableRoles.map((item) => (
+                  <option key={item} value={item}>
+                    {item === "agent" ? "broker" : item}
+                  </option>
+                ))}
+              </select>
+            </label>
           ) : null}
           <button
             type="button"

@@ -11,6 +11,7 @@ import {
   groupMapFromTenantSettings,
   isTenantGroup,
 } from "@/lib/admin/user-groups";
+import { resolveActiveRole } from "@/lib/auth/role-memberships";
 
 const patchSchema = z.object({
   email: z.string().email().optional(),
@@ -18,6 +19,7 @@ const patchSchema = z.object({
   phone: z.string().max(40).nullable().optional(),
   role: z.enum(["admin", "tc", "agent", "broker", "buyer", "seller", "mortgage", "title"]).optional(),
   group: z.string().optional(),
+  allowedRoles: z.array(z.enum(["admin", "tc", "broker", "buyer", "seller", "mortgage", "title"])).min(1).optional(),
 });
 
 type Params = { params: { userId: string } };
@@ -54,11 +56,17 @@ export async function GET(request: NextRequest, { params }: Params) {
     .maybeSingle();
   const groupMap = groupMapFromTenantSettings(tenant?.settings);
   const group = groupMap[userRow.id] ?? groupForRole(userRow.role);
+  const { data: memberships } = await admin
+    .from("user_role_memberships")
+    .select("role")
+    .eq("user_id", userRow.id)
+    .eq("tenant_id", userRow.tenant_id);
 
   return NextResponse.json({
     user: {
       ...userRow,
       group,
+      allowedRoles: (memberships ?? []).map((row) => row.role),
     },
   });
 }
@@ -90,18 +98,19 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   if (parsed.data.email) updates.email = parsed.data.email.trim().toLowerCase();
   if (parsed.data.fullName !== undefined) updates.full_name = parsed.data.fullName?.trim() || null;
   if (parsed.data.phone !== undefined) updates.phone = parsed.data.phone?.trim() || null;
-  if (parsed.data.role) updates.role = parsed.data.role;
+  const activeRole = resolveActiveRole(parsed.data.role ?? userRow.role, parsed.data.allowedRoles ?? [parsed.data.role ?? userRow.role]);
+  if (activeRole !== userRow.role) updates.role = activeRole;
 
   if (Object.keys(updates).length) {
     const { error: updateErr } = await admin.from("users").update(updates).eq("id", params.userId);
     if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 400 });
   }
 
-  if (parsed.data.email || parsed.data.role) {
+  if (parsed.data.email || activeRole !== userRow.role) {
     const authRow = await admin.auth.admin.getUserById(params.userId);
     const existingUserMeta = (authRow.data.user?.user_metadata ?? {}) as Record<string, unknown>;
     const existingAppMeta = (authRow.data.user?.app_metadata ?? {}) as Record<string, unknown>;
-    const nextRole = parsed.data.role ?? (typeof existingUserMeta.role === "string" ? existingUserMeta.role : userRow.role);
+    const nextRole = activeRole;
     const tenantId = userRow.tenant_id;
 
     await admin.auth.admin.updateUserById(params.userId, {
@@ -117,6 +126,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         tenant_id: tenantId,
       },
     });
+  }
+
+  if (parsed.data.allowedRoles) {
+    await admin.from("user_role_memberships").delete().eq("user_id", userRow.id).eq("tenant_id", userRow.tenant_id);
+    await admin.from("user_role_memberships").insert(
+      parsed.data.allowedRoles.map((role) => ({ tenant_id: userRow.tenant_id, user_id: userRow.id, role })),
+    );
   }
 
   const requestedGroup = parsed.data.group;
@@ -148,4 +164,3 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   return NextResponse.json({ ok: true });
 }
-

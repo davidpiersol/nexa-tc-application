@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.39.0-uat",
+    "currentVersion": "v4.40.0-uat",
     "lastDeployedVersion": "v4.31.5",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -2041,12 +2041,12 @@
       "lane": "uat",
       "milestoneId": "m1",
       "versionScope": "v4.40.0-uat",
-      "status": "todo",
+      "status": "done",
       "jiraKey": null,
       "summary": "Support one account having multiple allowed roles while preserving one active role at a time and explicit role switching.",
       "validation": {
-        "build": "not_run",
-        "tests": "not_run",
+        "build": "passed",
+        "tests": "passed",
         "approval": "pending"
       },
       "acceptance": [
@@ -2075,7 +2075,8 @@
         "Add focused unit tests for role membership and role redirect logic.",
         "Run browser smoke for role switching across admin, TC, and broker surfaces."
       ],
-      "fullQaPrompt": "Run full QA for P40 (multi-role users and active-role switching). Verify membership storage, switcher UX, route redirects, RLS/permission behavior, automated checks, and regressions. If all checks pass, mark build/tests passed and status done, leaving approval pending."
+      "fullQaPrompt": "Run full QA for P40 (multi-role users and active-role switching). Verify membership storage, switcher UX, route redirects, RLS/permission behavior, automated checks, and regressions. If all checks pass, mark build/tests passed and status done, leaving approval pending.",
+      "completedAt": "2026-05-17T12:00:00.000Z"
     },
     {
       "id": "P41",
