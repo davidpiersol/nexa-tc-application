@@ -73,6 +73,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
         { href: "/admin/global/package-rules", label: "Package rules" },
         { href: "/admin/global/ai", label: "AI" },
         { href: "/admin/global/wiki", label: "Wiki" },
+        { href: "/admin/global/uat-issues", label: "UAT issues" },
         { href: "/admin/global/reports", label: "Reports" },
       ];
     }
@@ -80,6 +81,7 @@ export function navItemsForPath(pathname: string): NavItem[] {
       { href: "/admin/tenant/dashboard", label: "Dashboard" },
       { href: "/admin/tenant/users", label: "Users" },
       { href: "/admin/tenant/groups", label: "Groups" },
+      { href: "/admin/tenant/uat-issues", label: "UAT issues" },
       { href: "/admin/tenant/reports", label: "Reports" },
     ];
   }

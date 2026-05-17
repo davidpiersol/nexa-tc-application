@@ -66,10 +66,12 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname === "/admin/global/package-rules") return "Package rules";
   if (pathname === "/admin/global/ai") return "AI Configuration";
   if (pathname === "/admin/global/wiki") return "Wiki";
+  if (pathname === "/admin/global/uat-issues") return "UAT issues";
   if (pathname === "/admin/global/reports") return "Reports";
   if (pathname === "/admin/tenant" || pathname === "/admin/tenant/dashboard") return "Admin Console";
   if (pathname === "/admin/tenant/users") return "Users";
   if (pathname === "/admin/tenant/groups") return "Groups";
+  if (pathname === "/admin/tenant/uat-issues") return "UAT issues";
   if (pathname === "/admin/tenant/reports") return "Reports";
   return "Nexa";
 }

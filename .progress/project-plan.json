@@ -25,7 +25,7 @@
   "versioning": {
     "scheme": "MSP",
     "format": "vM.S.P[-label]",
-    "currentVersion": "v4.35.0-dev",
+    "currentVersion": "v4.38.0-dev",
     "lastDeployedVersion": "v4.31.5",
     "releaseChannelPolicy": {
       "local": "vM.S.P-dev",
@@ -1876,10 +1876,127 @@
     },
     {
       "id": "P36",
+      "name": "UAT issue triage and admin review",
+      "lane": "uat",
+      "milestoneId": "m1",
+      "versionScope": "v4.36.0-dev",
+      "status": "done",
+      "jiraKey": null,
+      "summary": "Add admin-facing triage screens for UAT bug and enhancement submissions, with status tracking and tenant/global review boundaries.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Tenant admins can review UAT issues for their tenant.",
+        "Global admins can review UAT issues across tenants.",
+        "Issues expose status, type, severity, submitter, and timestamps."
+      ],
+      "recommendedPrompt": "Implement P36 UAT issue triage and admin review.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P36 is fully tested after typecheck, unit tests, build, browser smoke, and full QA pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.36.0"
+      },
+      "reviewChecklist": [
+        "Confirm the sprint changed only the intended feature area.",
+        "Confirm auth, role, tenant, and email boundaries remain intact.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused browser smoke for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P36 (UAT issue triage and admin review). Verify acceptance criteria, security, regression flows, automated checks, and browser smoke. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves.",
+      "completedAt": "2026-05-16T19:10:00.000Z"
+    },
+    {
+      "id": "P37",
+      "name": "User onboarding and invite emails",
+      "lane": "auth",
+      "milestoneId": "m1",
+      "versionScope": "v4.37.0-dev",
+      "status": "done",
+      "jiraKey": null,
+      "summary": "Add email invite and welcome flows for global-admin tenant onboarding and tenant-admin user onboarding without emailing raw passwords.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Global admins can send tenant-admin invite emails after tenant creation.",
+        "Tenant admins can send role-scoped user invite emails.",
+        "Invite emails use signed invite links and never expose raw temporary passwords."
+      ],
+      "recommendedPrompt": "Implement P37 User onboarding and invite emails.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P37 is fully tested after typecheck, unit tests, build, browser smoke, and full QA pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.37.0"
+      },
+      "reviewChecklist": [
+        "Confirm the sprint changed only the intended feature area.",
+        "Confirm auth, role, tenant, and email boundaries remain intact.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused browser smoke for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P37 (User onboarding and invite emails). Verify acceptance criteria, security, regression flows, automated checks, and browser smoke. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves.",
+      "completedAt": "2026-05-16T19:10:00.000Z"
+    },
+    {
+      "id": "P38",
+      "name": "Self-service password recovery",
+      "lane": "auth",
+      "milestoneId": "m1",
+      "versionScope": "v4.38.0-dev",
+      "status": "done",
+      "jiraKey": null,
+      "summary": "Add forgot-password and reset-password flows backed by Supabase recovery emails and safe redirects.",
+      "validation": {
+        "build": "passed",
+        "tests": "passed",
+        "approval": "pending"
+      },
+      "acceptance": [
+        "Users can request a password recovery email from login.",
+        "Recovery links route to a reset-password screen.",
+        "Users can set a new password and return to sign in safely."
+      ],
+      "recommendedPrompt": "Implement P38 Self-service password recovery.",
+      "milestoneMarker": {
+        "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
+        "stableWhen": "P38 is fully tested after typecheck, unit tests, build, browser smoke, and full QA pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.38.0"
+      },
+      "reviewChecklist": [
+        "Confirm the sprint changed only the intended feature area.",
+        "Confirm auth, role, tenant, and email boundaries remain intact.",
+        "Confirm BuildTrack status and validation fields were updated without marking human approval."
+      ],
+      "testChecklist": [
+        "Run npm run typecheck.",
+        "Run npm run test.",
+        "Run npm run build.",
+        "Run focused browser smoke for the changed workflow."
+      ],
+      "fullQaPrompt": "Run full QA for P38 (Self-service password recovery). Verify acceptance criteria, security, regression flows, automated checks, and browser smoke. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves.",
+      "completedAt": "2026-05-16T19:10:00.000Z"
+    },
+    {
+      "id": "P39",
       "name": "External CRM and calendar provider integrations",
       "lane": "integrations",
       "milestoneId": "m2",
-      "versionScope": "v4.36.0-dev",
+      "versionScope": "v4.39.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Implement approved external CRM and calendar provider connection flows after the internal CRM is stable, including OAuth/provider setup, field mapping, duplicate handling, CSV/VCF fallback, sync logs, and safe error states.",
@@ -1898,11 +2015,11 @@
         "No raw third-party passwords are stored unless David explicitly approves after a security review.",
         "External sync can be disabled per tenant and per user without breaking internal CRM."
       ],
-      "recommendedPrompt": "Implement P36 external CRM and calendar provider integrations after P31-P35 are stable. Add approved OAuth/API/CSV/VCF connection flows for Outlook, Google Calendar, Apple/iCal/CalDAV strategy, DeltaNET, Lofty, Follow Up Boss, and MoxiWorks. Include consent, field mapping, duplicate handling, sync logs, rate-limit/error handling, and safe disable states. Stop before storing raw third-party passwords or unsupported scraping.",
+      "recommendedPrompt": "Implement P39 external CRM and calendar provider integrations after P31-P35 are stable. Add approved OAuth/API/CSV/VCF connection flows for Outlook, Google Calendar, Apple/iCal/CalDAV strategy, DeltaNET, Lofty, Follow Up Boss, and MoxiWorks. Include consent, field mapping, duplicate handling, sync logs, rate-limit/error handling, and safe disable states. Stop before storing raw third-party passwords or unsupported scraping.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Current product is code-stable before this sprint begins.",
-        "stableWhen": "P36 is fully tested only after typecheck, unit tests, build, provider-mocked integration tests, browser smoke, security review, and full QA prompt pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.36.0"
+        "stableWhen": "P39 is fully tested only after typecheck, unit tests, build, provider-mocked integration tests, browser smoke, security review, and full QA prompt pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.39.0"
       },
       "reviewChecklist": [
         "Confirm internal CRM remains usable when all external providers are disconnected.",
@@ -1924,14 +2041,14 @@
         "Mock provider OAuth/API tests without live credentials.",
         "Browser smoke provider connection pages and disabled-provider fallback."
       ],
-      "fullQaPrompt": "Run full QA for P36 (External CRM and calendar provider integrations). Verify provider connection acceptance, credentials/security, OAuth/API/CSV/VCF fallback behavior, field mapping, duplicate handling, sync logs, disabled-provider behavior, and regression flows. If any provider access would require unsupported scraping or raw password storage, stop and report the risk plus recommendations. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
+      "fullQaPrompt": "Run full QA for P39 (External CRM and calendar provider integrations). Verify provider connection acceptance, credentials/security, OAuth/API/CSV/VCF fallback behavior, field mapping, duplicate handling, sync logs, disabled-provider behavior, and regression flows. If any provider access would require unsupported scraping or raw password storage, stop and report the risk plus recommendations. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves. If any check fails, keep status in_progress and document failures plus rollback recommendation."
     },
     {
-      "id": "P37",
+      "id": "P40",
       "name": "Public marketing content expansion",
       "lane": "ui",
       "milestoneId": "m1",
-      "versionScope": "v4.37.0-dev",
+      "versionScope": "v4.40.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Develop the public Choral Point website in detail after the core product and provider-integration sprints are stable, including final messaging, page-specific content, conversion paths, SEO basics, and launch-ready assets.",
@@ -1950,8 +2067,8 @@
       "recommendedPrompt": "Develop the public Choral Point marketing site in detail using the approved landing-page direction and existing public-page scaffolds. Finalize messaging, content hierarchy, SEO metadata, conversion paths, and launch-ready assets without destabilizing the application workflows.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Core application workflows and provider-integration decisions are stable before detailed public-site work begins.",
-        "stableWhen": "P37 is fully tested only after content approval, responsive/browser smoke, accessibility review, and production-readiness review pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.37.0"
+        "stableWhen": "P40 is fully tested only after content approval, responsive/browser smoke, accessibility review, and production-readiness review pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.40.0"
       },
       "reviewChecklist": [
         "Confirm public-site copy is approved by the product owner.",
@@ -1966,14 +2083,14 @@
         "Run browser smoke across all public routes and the request-demo flow.",
         "Review accessibility basics and metadata for public pages."
       ],
-      "fullQaPrompt": "Run full QA for P37 (public marketing content expansion). Verify approved copy, page hierarchy, navigation, request-demo flow, responsive behavior, metadata, accessibility, and regression safety. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+      "fullQaPrompt": "Run full QA for P40 (public marketing content expansion). Verify approved copy, page hierarchy, navigation, request-demo flow, responsive behavior, metadata, accessibility, and regression safety. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
     },
     {
-      "id": "P38",
+      "id": "P41",
       "name": "Production launch for choralpoint.com",
       "lane": "release",
       "milestoneId": "m1",
-      "versionScope": "v4.38.0-dev",
+      "versionScope": "v4.41.0-dev",
       "status": "todo",
       "jiraKey": null,
       "summary": "Stand up the production Choral Point site at choralpoint.com with domain, hosting, environment, email, security, monitoring, and launch verification guidance.",
@@ -1992,8 +2109,8 @@
       "recommendedPrompt": "Prepare and execute the production launch plan for Choral Point at choralpoint.com. Document hosting, DNS, TLS, environment variables, Postmark/domain verification, deployment, rollback, monitoring, and launch-smoke steps before promoting the site.",
       "milestoneMarker": {
         "baselineBeforeSprint": "Public marketing content and application release hardening are approved before production launch work begins.",
-        "stableWhen": "P38 is complete only after domain, HTTPS, email delivery, production environment, rollback, and launch-smoke checks pass.",
-        "suggestedRollbackTag": "stable/choral-point-v4.38.0"
+        "stableWhen": "P41 is complete only after domain, HTTPS, email delivery, production environment, rollback, and launch-smoke checks pass.",
+        "suggestedRollbackTag": "stable/choral-point-v4.41.0"
       },
       "reviewChecklist": [
         "Confirm domain ownership and DNS change window.",
@@ -2008,7 +2125,7 @@
         "Run production-like smoke checks before cutover.",
         "Run live production smoke after DNS/TLS cutover."
       ],
-      "fullQaPrompt": "Run full QA for P38 (production launch for choralpoint.com). Verify DNS, HTTPS, redirects, environment variables, Postmark delivery, request-demo submissions, login, public routes, protected routing, monitoring, and rollback readiness. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
+      "fullQaPrompt": "Run full QA for P41 (production launch for choralpoint.com). Verify DNS, HTTPS, redirects, environment variables, Postmark delivery, request-demo submissions, login, public routes, protected routing, monitoring, and rollback readiness. If every check passes, update validation.build/tests to passed and status to done, but leave validation.approval pending until David approves."
     }
   ],
   "blockers": [

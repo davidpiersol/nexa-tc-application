@@ -82,6 +82,13 @@ export function TenantUsersConsole() {
     await refresh();
     setMsg("User created.");
   }
+  async function sendInvite(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault(); setBusy(true); setMsg("");
+    const form=new FormData(e.currentTarget); const headers=await csrfHeader(); if(!headers)return setBusy(false);
+    const group=String(form.get("group") ?? "TC");
+    const res=await fetch("/api/admin/tenant/invites",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json",...headers},body:JSON.stringify({email:String(form.get("email")??""),role:roleForGroup(group)})});
+    setBusy(false); if(!res.ok)return setMsg("Invite email failed."); e.currentTarget.reset(); setMsg("Invite email sent.");
+  }
 
   return (
     <div className="space-y-6">
@@ -110,6 +117,12 @@ export function TenantUsersConsole() {
         <Button variant="gold" type="submit" disabled={busy}>
           Create account
         </Button>
+      </form>
+      <form onSubmit={sendInvite} className="grid gap-3 rounded-brand-md border border-neutral-200 bg-white p-4">
+        <h3 className="font-display text-lg text-brand-navy">Send account invite email</h3>
+        <Input label="Email" type="email" name="email" required />
+        <label className="flex flex-col gap-1.5 font-sans text-sm"><span>Role group</span><select name="group" defaultValue="TC" className="rounded border border-neutral-300 bg-white px-3 py-2">{GROUPS.map(g=><option key={g}>{g}</option>)}</select></label>
+        <Button variant="secondary" type="submit" disabled={busy}>Send invite email</Button>
       </form>
 
       <div className="rounded-brand-md border border-neutral-200 bg-white p-4">
@@ -140,4 +153,3 @@ export function TenantUsersConsole() {
     </div>
   );
 }
-

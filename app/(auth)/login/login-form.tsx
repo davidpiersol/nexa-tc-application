@@ -120,6 +120,10 @@ export function LoginForm({ redirect: redirectProp = "/tc" }: LoginFormProps) {
         <Link href="/signup" className="text-brand-steel underline underline-offset-4">
           Create account
         </Link>
+        <span className="mx-2 text-neutral-300">·</span>
+        <Link href="/forgot-password" className="text-brand-steel underline underline-offset-4">
+          Forgot password?
+        </Link>
       </p>
     </div>
   );

@@ -206,6 +206,12 @@ export function GlobalAdminConsole() {
     await refreshUsers(String(form.get("tenantId") ?? selectedTenantId));
     setMsg("Tenant admin assigned.");
   }
+  async function inviteTenantAdmin(email: string) {
+    if (!selectedTenantId) return;
+    const headers=await csrfHeader(); if(!headers) return;
+    const res=await fetch(`/api/admin/global/tenants/${selectedTenantId}/invite-admin`,{method:"POST",credentials:"include",headers:{"Content-Type":"application/json",...headers},body:JSON.stringify({email})});
+    setMsg(res.ok ? "Tenant admin invite email sent." : "Tenant admin invite email failed.");
+  }
 
   async function createTenantUser(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -494,6 +500,11 @@ export function GlobalAdminConsole() {
               Create tenant admin
             </Button>
           </form>
+          <form onSubmit={(e)=>{e.preventDefault(); const f=new FormData(e.currentTarget); void inviteTenantAdmin(String(f.get("email")??""));}} className="grid gap-3 border border-neutral-200 rounded-brand-md p-3">
+            <h4 className="font-display text-base text-brand-navy">Email tenant admin invite</h4>
+            <Input label="Email" name="email" type="email" required />
+            <Button type="submit" variant="secondary" disabled={busy}>Send invite email</Button>
+          </form>
 
           <div className="space-y-2">
             <h4 className="font-display text-base text-brand-navy">Tenant admin candidates</h4>
@@ -544,4 +555,3 @@ export function GlobalAdminConsole() {
     </div>
   );
 }
-
