@@ -95,11 +95,16 @@ export function ContactsConsole({ brokerOnly = false }: { brokerOnly?: boolean }
           {sorted.map((contact) => (
             <li
               key={contact.id}
-              className="rounded-brand-md border border-neutral-200 bg-neutral-50 px-4 py-3"
+              className="rounded-brand-md border border-neutral-200 bg-neutral-50 transition-colors hover:bg-white"
             >
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <Link
+                href={`${detailBase}/${contact.id}`}
+                className="flex flex-col gap-2 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 sm:flex-row sm:items-center sm:justify-between"
+              >
                 <div>
-                  <p className="font-sans text-sm font-semibold text-brand-navy">{contact.full_name}</p>
+                  <p className="font-sans text-sm font-semibold text-brand-navy underline-offset-4 hover:underline">
+                    {contact.full_name}
+                  </p>
                   <p className="font-sans text-xs text-neutral-600">
                     {contact.email ?? "no email"}
                     {contact.phone ? ` · ${contact.phone}` : ""}
@@ -116,10 +121,10 @@ export function ContactsConsole({ brokerOnly = false }: { brokerOnly?: boolean }
                       : ""}
                   </p>
                 </div>
-                <Button variant="ghost" size="sm" type="button" asChild>
-                  <Link href={`${detailBase}/${contact.id}`}>Open</Link>
-                </Button>
-              </div>
+                <span className="font-display text-sm font-semibold text-brand-navy underline-offset-4">
+                  Open
+                </span>
+              </Link>
             </li>
           ))}
         </ul>

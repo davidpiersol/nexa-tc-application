@@ -9,6 +9,39 @@ export const TENANT_GROUPS = [
 
 export type TenantGroup = (typeof TENANT_GROUPS)[number];
 
+export const TENANT_LOGIN_TYPES = [
+  "admin",
+  "tc",
+  "agent",
+  "broker",
+  "buyer",
+  "seller",
+  "mortgage",
+  "title",
+] as const;
+
+export type TenantLoginType = (typeof TENANT_LOGIN_TYPES)[number];
+
+export const TENANT_ASSIGNABLE_LOGIN_TYPES = [
+  "admin",
+  "tc",
+  "broker",
+  "buyer",
+  "seller",
+  "mortgage",
+  "title",
+] as const satisfies readonly TenantLoginType[];
+
+export type TenantAssignableLoginType = (typeof TENANT_ASSIGNABLE_LOGIN_TYPES)[number];
+
+export function assignableLoginType(role: string): TenantAssignableLoginType {
+  if (role === "agent") return "broker";
+  if (TENANT_ASSIGNABLE_LOGIN_TYPES.includes(role as TenantAssignableLoginType)) {
+    return role as TenantAssignableLoginType;
+  }
+  return "buyer";
+}
+
 export function isTenantGroup(value: string): value is TenantGroup {
   return TENANT_GROUPS.includes(value as TenantGroup);
 }
@@ -50,4 +83,3 @@ export function applyGroupToTenantSettings(
     },
   };
 }
-

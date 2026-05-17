@@ -1,0 +1,36 @@
+-- P33 registry completion: every New Mexico county has an explicit fallback state.
+INSERT INTO public.property_data_county_sources
+  (county_name, county_fips, portal_type, supported_lookup_keys, structured_api_available, automation_allowed, requires_auth, terms_review_status, notes)
+VALUES
+  ('Catron', '35003', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Chaves', '35005', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Cibola', '35006', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Colfax', '35007', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Curry', '35009', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('De Baca', '35011', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Doña Ana', '35013', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Eddy', '35015', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Grant', '35017', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Guadalupe', '35019', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Harding', '35021', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Hidalgo', '35023', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Lea', '35025', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Lincoln', '35027', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Los Alamos', '35028', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Luna', '35029', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('McKinley', '35031', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Mora', '35033', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Otero', '35035', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Quay', '35037', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Rio Arriba', '35039', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Roosevelt', '35041', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('San Juan', '35045', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('San Miguel', '35047', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Sandoval', '35043', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Santa Fe', '35049', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Sierra', '35051', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Socorro', '35053', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Taos', '35055', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Torrance', '35057', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.'),
+  ('Union', '35059', 'manual_only', ARRAY['address','parcel','owner'], false, false, false, 'not_reviewed', 'Manual fallback until a reviewed structured source is approved.')
+ON CONFLICT (state, county_name) DO NOTHING;

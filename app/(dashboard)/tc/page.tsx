@@ -11,6 +11,9 @@ async function TcDashboardBody() {
       pipeline={data.pipeline}
       deadlines={data.deadlines}
       tasks={data.tasks}
+      billingReminders={data.billingReminders}
+      scorecard={data.scorecard}
+      operationalNotifications={data.operationalNotifications}
     />
   );
 }

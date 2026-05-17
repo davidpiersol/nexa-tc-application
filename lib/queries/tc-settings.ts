@@ -1,5 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import {
+  DEFAULT_NM_GRT_RATE_PERCENT,
+  normalizeTaxRatePercent,
+} from "@/lib/billing/invoices";
+import {
   isTcDateFormatOption,
   isTcTimezoneOption,
 } from "@/lib/tc-settings-options";
@@ -12,6 +16,7 @@ export type TcSettingsData = {
   timezone: string;
   dateFormat: string;
   autoArchiveDays: number;
+  billingTaxRatePercent: number;
 };
 
 /**
@@ -40,6 +45,10 @@ export async function getTcSettingsForCurrentUser(): Promise<TcSettingsData | nu
     typeof prefs.dateFormat === "string" ? prefs.dateFormat : "";
   const autoArchiveDaysRaw =
     typeof prefs.autoArchiveDays === "number" ? prefs.autoArchiveDays : Number.NaN;
+  const billingTaxRatePercentRaw =
+    typeof prefs.billingTaxRatePercent === "number"
+      ? prefs.billingTaxRatePercent
+      : DEFAULT_NM_GRT_RATE_PERCENT;
 
   return {
     email: user.email ?? "",
@@ -59,5 +68,6 @@ export async function getTcSettingsForCurrentUser(): Promise<TcSettingsData | nu
       Number.isFinite(autoArchiveDaysRaw) && autoArchiveDaysRaw >= 0 && autoArchiveDaysRaw <= 3650
         ? Math.trunc(autoArchiveDaysRaw)
         : 30,
+    billingTaxRatePercent: normalizeTaxRatePercent(billingTaxRatePercentRaw),
   };
 }

@@ -1,0 +1,33 @@
+{
+  "brand": {
+    "name": "Choral Point",
+    "tagline": "The Center of Every Deal."
+  },
+  "colors": {
+    "navy": "#0B1220",
+    "slate": "#41566B",
+    "mist": "#A8B3C2",
+    "gold": "#D4AF37",
+    "amber": "#F2C979",
+    "cream": "#FFF6E8",
+    "paper": "#FBF7F1"
+  },
+  "typography": {
+    "primary": "Satoshi",
+    "fallbacks": ["Avenir Next", "Inter", "Arial", "sans-serif"],
+    "tone": "clean geometric sans, medium weight, generous tracking for brand marks"
+  },
+  "radii": {
+    "xl": "28px",
+    "lg": "22px",
+    "md": "16px"
+  },
+  "effects": {
+    "surfaceShadow": "0 24px 60px rgba(11, 18, 32, 0.10)",
+    "border": "rgba(11, 18, 32, 0.10)"
+  },
+  "motifs": {
+    "starburst": "assets/starburst.svg",
+    "wave": "assets/wave.svg"
+  }
+}

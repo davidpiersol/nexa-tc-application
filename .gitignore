@@ -32,5 +32,9 @@ __pycache__/
 venv/
 *.pyc
 
-# Local Netlify folder
-.netlify
+# Agent/local dev PID from npm run ready
+.nexa-ready-dev.pid
+
+# Local platform/test artifacts
+.netlify/
+test-results/

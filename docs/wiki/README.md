@@ -10,8 +10,9 @@ This wiki tracks **design and implementation progress** for the Nexa TC Applicat
 
 ## Recent doc updates
 
-- Added global-admin help coverage for template mapping and canonical field picker at [`help/articles/all/global-admin-template-mappings.md`](../../help/articles/all/global-admin-template-mappings.md).
-- Updated global-admin overview/wiki help entries to reference `/admin/global/templates` mapping operations.
+- Added current workflow help for MLS entry, billing/invoices, reports, TC CRM, and agent CRM.
+- Replaced long contact dropdown guidance with search-first contact selection where the workflow must choose an existing record.
+- Kept global-admin help coverage for template mapping, AI provider setup, tenant management, and the application wiki.
 
 ## Related files
 

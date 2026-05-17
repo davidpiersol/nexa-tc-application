@@ -5,9 +5,9 @@ The **Brokers** workspace is a filtered view of contacts that include the `Broke
 ### Broker-specific fields
 
 1. Brokerage selection.
-2. Signing platform.
-3. Signing preference.
-4. Credential update controls (admin-restricted).
+2. E-sign provider selection.
+3. Signing method.
+4. Credential update controls (admin-restricted and encrypted).
 
 ### Recommended usage
 

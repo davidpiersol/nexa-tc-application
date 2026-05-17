@@ -18,6 +18,13 @@ export const INTEGRATION_PROVIDERS = {
   docusign: "docusign",
   postmark: "postmark",
   plaid: "plaid",
+  aiOpenai: "ai_openai",
+  aiAnthropic: "ai_anthropic",
+  aiGoogleGemini: "ai_google_gemini",
+  aiGoogleVertex: "ai_google_vertex",
+  aiOpenrouter: "ai_openrouter",
+  aiGroq: "ai_groq",
+  aiXaiGrok: "ai_xai_grok",
 } as const;
 
 export type IntegrationProvider =

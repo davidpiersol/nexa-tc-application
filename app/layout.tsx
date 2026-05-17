@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,16 +8,10 @@ const inter = Inter({
   display: "swap",
 });
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "NEXA",
+  title: "Choral Point",
   description:
-    "The Center of Every Deal. Connect. Coordinate. Close.",
+    "The Center of Every Deal. One platform. Every participant. Perfectly in sync.",
 };
 
 export default function RootLayout({
@@ -27,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${playfair.variable} min-h-screen font-sans antialiased`}
-      >
+      <body className={`${inter.variable} min-h-screen font-sans antialiased`}>
         {children}
       </body>
     </html>

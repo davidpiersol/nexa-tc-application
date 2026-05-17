@@ -117,7 +117,10 @@ function partyRoleForAppRole(
   return m[r] ?? "other";
 }
 
-async function pdfBytes(label: string): Promise<Uint8Array> {
+async function pdfBytes(
+  label: string,
+  fieldNames: string[] = [],
+): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   const page = pdf.addPage([612, 792]);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
@@ -127,6 +130,16 @@ async function pdfBytes(label: string): Promise<Uint8Array> {
     size: 18,
     font,
     color: rgb(0.15, 0.15, 0.2),
+  });
+  const form = pdf.getForm();
+  fieldNames.forEach((fieldName, idx) => {
+    const field = form.createTextField(fieldName);
+    field.addToPage(page, {
+      x: 50,
+      y: 700 - idx * 36,
+      width: 300,
+      height: 22,
+    });
   });
   return pdf.save();
 }
@@ -478,6 +491,7 @@ async function main() {
     category: DocCategory | "other";
     availability: "available" | "unavailable" | "pending_licensed_copy";
     selectionState: TemplateSelectionState;
+    fieldMappings: Record<string, string>;
     docStatus:
       | "missing"
       | "requested"
@@ -492,6 +506,10 @@ async function main() {
       category: "contract",
       availability: "available",
       selectionState: "required",
+      fieldMappings: {
+        property_address_field: "property_address",
+        mls_number_field: "mls_number",
+      },
       docStatus: "uploaded",
     },
     {
@@ -500,6 +518,10 @@ async function main() {
       category: "disclosure",
       availability: "available",
       selectionState: "default",
+      fieldMappings: {
+        property_address_field: "property_address",
+        sellers_names_field: "intake_data.sellers_names",
+      },
       docStatus: "under_review",
     },
     {
@@ -508,6 +530,7 @@ async function main() {
       category: "disclosure",
       availability: "pending_licensed_copy",
       selectionState: "pending_licensed_copy",
+      fieldMappings: {},
       docStatus: "missing",
     },
     {
@@ -516,6 +539,7 @@ async function main() {
       category: "other",
       availability: "unavailable",
       selectionState: "unavailable",
+      fieldMappings: {},
       docStatus: "missing",
     },
     {
@@ -524,6 +548,9 @@ async function main() {
       category: "other",
       availability: "available",
       selectionState: "optional",
+      fieldMappings: {
+        property_address_field: "property_address",
+      },
       docStatus: "requested",
     },
   ];
@@ -554,7 +581,10 @@ async function main() {
 
     const templateVersionId = randomUUID();
     const versionPath = `templates/global/${templateRow.id}/${templateVersionId}/${spec.formNumber.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`;
-    const templatePdf = await pdfBytes(`${spec.formNumber} template`);
+    const templatePdf = await pdfBytes(
+      `${spec.formNumber} template`,
+      Object.keys(spec.fieldMappings),
+    );
     const { error: templateUploadErr } = await admin.storage
       .from(BUCKET)
       .upload(versionPath, templatePdf, {
@@ -576,7 +606,8 @@ async function main() {
           storage_path: versionPath,
           review_status: "approved",
           mapping_review_status: "approved",
-          field_mappings: {},
+          fillable_field_names: Object.keys(spec.fieldMappings),
+          field_mappings: spec.fieldMappings,
           is_current: true,
           is_active: true,
           created_by: tcId,
@@ -803,7 +834,8 @@ async function main() {
     const firstName = `Broker${i + 1}`;
     const lastName = "Contact";
     const fullName = `${firstName} ${lastName}`;
-    const email = `broker.${i + 1}@nexa.test`;
+    const email =
+      i === 0 ? UAT_USERS.agent.email : `broker.${i + 1}@nexa.test`;
     const company = companyRows[i % companyRows.length]?.name ?? "Nexa Brokerage";
     const { data: contact, error: cErr } = await admin
       .from("contacts")

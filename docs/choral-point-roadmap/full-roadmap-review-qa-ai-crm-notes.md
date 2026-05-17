@@ -94,9 +94,9 @@ Current gates:
 - `P8`: auth, OAuth, MFA, tenant/global admin, and onboarding
 - `P14`: transactions, contacts, brokers, and document checklist
 - `P19`: templates, storage, PDF mapping, and generated documents
-- `P25`: signing, integrations, billing, and workflow handoffs
-- `P29`: AI, CRM, privacy, cost, and provider adapters
-- `P32`: statewide property data, UI/UX, and final pre-release cleanup
+- `P26`: signing, integrations, billing, and workflow handoffs
+- `P30`: AI, CRM, privacy, cost, and provider adapters
+- `P34`: statewide property data, UI/UX, and final pre-release cleanup
 
 Hardening rule:
 
@@ -278,15 +278,16 @@ The transcript indicates brokers are assessing CRM-style tools, and the first br
 
 Recommended strategy:
 
-- Build CRM-lite inside Choral Point only where it directly supports TC workflow.
+- Build CRM inside Choral Point where it directly supports TC and agent workflow.
 - Add a provider-neutral CRM adapter layer for external sync.
 - Treat external CRMs as optional integrations, not required for Choral Point core stability.
 - Keep a separate-app option open if CRM grows beyond transaction coordination.
 
-### CRM-Lite Features to Add Inside Choral Point
+### CRM Features to Add Inside Choral Point
 
 Good fit for this product:
 
+- Upcoming Actions landing page for Today / This Week / This Month / This Quarter
 - Contacts
 - Contact categories and subcategories
 - Broker-client flag
@@ -299,6 +300,17 @@ Good fit for this product:
 - Transaction relationship history
 - Import/export CSV
 - External CRM IDs per contact/provider
+- User-specific CRM workspaces for TC and agent users
+- Internal reminders/calendar layer with later Outlook, Google Calendar, and Apple/iCal connection paths
+- External CRM Connections page with DeltaNET, Lofty, Follow Up Boss, MoxiWorks, and CSV fallback
+
+External CRM credential blocker:
+
+- Users generally know their normal username/password, not API keys.
+- Prefer OAuth connection flows where providers support them.
+- If a provider requires API keys, use a vendor/admin-assisted setup path and explain the steps in plain language.
+- If neither OAuth nor API access is available, support CSV import/export as the safe fallback.
+- Do not store third-party passwords or automate login/scraping unless explicitly approved after a security review.
 
 Not recommended for core MVP:
 

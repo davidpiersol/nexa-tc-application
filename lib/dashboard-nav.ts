@@ -1,4 +1,5 @@
 import type { DashboardRole } from "@/types/roles";
+import { isWorkspaceTransactionId } from "@/lib/utils/workspace-id";
 
 export type NavItem = { href: string; label: string };
 
@@ -28,6 +29,14 @@ export function routeBase(pathname: string): string {
     return "/admin/global/dashboard";
   }
   if (role === "tc") return "/tc";
+  if (role === "agent") {
+    const parts = pathname.split("/").filter(Boolean);
+    const seg = parts[1];
+    if (seg && isWorkspaceTransactionId(seg)) {
+      return `/agent/${seg}`;
+    }
+    return "/agent";
+  }
   const parts = pathname.split("/").filter(Boolean);
   const id = parts[1];
   if (id) return `/${role}/${id}`;
@@ -43,8 +52,13 @@ export function navItemsForPath(pathname: string): NavItem[] {
     return [
       { href: "/tc", label: "Overview" },
       { href: "/tc/transactions", label: "Transactions" },
+      { href: "/tc/mls-entry", label: "MLS entry" },
       { href: "/tc/contacts", label: "Contacts" },
       { href: "/tc/brokers", label: "Brokers" },
+      { href: "/tc/crm", label: "CRM" },
+      { href: "/tc/billing", label: "Billing" },
+      { href: "/tc/scorecard", label: "Scorecard" },
+      { href: "/tc/reports", label: "Reports" },
       { href: "/tc/archive", label: "Archive" },
       { href: "/tc/settings", label: "Settings" },
     ];
@@ -56,7 +70,10 @@ export function navItemsForPath(pathname: string): NavItem[] {
         { href: "/admin/global/dashboard", label: "Dashboard" },
         { href: "/admin/global/tenants", label: "Tenants" },
         { href: "/admin/global/templates", label: "Templates" },
+        { href: "/admin/global/package-rules", label: "Package rules" },
+        { href: "/admin/global/ai", label: "AI" },
         { href: "/admin/global/wiki", label: "Wiki" },
+        { href: "/admin/global/uat-issues", label: "UAT issues" },
         { href: "/admin/global/reports", label: "Reports" },
       ];
     }
@@ -64,7 +81,16 @@ export function navItemsForPath(pathname: string): NavItem[] {
       { href: "/admin/tenant/dashboard", label: "Dashboard" },
       { href: "/admin/tenant/users", label: "Users" },
       { href: "/admin/tenant/groups", label: "Groups" },
+      { href: "/admin/tenant/uat-issues", label: "UAT issues" },
       { href: "/admin/tenant/reports", label: "Reports" },
+    ];
+  }
+
+  if (role === "agent") {
+    return [
+      { href: "/agent", label: "Transactions" },
+      { href: "/agent/crm", label: "CRM" },
+      { href: "/agent/profile", label: "Signing & profile" },
     ];
   }
 
@@ -72,13 +98,16 @@ export function navItemsForPath(pathname: string): NavItem[] {
 }
 
 /**
- * Profile route per role: TC uses `/tc/profile`; party dashboards use `/{role}/{transactionId}/profile`.
+ * Profile route per role: TC `/tc/profile`; agent `/agent/profile`; other parties `/{role}/{transactionId}/profile`.
  */
 export function profileHrefFromPathname(pathname: string): string | null {
   const role = roleFromPathname(pathname);
   if (!role) return null;
-  if (role === "admin") return null;
+  if (role === "admin") {
+    return pathname.startsWith("/admin/global") ? "/admin/global/profile" : "/admin/tenant/profile";
+  }
   if (role === "tc") return "/tc/profile";
+  if (role === "agent") return "/agent/profile";
 
   const parts = pathname.split("/").filter(Boolean);
   const scopedId = parts[1];
@@ -86,4 +115,3 @@ export function profileHrefFromPathname(pathname: string): string | null {
 
   return `/${role}/${scopedId}/profile`;
 }
-

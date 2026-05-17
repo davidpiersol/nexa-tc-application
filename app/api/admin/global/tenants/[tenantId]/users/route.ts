@@ -80,6 +80,11 @@ export async function POST(request: NextRequest, { params }: Params) {
     await admin.auth.admin.deleteUser(created.user.id);
     return NextResponse.json({ error: profileErr.message }, { status: 400 });
   }
+  await admin.from("user_role_memberships").insert({
+    tenant_id: params.tenantId,
+    user_id: created.user.id,
+    role: dbRole,
+  });
 
   await admin.from("audit_log").insert({
     tenant_id: params.tenantId,
@@ -97,4 +102,3 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   return NextResponse.json({ ok: true, userId: created.user.id });
 }
-

@@ -1,7 +1,11 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { chromium, request, type FullConfig } from "@playwright/test";
-import { UAT_PASSWORD, UAT_USERS } from "../scripts/uat-constants";
+import {
+  UAT_PASSWORD,
+  UAT_TRANSACTION_ID,
+  UAT_USERS,
+} from "../scripts/uat-constants";
 
 /**
  * Wait for the dev server to respond to /login before any test logs in. This avoids
@@ -87,5 +91,13 @@ export default async function globalSetup(config: FullConfig) {
     UAT_USERS.buyer.email,
     /\/buyer\/[a-f0-9-]+/,
     join(dir, "buyer.json"),
+  );
+
+  await login(
+    baseURL,
+    UAT_USERS.agent.email,
+    /\/agent(\/|$)/,
+    join(dir, "agent.json"),
+    ["/agent", `/agent/${UAT_TRANSACTION_ID}`],
   );
 }

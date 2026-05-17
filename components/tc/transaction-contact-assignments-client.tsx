@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import {
   assignmentCategoryLabel,
@@ -174,29 +175,28 @@ export function TransactionContactAssignmentsClient({
         </p>
 
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-          <label className="flex flex-col gap-1 font-sans text-sm">
-            <span className="text-neutral-700">Contact</span>
-            <select
-              className="rounded border border-neutral-300 bg-white px-3 py-2"
-              value={contactId}
-              onChange={(event) => setContactId(event.target.value)}
-              disabled={busy}
-            >
-              <option value="">Select a service provider contact</option>
-              {providerContacts.map((contact) => (
-                <option key={contact.id} value={contact.id}>
-                  {contact.fullName || "Unnamed"} ·{" "}
-                  {contact.categories.length > 0
-                    ? contact.categories
-                        .map((category) =>
-                          isContactCategory(category) ? contactCategoryLabel(category) : category,
-                        )
-                        .join(", ")
-                    : "Uncategorized"}
-                </option>
-              ))}
-            </select>
-          </label>
+          <SearchableSelect
+            label="Contact"
+            value={contactId}
+            onValueChange={setContactId}
+            disabled={busy}
+            placeholder="Search service provider contacts"
+            options={providerContacts.map((contact) => {
+              const categoryLabel =
+                contact.categories.length > 0
+                  ? contact.categories
+                      .map((category) =>
+                        isContactCategory(category) ? contactCategoryLabel(category) : category,
+                      )
+                      .join(", ")
+                  : "Uncategorized";
+              return {
+                value: contact.id,
+                label: `${contact.fullName || "Unnamed"} · ${categoryLabel}`,
+                keywords: contact.categories,
+              };
+            })}
+          />
 
           <label className="flex flex-col gap-1 font-sans text-sm">
             <span className="text-neutral-700">Assignment role</span>

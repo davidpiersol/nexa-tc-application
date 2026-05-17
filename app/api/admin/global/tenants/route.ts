@@ -5,20 +5,23 @@ import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
 import { validateCsrf } from "@/lib/security/csrf-server";
 
+const optionalText = (schema: z.ZodString) =>
+  z.preprocess((value) => (value === "" ? undefined : value), schema.optional());
+
 const createTenantSchema = z.object({
   name: z.string().min(2).max(120), // company name
-  slug: z.string().min(2).max(80).regex(/^[a-z0-9-]+$/).optional(),
-  companyType: z.string().min(2).max(80).optional(),
-  companyEmail: z.string().email().optional(),
-  companyPhone: z.string().max(40).optional(),
-  website: z.string().max(120).optional(),
-  address1: z.string().max(180).optional(),
-  address2: z.string().max(180).optional(),
-  city: z.string().max(80).optional(),
-  state: z.string().max(80).optional(),
-  postalCode: z.string().max(20).optional(),
-  country: z.string().max(80).optional(),
-  notes: z.string().max(500).optional(),
+  slug: optionalText(z.string().min(2).max(80).regex(/^[a-z0-9-]+$/)),
+  companyType: optionalText(z.string().min(2).max(80)),
+  companyEmail: optionalText(z.string().email()),
+  companyPhone: optionalText(z.string().max(40)),
+  website: optionalText(z.string().max(120)),
+  address1: optionalText(z.string().max(180)),
+  address2: optionalText(z.string().max(180)),
+  city: optionalText(z.string().max(80)),
+  state: optionalText(z.string().max(80)),
+  postalCode: optionalText(z.string().max(20)),
+  country: optionalText(z.string().max(80)),
+  notes: optionalText(z.string().max(500)),
   seatLimit: z.number().int().min(1).max(10000).optional(),
 });
 
@@ -43,11 +46,30 @@ export async function GET(request: NextRequest) {
   if (error) return error;
 
   const admin = createServiceRoleClient();
+  const view = request.nextUrl.searchParams.get("view");
   let { data: tenants, error: tenantErr } = await admin
     .from("tenants")
-    .select("id, name, slug, settings, is_suspended, seat_limit, created_at")
+    .select("id, name, slug, settings, is_suspended, seat_limit, archived_at, created_at")
     .order("created_at", { ascending: false });
-  if (tenantErr && (missingColumn(tenantErr.message, "is_suspended") || missingColumn(tenantErr.message, "settings"))) {
+  if (view === "archived") {
+    ({ data: tenants, error: tenantErr } = await admin
+      .from("tenants")
+      .select("id, name, slug, settings, is_suspended, seat_limit, archived_at, created_at")
+      .not("archived_at", "is", null)
+      .order("created_at", { ascending: false }));
+  } else if (view !== "all") {
+    ({ data: tenants, error: tenantErr } = await admin
+      .from("tenants")
+      .select("id, name, slug, settings, is_suspended, seat_limit, archived_at, created_at")
+      .is("archived_at", null)
+      .order("created_at", { ascending: false }));
+  }
+  if (
+    tenantErr &&
+    (missingColumn(tenantErr.message, "is_suspended") ||
+      missingColumn(tenantErr.message, "settings") ||
+      missingColumn(tenantErr.message, "archived_at"))
+  ) {
     const fallback = await admin
       .from("tenants")
       .select("id, name, slug, seat_limit, created_at")
@@ -187,4 +209,3 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ ok: true, tenant: created });
 }
-

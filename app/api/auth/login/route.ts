@@ -29,7 +29,17 @@ export async function POST(request: NextRequest) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 401 });
+    let message = error.message;
+    if (
+      process.env.NODE_ENV === "development" &&
+      message === "fetch failed" &&
+      typeof (error as { cause?: unknown }).cause === "object" &&
+      (error as { cause?: { code?: string } }).cause?.code === "ECONNREFUSED"
+    ) {
+      message =
+        "cannot_reach_supabase — Nothing is accepting connections at your NEXT_PUBLIC_SUPABASE_URL (often 127.0.0.1:54321). Run `npx supabase start` or switch URL/keys to a hosted Supabase project.";
+    }
+    return NextResponse.json({ error: message }, { status: 401 });
   }
 
   return NextResponse.json({ ok: true });

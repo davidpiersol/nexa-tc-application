@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CANONICAL_FIELD_PICKER_OPTIONS } from "@/lib/documents/template-field-mapping";
@@ -28,6 +28,16 @@ type TemplateRow = {
   global_document_template_versions?: TemplateVersion[];
 };
 
+type MappingSuggestionRow = {
+  id: string;
+  suggested_mappings: Record<string, string>;
+  confidence: number | null;
+  status: string;
+  model_name: string | null;
+  rationale: string | null;
+  created_at: string;
+};
+
 async function csrfHeader(): Promise<Record<string, string> | null> {
   const res = await fetch("/api/csrf", { credentials: "include" });
   const json = (await res.json()) as { csrfToken?: string };
@@ -40,6 +50,7 @@ export function GlobalTemplateConsole() {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [selectedVersionId, setSelectedVersionId] = useState<string>("");
   const [mappingDraft, setMappingDraft] = useState<Record<string, string>>({});
+  const [mappingSuggestions, setMappingSuggestions] = useState<MappingSuggestionRow[]>([]);
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -65,7 +76,10 @@ export function GlobalTemplateConsole() {
   }, []);
 
   const selected = templates.find((t) => t.id === selectedTemplateId) ?? null;
-  const versions = selected?.global_document_template_versions ?? [];
+  const versions = useMemo(
+    () => selected?.global_document_template_versions ?? [],
+    [selected],
+  );
   const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? null;
 
   useEffect(() => {
@@ -85,6 +99,30 @@ export function GlobalTemplateConsole() {
     }
     setMappingDraft(selectedVersion.field_mappings ?? {});
   }, [selectedVersion]);
+
+  const loadMappingSuggestions = useCallback(async () => {
+    if (!selectedTemplateId || !selectedVersionId) {
+      setMappingSuggestions([]);
+      return;
+    }
+    const res = await fetch(
+      `/api/admin/global/templates/${selectedTemplateId}/versions/${selectedVersionId}/mapping-suggestions`,
+      { credentials: "include" },
+    );
+    const body = (await res.json().catch(() => ({}))) as {
+      suggestions?: MappingSuggestionRow[];
+      error?: string;
+    };
+    if (!res.ok) {
+      setMappingSuggestions([]);
+      return;
+    }
+    setMappingSuggestions(body.suggestions ?? []);
+  }, [selectedTemplateId, selectedVersionId]);
+
+  useEffect(() => {
+    void loadMappingSuggestions();
+  }, [loadMappingSuggestions]);
 
   async function createTemplate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -194,7 +232,81 @@ export function GlobalTemplateConsole() {
       return;
     }
     await refresh();
+    await loadMappingSuggestions();
     setMsg("Version updated.");
+  }
+
+  async function requestAiMappingSuggestion() {
+    if (!selectedTemplateId || !selectedVersionId) return;
+    setBusy(true);
+    setMsg("");
+    const headers = await csrfHeader();
+    if (!headers) {
+      setBusy(false);
+      setMsg("Could not load CSRF token.");
+      return;
+    }
+    const res = await fetch(
+      `/api/admin/global/templates/${selectedTemplateId}/versions/${selectedVersionId}/mapping-suggestions`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({}),
+      },
+    );
+    const body = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      message?: string;
+    };
+    setBusy(false);
+    if (!res.ok) {
+      setMsg(
+        body.message ??
+          body.error ??
+          (res.status === 503 ? "AI unavailable (check ANTHROPIC_API_KEY)." : "AI suggestion failed"),
+      );
+      return;
+    }
+    await refresh();
+    await loadMappingSuggestions();
+    setMsg("AI suggestion recorded (pending review). Not applied until approved.");
+  }
+
+  async function patchSuggestion(suggestionId: string, action: "approve_apply" | "reject") {
+    if (!selectedTemplateId || !selectedVersionId) return;
+    setBusy(true);
+    setMsg("");
+    const headers = await csrfHeader();
+    if (!headers) {
+      setBusy(false);
+      setMsg("Could not load CSRF token.");
+      return;
+    }
+    const res = await fetch(
+      `/api/admin/global/templates/${selectedTemplateId}/versions/${selectedVersionId}/mapping-suggestions/${suggestionId}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify({ action }),
+      },
+    );
+    const body = (await res.json().catch(() => ({}))) as { error?: string; details?: string[] };
+    setBusy(false);
+    if (!res.ok) {
+      setMsg(body.details?.join(", ") ?? body.error ?? "Suggestion update failed");
+      return;
+    }
+    await refresh();
+    await loadMappingSuggestions();
+    setMsg(action === "approve_apply" ? "Approved suggestion applied as draft mappings (needs review)." : "Suggestion rejected.");
   }
 
   function onMappingChange(pdfField: string, canonicalField: string) {
@@ -368,66 +480,139 @@ export function GlobalTemplateConsole() {
           </div>
 
           {selectedVersion ? (
-            <div className="rounded-brand-md border border-neutral-200 p-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-sans text-sm font-semibold text-brand-navy">
-                  Field mapping · {selectedVersion.version_label}
-                </p>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="gold"
-                  disabled={busy}
-                  onClick={() => void updateVersion(selectedVersion.id, "save_mappings")}
-                >
-                  Save mappings
-                </Button>
-              </div>
-              <p className="mt-1 font-sans text-xs text-neutral-600">
-                Map each PDF field to a canonical transaction field.
-              </p>
-
-              <div className="mt-3 space-y-2">
-                {(selectedVersion.fillable_field_names ?? []).map((pdfField) => (
-                  <label
-                    key={pdfField}
-                    className="grid gap-1 rounded-brand-md border border-neutral-200 p-2"
-                  >
-                    <span className="font-mono text-xs text-neutral-700">{pdfField}</span>
-                    <select
-                      value={mappingDraft[pdfField] ?? ""}
-                      onChange={(e) => onMappingChange(pdfField, e.target.value)}
-                      className="h-10 rounded-brand-md border border-neutral-300 bg-white px-3 font-sans text-sm text-neutral-900 shadow-brand-sm"
-                    >
-                      <option value="">Not mapped</option>
-                      <optgroup label="Transaction fields">
-                        {CANONICAL_FIELD_PICKER_OPTIONS.filter(
-                          (option) => option.group === "transaction",
-                        ).map((option) => (
-                          <option key={option.key} value={option.key}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </optgroup>
-                      <optgroup label="Intake data fields">
-                        {CANONICAL_FIELD_PICKER_OPTIONS.filter(
-                          (option) => option.group === "intake_data",
-                        ).map((option) => (
-                          <option key={option.key} value={option.key}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </optgroup>
-                    </select>
-                  </label>
-                ))}
-                {(selectedVersion.fillable_field_names ?? []).length === 0 ? (
-                  <p className="font-sans text-sm text-neutral-600">
-                    No fillable fields detected for this template version.
+            <Fragment>
+              <div className="rounded-brand-md border border-neutral-200 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-sans text-sm font-semibold text-brand-navy">
+                    Field mapping · {selectedVersion.version_label}
                   </p>
-                ) : null}
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="gold"
+                    disabled={busy}
+                    onClick={() => void updateVersion(selectedVersion.id, "save_mappings")}
+                  >
+                    Save mappings
+                  </Button>
+                </div>
+                <p className="mt-1 font-sans text-xs text-neutral-600">
+                  Map each PDF field to a canonical transaction field.
+                </p>
+
+                <div className="mt-3 space-y-2">
+                  {(selectedVersion.fillable_field_names ?? []).map((pdfField) => (
+                    <label
+                      key={pdfField}
+                      className="grid gap-1 rounded-brand-md border border-neutral-200 p-2"
+                    >
+                      <span className="font-mono text-xs text-neutral-700">{pdfField}</span>
+                      <select
+                        value={mappingDraft[pdfField] ?? ""}
+                        onChange={(e) => onMappingChange(pdfField, e.target.value)}
+                        className="h-10 rounded-brand-md border border-neutral-300 bg-white px-3 font-sans text-sm text-neutral-900 shadow-brand-sm"
+                      >
+                        <option value="">Not mapped</option>
+                        <optgroup label="Transaction fields">
+                          {CANONICAL_FIELD_PICKER_OPTIONS.filter(
+                            (option) => option.group === "transaction",
+                          ).map((option) => (
+                            <option key={option.key} value={option.key}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="Intake data fields">
+                          {CANONICAL_FIELD_PICKER_OPTIONS.filter(
+                            (option) => option.group === "intake_data",
+                          ).map((option) => (
+                            <option key={option.key} value={option.key}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </optgroup>
+                      </select>
+                    </label>
+                  ))}
+                  {(selectedVersion.fillable_field_names ?? []).length === 0 ? (
+                    <p className="font-sans text-sm text-neutral-600">
+                      No fillable fields detected for this template version.
+                    </p>
+                  ) : null}
+                </div>
               </div>
-            </div>
+
+              <div className="rounded-brand-md border border-neutral-200 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p className="font-sans text-sm font-semibold text-brand-navy">
+                      AI-assisted mapping
+                    </p>
+                    <p className="mt-1 font-sans text-xs text-neutral-600">
+                      After at least one manual mapping is saved, you can request suggestions. AI
+                      never auto-applies; approve to load mappings as a draft for further editing.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={
+                      busy ||
+                      (selectedVersion.fillable_field_names ?? []).length === 0 ||
+                      Object.keys(selectedVersion.field_mappings ?? {}).length === 0
+                    }
+                    onClick={() => void requestAiMappingSuggestion()}
+                  >
+                    Request AI suggestion
+                  </Button>
+                </div>
+
+                <div className="mt-3 space-y-2">
+                  {mappingSuggestions.map((s) => (
+                    <div
+                      key={s.id}
+                      className="rounded-brand-md border border-neutral-100 bg-neutral-50 p-2 font-sans text-xs text-neutral-800"
+                    >
+                      <p className="font-semibold text-brand-navy">
+                        {s.status}
+                        {s.confidence != null ? ` · confidence ${s.confidence.toFixed(2)}` : ""}
+                        {s.model_name ? ` · ${s.model_name}` : ""}
+                      </p>
+                      {s.rationale ? <p className="mt-1 text-neutral-700">{s.rationale}</p> : null}
+                      <p className="mt-1 font-mono text-[11px] text-neutral-600">
+                        {JSON.stringify(s.suggested_mappings)}
+                      </p>
+                      {s.status === "pending" ? (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="gold"
+                            disabled={busy}
+                            onClick={() => void patchSuggestion(s.id, "approve_apply")}
+                          >
+                            Approve & apply as draft
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="secondary"
+                            disabled={busy}
+                            onClick={() => void patchSuggestion(s.id, "reject")}
+                          >
+                            Reject
+                          </Button>
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                  {mappingSuggestions.length === 0 ? (
+                    <p className="font-sans text-xs text-neutral-600">No suggestions yet.</p>
+                  ) : null}
+                </div>
+              </div>
+            </Fragment>
           ) : null}
         </section>
       </div>

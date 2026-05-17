@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choral Point Landing Flow C</title>
+  <style>
+    :root {
+      --navy: #0b1220;
+      --slate: #41566b;
+      --gold: #d4af37;
+      --line: rgba(11, 18, 32, 0.1);
+      --font: "Avenir Next", "Inter", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--navy);
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 100% 100%, rgba(11, 18, 32, 1) 0%, rgba(20, 32, 51, 0.98) 34%, transparent 64%),
+        linear-gradient(135deg, #fffaf3 0%, #f7f0e7 16%, #c8d0db 35%, #41566b 58%, #142033 100%);
+    }
+    body::after {
+      position: fixed;
+      inset: 0;
+      content: "";
+      background: url("../../public/brand/choral-point/wave.svg") center / cover no-repeat;
+      pointer-events: none;
+    }
+    main {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: clamp(28px, 5vw, 72px);
+    }
+    .content {
+      width: min(430px, 100%);
+    }
+    .brand {
+      margin-bottom: clamp(64px, 12vh, 128px);
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .brand span:last-child { color: #b97811; }
+    .star {
+      width: 24px;
+      height: 24px;
+      background: url("../../public/brand/choral-point/starburst.svg") center / contain no-repeat;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 5vw, 72px);
+      font-weight: 600;
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+    p {
+      margin: 22px 0 0;
+      color: var(--slate);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
+    .button {
+      border-radius: 12px;
+      padding: 14px 20px;
+      background: var(--gold);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .button.secondary {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--navy);
+    }
+    .label {
+      position: fixed;
+      top: 24px;
+      right: 28px;
+      z-index: 2;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="label">Option C</div>
+  <main>
+    <section class="content">
+      <div class="brand"><span>Choral</span><i class="star"></i><span>Point</span></div>
+      <h1>The Center of<br />Every Deal.</h1>
+      <p>One platform. Every participant. Perfectly in sync.</p>
+      <div class="actions">
+        <span class="button">Sign in</span>
+        <span class="button secondary">Create account</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

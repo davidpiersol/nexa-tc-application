@@ -5,8 +5,9 @@ The Global Admin workspace is for platform-level operations across tenants.
 ### Use this page to
 
 1. Review platform status and tenant operations.
-2. Navigate to tenant management, reports, and the application wiki.
-3. Confirm global-admin tools remain separate from tenant-admin tools.
+2. Navigate to tenant management, reports, UAT issues, and the application wiki.
+3. Open your own profile from the account menu to update personal details or change your password.
+4. Confirm global-admin tools remain separate from tenant-admin tools.
 
 ### Related pages
 

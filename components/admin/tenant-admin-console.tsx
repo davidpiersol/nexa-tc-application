@@ -94,7 +94,7 @@ export function TenantAdminConsole() {
         <h3 className="font-display text-lg text-brand-navy">Invite / approval request</h3>
         <Input label="Email" type="email" name="email" required />
         <Input
-          label="Desired role (tc, agent, broker, buyer, seller, mortgage, title)"
+          label="Desired role (tc, broker, buyer, seller, mortgage, title)"
           name="desiredRole"
           defaultValue="tc"
           required
@@ -134,4 +134,3 @@ export function TenantAdminConsole() {
     </div>
   );
 }
-

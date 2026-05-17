@@ -14,6 +14,10 @@ import {
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
 import { validateCsrf } from "@/lib/security/csrf-server";
 import { wrapEncryptedCredentials } from "@/lib/integrations/credentials-store";
+import {
+  normalizeSigningDeliveryMode,
+  resolveSigningWorkflowSlug,
+} from "@/lib/signing/signing-workflow";
 
 type BrokerProfileRow = {
   id: string;
@@ -69,6 +73,15 @@ function signingPreferenceMode(signingPreferences: unknown): string | null {
     return typeof mode === "string" && mode.trim().length > 0 ? mode : null;
   }
   return null;
+}
+
+function normalizeSigningPreferencePayload(platform: string | undefined, preference: string | undefined) {
+  const providerSlug = resolveSigningWorkflowSlug(platform).slug;
+  const mode = normalizeSigningDeliveryMode(preference);
+  return {
+    signingPlatform: providerSlug,
+    signingPreferences: { providerSlug, mode },
+  };
 }
 
 export async function GET(request: NextRequest) {
@@ -224,15 +237,18 @@ export async function POST(request: NextRequest) {
   }
 
   if (body.brokerProfile && categories.includes("broker")) {
-    const signingPreference = body.brokerProfile.signingPreference?.trim();
     const brokerage = body.brokerProfile.brokerage?.trim();
+    const signing = normalizeSigningPreferencePayload(
+      body.brokerProfile.signingPlatform,
+      body.brokerProfile.signingPreference,
+    );
     const { data: profile, error: profileErr } = await admin
       .from("broker_profiles")
       .insert({
         tenant_id: actor.tenantId,
         contact_id: contact.id,
-        signing_platform: body.brokerProfile.signingPlatform?.trim() || null,
-        signing_preferences: signingPreference ? { mode: signingPreference } : {},
+        signing_platform: signing.signingPlatform,
+        signing_preferences: signing.signingPreferences,
         settings: {
           ...(body.brokerProfile.settings ?? {}),
           ...(brokerage ? { brokerage } : {}),

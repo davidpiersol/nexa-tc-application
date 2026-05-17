@@ -21,6 +21,9 @@ export async function GET(request: Request) {
   if (!profile) {
     return NextResponse.redirect(new URL("/auth/access-pending", base));
   }
+  if (!profile.tenantEnabled) {
+    return NextResponse.redirect(new URL("/forbidden", base));
+  }
 
   const role = profile.role;
 
@@ -59,7 +62,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL(`/title/${txId}`, base));
     case "agent":
     case "broker":
-      return NextResponse.redirect(new URL(`/agent/${txId}`, base));
+      return NextResponse.redirect(new URL("/agent", base));
     default:
       return NextResponse.redirect(new URL("/tc", base));
   }

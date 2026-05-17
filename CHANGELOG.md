@@ -4,6 +4,218 @@ All notable changes to this repository are documented here. The format is based 
 
 ## [Unreleased]
 
+### Added
+
+- **Public marketing scaffold** — added public Platform, Solutions, Resources, Company, How It Works, and Request a Demo pages aligned with the approved landing-page visual direction.
+- **Production launch planning** — appended future public-content and `choralpoint.com` launch sprints plus a starter production-launch guide.
+
+### Changed
+
+- **Landing and login entry points** — adopted the approved Choral Point landing/login visuals and added a public Login link plus demo-request routing.
+
+## [v4.30.5-dev] - 2026-05-14
+
+### Changed
+
+- **Roadmap sprint insertion** — inserted new P31 for full CRM build-out across TC and agent workspaces, then shifted UI/UX, statewide property lookup, final hardening, and release hardening to P32-P35.
+- **CRM credential blocker** — added a blocker requiring OAuth, vendor/admin-assisted setup, or CSV fallback for external CRM connections where users cannot obtain API keys.
+
+## [v4.30.4-dev] - 2026-05-14
+
+### Added
+
+- **AI credential testing** — added a Global Admin “Test saved key” action that decrypts the saved provider key server-side and validates it against each supported provider’s model-list endpoint without exposing the secret.
+- **Provider validation tests** — added unit coverage for successful key validation, missing keys, provider rejections, and the credential test API response shape.
+
+## [v4.30.3-dev] - 2026-05-14
+
+### Changed
+
+- **AI configuration cleanup** — removed the provider catalog and provider credential status card grids from the Global Admin AI page while keeping the encrypted credential form.
+- **AI provider help** — moved provider reference details into the Global Admin wiki/help article for AI provider setup.
+
+## [v4.30.2-dev] - 2026-05-14
+
+### Added
+
+- **Global AI credential management** — added a global-admin dashboard credential form for AI provider keys, including masked provider status and encrypted server-side storage.
+- **Global provider credential schema** — added a platform-level encrypted credential table guarded by global-admin-only RLS and Data API grants.
+- **AI credential API tests** — added coverage confirming secret values are not returned and unsupported providers are rejected.
+
+## [v4.30.1-dev] - 2026-05-14
+
+### Added
+
+- **xAI Grok provider** — added xAI Grok as a separate provider from Groq, including credential-provider wiring and local env placeholders for testing without committing keys.
+
+### Changed
+
+- **AI testing defaults** — activated scaffolded AI feature defaults for testing with per-feature providers, max-token limits, a $50/month placeholder budget, and human-review safety boundaries still intact.
+- **AI database defaults** — added a follow-up migration that permits `xai_grok` in AI feature settings and seeds global testing defaults prospectively.
+
+## [v4.30.0-dev] - 2026-05-14
+
+### Changed
+
+- **AI/CRM hardening gate** — reviewed P28/P29 for credential exposure, tenant/RLS boundaries, cost controls, disabled provider behavior, and performance risks without adding product features.
+- **CRM adapter wording** — renamed an internal CRM helper so candidate providers are described as enableable after approval, not currently synced.
+
+### Added
+
+- **Hardening report** — documented P30 findings, deferred risks, and recommendations for live AI execution, prompt retention, CRM sync, and migration validation.
+
+## [v4.29.0-dev] - 2026-05-14
+
+### Added
+
+- **CRM-lite scaffold** — added a TC CRM page and navigation entry defining contacts, SOI segmentation, lead temperature, touch history, follow-up tasks, notes, reminders, relationships, and import/export as the CRM-lite module boundary.
+- **External CRM adapter catalog** — added disabled-by-default provider scaffolding for DeltaNET / Delta Media Group, Lofty, Follow Up Boss, and MoxiWorks, with Delta marked investigation-only until official API/export access is confirmed.
+- **CRM data scaffold** — added tenant-scoped CRM touchpoint and external-link tables so future sync can track consented provider IDs and disabled sync state without duplicating contact records.
+
+## [v4.28.0-dev] - 2026-05-14
+
+### Added
+
+- **Provider-neutral AI catalog** — added disabled-by-default AI provider and feature scaffolding for OpenAI, Anthropic, Google Gemini, Google Vertex AI, OpenRouter-compatible gateways, and Groq.
+- **AI governance schema** — added AI feature settings and usage event tables for provider/model selection, budget controls, token/cost tracking, and tenant-scoped audit history.
+- **Global AI configuration page** — added a global-admin AI configuration surface showing provider credentials, per-feature defaults, max-token limits, and human-review safety boundaries.
+
+## [v4.27.0-dev] - 2026-05-14
+
+### Added
+
+- **Operations center scaffold** — added dashboard notification scaffolding for invoice reminders, open TC tasks, scorecard blockers, and AI pass / Human pass activity labels.
+- **Scorecard placeholder** — added a TC Scorecard page and navigation entry with blocked placeholder metrics until final team scorecard rules are supplied.
+- **Communication integration plan** — documented Slack as optional/provider-scoped and Outlook/Google calendar as later OAuth/provider integrations that do not send externally yet.
+
+## [v4.26.3-dev] - 2026-05-14
+
+### Added
+
+- **Invoice PDF download** — added an authenticated server-generated invoice PDF download alongside the browser invoice preview.
+
+## [v4.26.2-dev] - 2026-05-13
+
+### Added
+
+- **Billing workspace navigation** — added Billing, Invoices, and Reports buttons with active-page highlighting at the top of billing/report pages.
+- **Invoice print and email detail** — reformatted printable invoices using the provided sample invoice structure and expanded invoice email bodies with line items, totals, balance, and printable invoice links.
+- **Clickable MLS and contact records** — made contact rows open their detail pages and added MLS-only job detail pages from the MLS entry list.
+- **Invoice detail actions** — added invoice-specific Print and Email buttons to the invoice detail page while preserving Billing tab highlighting.
+- **Invoice editing** — added an invoice edit screen and API update path for bill-to, status, dates, line item, tax, and notes.
+
+### Changed
+
+- **Billing tax summaries** — monthly, quarterly, and yearly billing cards now show tax billed separately from tax on received money.
+- **Billing landing page** — removed duplicate invoice/report cards now covered by the top Billing, Invoices, and Reports navigation.
+- **Invoice tax default** — changed the fallback NM GRT invoice rate from the state base rate to Los Lunas at 8.425%, while preserving the TC settings override.
+- **Invoice create flow** — creating an invoice now routes directly to the new invoice detail page.
+
+## [v4.26.1-dev] - 2026-05-13
+
+### Added
+
+- **Supabase Data API grants** — added an explicit grant migration for Choral Point public tables and policy helper functions ahead of Supabase's May/October 2026 Data API default-grant changes.
+- **Supabase migration guidance** — documented the required grant/RLS/policy pattern for future public tables and confirmed Choral Point should avoid broad anonymous table access.
+
+## [v4.26.0] - 2026-05-13
+
+### Changed
+
+- **P26 hardening gate** — reviewed signing/export, integrations, billing, and workflow handoffs for security, performance, code quality, permissions, and regression risk without adding new product features.
+- **Envelope status sync performance** — de-duplicated DocuSign envelope status refreshes so documents sharing one envelope use one provider status call and one grouped database update.
+- **Signing provider safety** — added typed provider-slug checking for provider labels and hardened external provider links with safe new-tab attributes.
+
+## [v4.25.0-dev] - 2026-05-13
+
+### Added
+
+- **Provider-agnostic e-sign setup** — added friendly broker signing provider scaffolding for DocuSign, Adobe Acrobat Sign, SkySlope DigiSign, Dotloop, Lone Wolf Authentisign, SkySlope, and manual export fallback.
+- **DocuSign status sync** — added a read-only envelope status refresh path for transaction documents with recipient delivery/signing details.
+- **Provider-neutral signing metadata** — added document columns for provider slug, envelope id, envelope status, provider URL, delivery detail, and sync errors.
+
+### Changed
+
+- **Broker signing setup UX** — replaced raw signing preference JSON in normal broker-facing flows with provider and signing-method dropdowns.
+
+## [v4.24.2-dev] - 2026-05-13
+
+### Added
+
+- **Invoice workspace split** — moved invoice search, sort, detail, print, and email operations to `/tc/billing/invoices`.
+- **Universal TC reports hub** — added `/tc/reports` as the landing page for billing, contacts, brokers, transactions/listings, document operations, and future page-specific reporting.
+- **Billing report detail** — added `/tc/reports/billing` with total billed, total received, taxes on received, period summaries, and invoice detail rows.
+
+### Changed
+
+- **Billing landing page** — kept invoice creation and high-level billed/received/tax summary cards on `/tc/billing`, with tax settings moved to the bottom.
+
+## [v4.24.1-dev] - 2026-05-13
+
+### Added
+
+- **Billing usability patch** — invoice broker/client entry now searches tenant contacts and broker-client records while still allowing manual names.
+- **Invoice tax defaults** — TC settings now include a default NM invoice tax rate, and invoice creation auto-calculates/stores tax using that rate.
+- **Receivable follow-ups** — invoices default to payable upon receipt with 0/30/60/90 reminder scaffolding, plus a TC dashboard modal for past-due/open follow-ups.
+- **Invoice operations scaffold** — invoices can be opened from the list, selected in bulk for print, and staged for email via a mailto handoff until provider email/API sync is approved.
+- **Reporting scaffold** — billing now shows NM quarterly, federal quarterly, and year-end summary cards for accounting review without automated filing.
+
+## [v4.24.0-dev] - 2026-05-13
+
+### Added
+
+- **Billing workspace** — added `/tc/billing` with invoice creation, invoice list, accounts receivable status, and monthly/quarterly/yearly summary cards.
+- **Invoice scaffolding schema** — added billing service types, invoices, invoice line items, RLS policies, and default tenant service rows for full TC transaction, MLS-only entry, and custom services.
+- **Billing API and reusable math** — added guarded invoice create/list API, centralized invoice total/currency/receivable helpers, and audit logging for invoice creation.
+- **Accounting integration plan** — documented QuickBooks, Profit Power, and payment-provider integration paths while leaving external sync, payments, and tax filing out of P24 scope.
+- **P24 validation coverage** — added unit tests for invoice totals/status/periods and browser smoke coverage that creates an invoice with accounting sync still not configured.
+
+## [v4.23.0-dev] - 2026-05-13
+
+### Added
+
+- **MLS-only job workspace** — added `/tc/mls-entry`, `/tc/mls-entry/new`, and `/tc/mls-entry/research` so MLS entry-only service requests live outside the full TC transaction pipeline.
+- **MLS entry job persistence** — added `mls_entry_jobs` schema, RLS, API create/list routes, normalizers, and billing status fields for manual MLS-only work tracking.
+- **MLS write-access spike notes** — documented SWMLS/GAAR/FlexMLS write-access questions and kept MLS submission manual until write capability is confirmed.
+- **P23 validation coverage** — added unit tests for MLS job helpers/nav and browser smoke coverage that creates an MLS-only job.
+
+### Fixed
+
+- **Local dev rendering** — Added `npm run dev:fresh` (`scripts/dev-fresh.sh`) to free port **3000**, remove `.next`, and start a single `next dev` on that port so you do not get one stale process on 3000 (unstyled pages) and a second Next on 3001. **`NEXA_WEBPACK_DEV_MEMORY_CACHE=true`** opt-in webpack **memory** cache when `.next/cache/webpack` restores fail (`PackFileCacheStrategy` / `hasStartTime`); otherwise dev uses Next’s filesystem cache for faster incremental builds.
+
+### Changed
+
+- **`PageEnter` reduced-motion guard** — only bypasses Framer Motion when `useReducedMotion() === true` (not on `null` unknown), avoiding inconsistent trees across SSR and hydration.
+
+- **Dev-only login diagnostics** — `POST /api/auth/login` returns a clearer `401` body when Auth cannot connect to **`NEXT_PUBLIC_SUPABASE_URL`** (typical **`ECONNREFUSED`** against `127.0.0.1:54321` when Docker/Supabase stack is stopped). `.env.example` notes local URL vs **`npx supabase start`** requirement.
+
+## [v4.17.1] - 2026-05-11
+
+### Added
+
+- **`isExpectedGlobalTemplateVersionPath`** — validates persisted global template blob paths against template/version IDs before service-role downloads.
+- **PDF generation bounds** — `lib/documents/pdf-generation-limits.ts` caps source template bytes (default 15 MiB, optional `NEXA_MAX_GENERATION_TEMPLATE_MB`).
+- **B11 blocker** — documents deferred items: optional output-PDF caps and PATCH semantics for immutable generated rows.
+
+### Changed
+
+- **Generate PDF route hardening** — rejects mismatched/invalid `storage_path`, returns `413 template_pdf_too_large` when over cap, removes orphaned uploads if document insert fails.
+- **AcroForm dropdown fills** — no longer selects an arbitrary first option when values do not match; avoids silent wrong legal payloads.
+
+## [v4.17.0] - 2026-05-11
+
+### Added
+
+- **Generated PDF workflow** — added transaction-scoped PDF generation from approved mapped template versions, with generated files stored under `{tenant_id}/{transaction_id}/generated/{timestamp}_{form_number}.pdf`.
+- **Generated document history metadata** — added document metadata for template version lineage and source data snapshots so later template updates do not mutate existing generated PDFs.
+- **P17 validation coverage** — added unit coverage for transaction data snapshots, AcroForm filling, and generated-document API insertion behavior, plus browser smoke coverage for generating a filled PDF from seeded mapped templates.
+
+### Changed
+
+- **Documents UI generation action** — transaction document selections now expose a guarded “Generate filled PDF” action with actionable missing-data errors and document list refresh after generation.
+- **Template seed readiness** — UAT template seeds now include fillable fields and mappings for generation smoke while preserving unmapped-template behavior for validation paths.
+- **Storage-path hardening** — added a follow-up migration to keep the global template storage-path check compatible with normal PostgreSQL regex behavior.
+
 ## [v4.16.0] - 2026-05-11
 
 ### Added

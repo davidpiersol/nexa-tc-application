@@ -35,6 +35,9 @@ test.describe("TC dashboard", () => {
     await expect(page.getByText(/Desert Willow/i).first()).toBeVisible({
       timeout: 30_000,
     });
+    await expect(page.getByText("Operations center")).toBeVisible();
+    await expect(page.getByText("Scorecard setup blocked")).toBeVisible();
+    await expect(page.getByText("AI pass").first()).toBeVisible();
     expect(errs).toEqual([]);
   });
 
@@ -53,6 +56,35 @@ test.describe("TC dashboard", () => {
     await expect(
       page.getByRole("link", { name: "First Pass" }).first(),
     ).toBeVisible();
+    await expect(page.getByText("AI pass").first()).toBeVisible();
+    await expect(page.getByText("Human pass").first()).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
+  test("scorecard page keeps blocked operational placeholder visible", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, "/tc/scorecard");
+    await expect(page.getByRole("heading", { level: 2, name: "Scorecard" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText(/scorecard task definitions have not been supplied/i)).toBeVisible();
+    await expect(page.getByText("Slack", { exact: true })).toBeVisible();
+    await expect(page.getByText("Microsoft Outlook / Calendar", { exact: true })).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
+  test("CRM connections page shows disabled external CRM scaffolding", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, "/tc/crm/connections");
+    await expect(page.getByRole("heading", { level: 2, name: "External CRM Connections" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText("DeltaNET / Delta Media Group")).toBeVisible();
+    await expect(page.getByText("Lofty")).toBeVisible();
+    await expect(page.getByText("Follow Up Boss")).toBeVisible();
+    await expect(page.getByText("MoxiWorks")).toBeVisible();
+    await expect(page.getByText(/No external sync/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Setup pending" }).first()).toBeDisabled();
     expect(errs).toEqual([]);
   });
 
@@ -120,6 +152,20 @@ test.describe("TC dashboard", () => {
     await expect(page.getByRole("button", { name: "Delete document" })).toBeVisible();
   });
 
+  test("documents page generates a filled PDF from a mapped template", async ({ page }) => {
+    const id = UAT_TRANSACTION_ID;
+    await gotoApp(page, `/tc/transactions/${id}/documents`);
+
+    const generateButton = page.getByRole("button", { name: "Generate filled PDF" }).first();
+    await expect(generateButton).toBeEnabled({ timeout: 30_000 });
+    await generateButton.click();
+
+    await page.getByPlaceholder("Search file, category, status").fill("NMAR-2104");
+    await expect(page.getByText(/NMAR-2104[.]pdf/i).first()).toBeVisible({
+      timeout: 30_000,
+    });
+  });
+
   test("transaction workspace nav switches between detail pages", async ({ page }) => {
     const id = UAT_TRANSACTION_ID;
     await gotoApp(page, `/tc/transactions/${id}/documents`);
@@ -152,12 +198,32 @@ test.describe("TC dashboard", () => {
     await expect(page).toHaveURL(/\/tc\/transactions$/);
   });
 
+  test("statewide property lookup supports manual review before saving", async ({ page }) => {
+    const id = UAT_TRANSACTION_ID;
+    await gotoApp(page, `/tc/transactions/${id}/edit`);
+
+    await page.getByPlaceholder("Valencia").fill("Catron");
+    await page
+      .getByPlaceholder(/Owner: Jane Doe/i)
+      .fill("Owner: QA Owner\nParcel number: QA-123\nCounty: Catron");
+    await page.getByRole("button", { name: "Research property" }).click();
+
+    await expect(page.getByText(/Suggestions ready for human review/i)).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByText(/owner_name: QA Owner/i)).toBeVisible();
+    await page.getByRole("button", { name: "Accept" }).first().click();
+    await expect(page.getByText(/Suggestion accepted and saved/i)).toBeVisible();
+  });
+
   test("assign and remove vendor from transaction", async ({ page }) => {
     const id = UAT_TRANSACTION_ID;
     const note = `QA vendor assignment ${Date.now()}`;
     await gotoApp(page, `/tc/transactions/${id}/vendors`);
 
-    await page.getByRole("combobox", { name: /^Contact/ }).selectOption({ index: 1 });
+    const contactCombobox = page.getByRole("combobox", { name: /^Contact/ });
+    await contactCombobox.click();
+    await page.locator('[id$="-options"] button').first().click();
     await page.getByRole("combobox", { name: "Assignment role" }).selectOption("other");
     await page.getByRole("combobox", { name: "Category context (optional)" }).selectOption("other");
     await page.getByLabel("Notes (optional)").fill(note);
@@ -245,12 +311,93 @@ test.describe("TC dashboard", () => {
     await gotoApp(page, "/tc/brokers/new");
     await page.getByLabel("First name").fill("Broker");
     await page.getByLabel("Last name").fill(`QA ${Date.now()}`);
-    await page.getByLabel("Signing platform").fill("docusign");
+    await page.getByLabel("E-sign provider").selectOption("docusign_api");
     await page.getByRole("combobox", { name: "Brokerage" }).selectOption("Other");
     await page.getByLabel("Brokerage (other)").fill("QA Brokerage");
     await page.getByRole("button", { name: "Create broker" }).click();
     await expect(page).toHaveURL(/\/tc\/brokers\/[a-f0-9-]+$/);
     await expect(page.getByRole("heading", { level: 2, name: "Broker Profile" })).toBeVisible();
+  });
+
+  test("MLS-only entry workspace renders without MLS write integration", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    const marker = `MLS QA ${Date.now()}`;
+    await gotoApp(page, "/tc/mls-entry");
+    await expect(page.getByRole("heading", { level: 2, name: "MLS entry jobs" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText(/No MLS write integration is enabled/i)).toBeVisible();
+    await page.getByRole("link", { name: "Research notes" }).click();
+    await expect(page).toHaveURL(/\/tc\/mls-entry\/research$/);
+    await expect(page.getByText(/Do not implement MLS write submission yet/i)).toBeVisible();
+
+    await gotoApp(page, "/tc/mls-entry/new");
+    await expect(page.getByRole("heading", { level: 2, name: "New MLS entry job" })).toBeVisible();
+    await expect(page.getByLabel("Requesting broker")).toBeVisible();
+    await expect(page.getByLabel("Property address")).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Property type" })).toBeVisible();
+    await expect(page.getByLabel("General notes")).toBeVisible();
+
+    await page.getByLabel("Requesting broker").fill("Angela QA");
+    await page.getByLabel("Property address").fill(marker);
+    await page.getByRole("combobox", { name: "Property type" }).selectOption("Vacant Land");
+    await page.getByLabel("General notes").fill("MLS-only smoke job; no write integration.");
+    await page.getByRole("button", { name: "Create MLS entry job" }).click();
+    await expect(page).toHaveURL(/\/tc\/mls-entry$/);
+    await expect(page.getByText(marker)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/MLS-only/i).first()).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
+  test("billing workspace creates an invoice without accounting sync", async ({ page }) => {
+    const errs = attachConsoleCapture(page);
+    const marker = `Billing QA ${Date.now()}`;
+    await gotoApp(page, "/tc/billing");
+    await expect(page.getByRole("heading", { level: 2, name: "Billing" })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText(/Accounting sync is scaffolded/i)).toBeVisible();
+    await page.getByLabel("Broker / client to invoice").fill(marker);
+    await page.getByLabel("Description").fill("MLS-only entry smoke invoice");
+    await page.getByLabel("Quantity").fill("1");
+    await page.getByLabel("Unit amount").fill("250.00");
+    await page.getByRole("button", { name: "Create invoice" }).click();
+    await expect(page).toHaveURL(/\/tc\/billing\/[a-f0-9-]+$/, { timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: /CP-/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /edit/i })).toHaveAttribute("href", /\/tc\/billing\/[a-f0-9-]+\/edit$/);
+    await expect(page.getByRole("link", { name: /download pdf/i })).toHaveAttribute(
+      "href",
+      /\/api\/billing\/invoices\/[a-f0-9-]+\/pdf$/,
+    );
+    await expect(page.getByRole("link", { name: /preview invoice/i })).toHaveAttribute(
+      "href",
+      /\/tc\/billing\/print\?ids=[a-f0-9-]+$/,
+    );
+    await gotoApp(page, "/tc/billing/invoices");
+    await expect(page.getByRole("heading", { level: 2, name: "Invoices" })).toBeVisible();
+    await page.getByPlaceholder("Broker, invoice, status, source, amount").fill(marker);
+    await expect(page.getByText(marker)).toBeVisible({ timeout: 15_000 });
+    await page.getByRole("combobox", { name: "Sort" }).selectOption("total_desc");
+    await expect(page.getByText("$271.06").first()).toBeVisible();
+    await expect(page.getByText(/Sync: not configured/i).first()).toBeVisible();
+    await page.locator("li", { hasText: marker }).getByRole("link").first().click();
+    await expect(page).toHaveURL(/\/tc\/billing\/[a-f0-9-]+$/);
+    await expect(page.getByRole("heading", { name: /CP-/ })).toBeVisible();
+    await expect(page.getByText(/Payable upon receipt/i)).toBeVisible();
+    await gotoApp(page, "/tc/billing/invoices");
+    await page.getByRole("checkbox", { name: /select all invoices/i }).check();
+    const printLink = page.getByRole("link", { name: /print selected/i });
+    await expect(printLink).toHaveAttribute("href", /\/tc\/billing\/print\?ids=/);
+    await expect(page.getByRole("link", { name: /email selected/i })).toHaveAttribute("href", /^mailto:/);
+    await gotoApp(page, "/tc/reports");
+    await expect(page.getByRole("heading", { level: 2, name: "Reports" })).toBeVisible();
+    await page.getByRole("link", { name: /Billing collections/i }).click();
+    await expect(page).toHaveURL(/\/tc\/reports\/billing/);
+    await expect(page.getByRole("heading", { level: 2, name: "Billing report" })).toBeVisible();
+    await expect(page.getByText(/Total billed/i)).toBeVisible();
+    await expect(page.getByText("Taxes on received", { exact: true })).toBeVisible();
+    await expect(page.getByText(marker)).toBeVisible();
+    expect(errs).toEqual([]);
   });
 
   test("document delete removes row without breaking transaction", async ({ page }) => {
@@ -315,6 +462,35 @@ test.describe("TC dashboard", () => {
       const res = await page.request.get(src);
       expect(res.ok(), `img ${src} should load`).toBeTruthy();
     }
+  });
+});
+
+test.describe("Broker dashboard", () => {
+  test.use({ storageState: "playwright/.auth/agent.json" });
+
+  test("broker hub renders assigned-transactions workspace without console errors", async ({
+    page,
+  }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, "/agent");
+    await expect(page.getByText(/Broker workspace/i)).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(
+      page.getByRole("heading", { name: /Assigned transactions/i }),
+    ).toBeVisible();
+    expect(errs).toEqual([]);
+  });
+
+  test("broker transaction workspace shows client-visible documents section", async ({
+    page,
+  }) => {
+    const errs = attachConsoleCapture(page);
+    await gotoApp(page, `/agent/${UAT_TRANSACTION_ID}`);
+    await expect(page.getByText(/Client-visible documents/i)).toBeVisible({
+      timeout: 30_000,
+    });
+    expect(errs).toEqual([]);
   });
 });
 

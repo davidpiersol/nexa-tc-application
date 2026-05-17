@@ -43,6 +43,18 @@ Migrations live in [`supabase/migrations/`](../supabase/migrations/).
 
 After migrations, confirm tables exist under **Table Editor**.
 
+### Data API grants for new public tables
+
+Supabase requires explicit grants for `public` tables that should be reachable through the Data API (`supabase-js`, PostgREST, or GraphQL). For every future migration that creates a table in `public`, include the full access shape in the same feature migration:
+
+1. `GRANT` table privileges to the roles that should reach it through the Data API.
+2. `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`.
+3. Add RLS policies for each allowed operation.
+
+Choral Point should not grant broad `anon` table access by default. Most app tables should be granted to `authenticated` and `service_role`, with RLS policies deciding tenant, role, row, and operation access. Anonymous invite/signup flows should prefer signed tokens and API routes rather than direct unauthenticated table reads.
+
+When tightening grants on an existing project, `REVOKE` inherited/default privileges first, then add the intended `GRANT` statements. Existing Supabase projects may already show broad `anon`/`authenticated` privileges until a hardening migration normalizes them.
+
 ## 4. Storage
 
 If you use document uploads or inbound email attachments:

@@ -70,18 +70,42 @@ export async function getTransactionPartyDetail(
   return data;
 }
 
-export async function listDocumentsForTransaction(transactionId: string) {
+export type TransactionDocumentSummary = {
+  id: string;
+  category: string;
+  status: string;
+  file_name: string | null;
+  mime_type: string | null;
+  created_at: string;
+  updated_at?: string | null;
+  visible_to_client?: boolean;
+  signing_provider_slug?: string | null;
+  signing_envelope_id?: string | null;
+  signing_envelope_status?: string | null;
+  signing_envelope_status_updated_at?: string | null;
+  signing_delivery_status?: Record<string, unknown> | null;
+  signing_provider_url?: string | null;
+  /** Stored file exists (ZIP packet + signing payloads). */
+  can_export: boolean;
+};
+
+export async function listDocumentsForTransaction(
+  transactionId: string,
+): Promise<TransactionDocumentSummary[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("documents")
     .select(
-      "id, category, status, file_name, mime_type, created_at, updated_at, visible_to_client",
+      "id, category, status, file_name, mime_type, created_at, updated_at, visible_to_client, signing_provider_slug, signing_envelope_id, signing_envelope_status, signing_envelope_status_updated_at, signing_delivery_status, signing_provider_url, storage_path",
     )
     .eq("transaction_id", transactionId)
     .order("created_at", { ascending: false });
 
   if (error) return [];
-  return data ?? [];
+  return (data ?? []).map(({ storage_path, ...pub }) => ({
+    ...pub,
+    can_export: Boolean(storage_path),
+  }));
 }
 
 export type TransactionDocumentSelectionRow = {

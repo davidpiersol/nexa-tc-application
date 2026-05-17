@@ -14,6 +14,8 @@ export function documentStatusToBadge(
       return { label: "Rejected", variant: "neutral" };
     case "missing":
       return { label: "Missing", variant: "neutral" };
+    case "sent_for_signature":
+      return { label: "Sent for signature", variant: "neutral" };
     default:
       return { label: status, variant: "neutral" };
   }

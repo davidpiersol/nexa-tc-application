@@ -1,7 +1,7 @@
 /** Top bar titles aligned with Figma frame names (fallback when route matches). */
 export function dashboardTitleForPath(pathname: string): string {
+  if (pathname === "/uat-issues") return "UAT issues";
   if (pathname === "/tc/profile") return "Profile";
-  if (pathname.match(/^\/agent\/[^/]+\/profile$/)) return "Profile";
   if (pathname.match(/^\/seller\/[^/]+\/profile$/)) return "Profile";
   if (pathname.match(/^\/mortgage\/[^/]+\/profile$/)) return "Profile";
   if (pathname.match(/^\/title\/[^/]+\/profile$/)) return "Profile";
@@ -34,22 +34,46 @@ export function dashboardTitleForPath(pathname: string): string {
   if (pathname.match(/^\/tc\/contacts\/[^/]+$/)) return "Contact Profile";
   if (pathname === "/tc/contacts") return "Contacts";
   if (pathname === "/tc/brokers") return "Brokers";
+  if (pathname === "/tc/crm") return "CRM";
+  if (pathname.startsWith("/tc/crm/")) return "CRM";
   if (pathname === "/tc/archive") return "Archive";
   if (pathname === "/tc/transactions") return "Transactions";
+  if (pathname === "/tc/mls-entry/new") return "New MLS Entry";
+  if (pathname === "/tc/mls-entry/research") return "MLS Write Access";
+  if (pathname.match(/^\/tc\/mls-entry\/[^/]+$/)) return "MLS Entry Detail";
+  if (pathname === "/tc/mls-entry") return "MLS Entry";
+  if (pathname === "/tc/billing") return "Billing";
+  if (pathname === "/tc/billing/invoices") return "Invoices";
+  if (pathname === "/tc/billing/print") return "Print Invoices";
+  if (pathname.match(/^\/tc\/billing\/[^/]+\/edit$/)) return "Edit Invoice";
+  if (pathname.match(/^\/tc\/billing\/[^/]+$/)) return "Invoice Detail";
+  if (pathname === "/tc/scorecard") return "Scorecard";
+  if (pathname === "/tc/reports") return "Reports";
+  if (pathname === "/tc/reports/billing") return "Billing Report";
+  if (pathname.match(/^\/tc\/reports\/[^/]+$/)) return "Report";
   if (pathname === "/tc/settings") return "Settings";
-  if (pathname.match(/^\/agent\/[^/]+$/)) return "Agent Dashboard";
+  if (pathname === "/agent" || pathname === "/agent/") return "Broker dashboard";
+  if (pathname === "/agent/crm" || pathname.startsWith("/agent/crm/")) return "CRM";
+  if (pathname.startsWith("/agent/profile")) return "Broker profile";
+  if (pathname.match(/^\/agent\/[^/]+$/)) return "Broker transaction";
   if (pathname.match(/^\/buyer\/[^/]+$/)) return "Buyer Dashboard";
   if (pathname.match(/^\/seller\/[^/]+$/)) return "Seller Dashboard";
   if (pathname.match(/^\/mortgage\/[^/]+$/)) return "Mortgage Dashboard";
   if (pathname.match(/^\/title\/[^/]+$/)) return "Title Dashboard";
   if (pathname === "/admin/global" || pathname === "/admin/global/dashboard") return "Global Admin";
+  if (pathname === "/admin/global/profile") return "Profile";
   if (pathname === "/admin/global/tenants") return "Tenants";
   if (pathname === "/admin/global/templates") return "Templates";
+  if (pathname === "/admin/global/package-rules") return "Package rules";
+  if (pathname === "/admin/global/ai") return "AI Configuration";
   if (pathname === "/admin/global/wiki") return "Wiki";
+  if (pathname === "/admin/global/uat-issues") return "UAT issues";
   if (pathname === "/admin/global/reports") return "Reports";
   if (pathname === "/admin/tenant" || pathname === "/admin/tenant/dashboard") return "Admin Console";
   if (pathname === "/admin/tenant/users") return "Users";
+  if (pathname === "/admin/tenant/profile") return "Profile";
   if (pathname === "/admin/tenant/groups") return "Groups";
+  if (pathname === "/admin/tenant/uat-issues") return "UAT issues";
   if (pathname === "/admin/tenant/reports") return "Reports";
   return "Nexa";
 }

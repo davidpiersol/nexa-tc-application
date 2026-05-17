@@ -1,43 +1,49 @@
 import Link from "next/link";
-import NexaIcon from "@/components/brand/NexaIcon";
-import NexaLogo from "@/components/brand/NexaLogo";
-import { nexaBrand } from "@/lib/brand/tokens";
+import { ChoralPointLogo } from "@/components/brand/ChoralPointLogo";
+import { choralPointBrand } from "@/lib/brand/tokens";
 
 export default function HomePage() {
   return (
-    <div className="mx-auto flex max-w-lg flex-col gap-8 p-10">
-      <div className="flex flex-col gap-4">
-        <NexaLogo showTagline={false} className="max-w-[280px]" title="NEXA" />
-        <h1 className="font-display text-heading-md text-brand-navy">
-          {nexaBrand.tagline}
-        </h1>
-        <p className="text-ui-body text-neutral-600">{nexaBrand.actionLine}</p>
+    <main className="choral-marketing-page min-h-screen text-brand-navy">
+      <div className="choral-marketing-shell">
+        <header className="flex items-center justify-between gap-4 py-7">
+          <ChoralPointLogo className="text-[15px] tracking-[0.34em]" />
+          <nav className="hidden items-center gap-9 text-sm text-brand-navy/80 md:flex">
+            <Link href="/platform">Platform</Link>
+            <Link href="/solutions">Solutions</Link>
+            <Link href="/resources">Resources</Link>
+            <Link href="/company">Company</Link>
+            <Link href="/login">Login</Link>
+          </nav>
+          <Link href="/request-demo" className="choral-marketing-primary">
+            Request a Demo
+          </Link>
+        </header>
+
+        <section className="flex flex-1 items-center">
+          <div className="max-w-2xl pb-10">
+            <h1 className="font-display text-[46px] font-semibold leading-[1.03] tracking-[-0.045em] text-brand-navy sm:text-[72px]">
+              {choralPointBrand.tagline.split(" ").slice(0, 2).join(" ")}<br />
+              {choralPointBrand.tagline.split(" ").slice(2).join(" ")}
+            </h1>
+            <p className="mt-7 text-lg leading-8 text-brand-navy/75 sm:text-xl">
+              One platform. Every participant.<br />
+              Perfectly in sync.
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <Link href="/request-demo" className="choral-marketing-primary">
+                Request a Demo
+              </Link>
+              <Link href="/how-it-works" className="choral-marketing-secondary">
+                See How It Works
+                <span className="choral-play-dot" aria-hidden>
+                  ▶
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
-      <div className="flex items-start gap-4 border-t border-neutral-200 pt-6">
-        <NexaIcon className="mt-0.5 size-10 shrink-0" aria-hidden />
-        <div className="flex min-w-0 flex-col gap-2">
-          <p className="text-ui-body text-neutral-600">
-            Scaffold routes — use dashboard sections below during development.
-          </p>
-          <ul className="flex flex-col gap-2 text-ui-body">
-            <li>
-              <Link className="text-brand-steel underline" href="/login">
-                Login
-              </Link>
-            </li>
-            <li>
-              <Link className="text-brand-steel underline" href="/tc">
-                TC dashboard
-              </Link>
-            </li>
-            <li>
-              <Link className="text-brand-steel underline" href="/buyer/example-id">
-                Buyer dashboard (sample id)
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    </main>
   );
 }

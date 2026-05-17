@@ -87,7 +87,7 @@ It includes:
 - OAuth account creation strategy
 - AI insertion points
 - Multi-provider AI cost and wiring guidance
-- CRM-lite feature recommendations
+- CRM feature recommendations
 - External CRM integration candidates, including DeltaNET, Lofty, Follow Up Boss, and MoxiWorks
 
 ## Auth and OAuth Account Creation

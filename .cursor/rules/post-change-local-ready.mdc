@@ -1,0 +1,13 @@
+---
+description: After substantive app/DB/auth changes run full local verify + stack + login smoke
+alwaysApply: true
+---
+
+# Local readiness (single command)
+
+When finishing work that touches Next.js routes, Supabase schema/auth, middleware, or login:
+
+1. Run **`npm run ready`** from the repo root (needs Docker + `.env.local` with local Supabase URL `http://127.0.0.1:54321` or `localhost:54321` for DB reset + seed; remote URLs skip reset).
+2. Do **not** ask the maintainer to run lint/test/supabase/docker separately unless **`npm run ready`** fails — then fix and rerun.
+
+This replaces ad‑hoc reminders for lint, Vitest, Supabase start/reset, seed, production build, `:3000` dev, and **`tc@nexa.test`** login smoke.

@@ -1,11 +1,29 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      const mem =
+        process.env.NEXA_WEBPACK_DEV_MEMORY_CACHE === "1" ||
+        process.env.NEXA_WEBPACK_DEV_MEMORY_CACHE === "true";
+      if (mem) {
+        // Opt-in: avoids corrupted `.next/cache/webpack/*.pack.gz` restores (hasStartTime / ENOENT).
+        // Default OFF — filesystem cache is much faster for day-to-day dev.
+        config.cache = { type: "memory" };
+      }
+    }
+    return config;
+  },
+
   async redirects() {
     return [{ source: "/mfa", destination: "/auth/mfa", permanent: false }];
   },
   async headers() {
     const isProd = process.env.NODE_ENV === "production";
+    const localDevConnections = isProd
+      ? ""
+      : " http://127.0.0.1:54321 ws://127.0.0.1:54321 http://localhost:54321 ws://localhost:54321";
     /** @type {{ key: string; value: string }[]} */
     const securityHeaders = [
       { key: "X-Frame-Options", value: "DENY" },
@@ -23,7 +41,7 @@ const nextConfig = {
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' blob: data: https:",
           "font-src 'self' data:",
-          "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.postmarkapp.com",
+          `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.postmarkapp.com${localDevConnections}`,
           "frame-ancestors 'none'",
         ].join("; "),
       },

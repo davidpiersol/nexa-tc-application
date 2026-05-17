@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
+import { PropertyLookupPanel } from "@/components/tc/property-lookup-panel";
 
 type TransactionStatus =
   | "draft"
@@ -364,6 +365,8 @@ export function TransactionEditorForm({
           />
         </label>
       </section>
+
+      <PropertyLookupPanel transactionId={initial.id} address={initial.property_address} />
 
       <section className="rounded-brand-md border border-neutral-200 p-4">
         <h4 className="font-display text-heading-md text-brand-navy">

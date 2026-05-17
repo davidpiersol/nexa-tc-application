@@ -1,0 +1,26 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="g" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(60 60) rotate(90) scale(26)">
+      <stop stop-color="#FFF6E8"/>
+      <stop offset="0.45" stop-color="#F2C979"/>
+      <stop offset="1" stop-color="#D4AF37"/>
+    </radialGradient>
+  </defs>
+  <g stroke="#D4AF37" stroke-linecap="round">
+    <path d="M60 8V112"/><path d="M8 60H112"/>
+    <path d="M23 23L97 97"/><path d="M97 23L23 97"/>
+    <path d="M41 12L79 108"/><path d="M79 12L41 108"/>
+    <path d="M12 41L108 79"/><path d="M108 41L12 79"/>
+  </g>
+  <g fill="#D4AF37">
+    <circle cx="60" cy="8" r="3"/><circle cx="60" cy="112" r="3"/>
+    <circle cx="8" cy="60" r="3"/><circle cx="112" cy="60" r="3"/>
+    <circle cx="23" cy="23" r="3"/><circle cx="97" cy="97" r="3"/>
+    <circle cx="97" cy="23" r="3"/><circle cx="23" cy="97" r="3"/>
+    <circle cx="41" cy="12" r="2.5"/><circle cx="79" cy="108" r="2.5"/>
+    <circle cx="79" cy="12" r="2.5"/><circle cx="41" cy="108" r="2.5"/>
+    <circle cx="12" cy="41" r="2.5"/><circle cx="108" cy="79" r="2.5"/>
+    <circle cx="108" cy="41" r="2.5"/><circle cx="12" cy="79" r="2.5"/>
+  </g>
+  <circle cx="60" cy="60" r="15" fill="url(#g)"/>
+</svg>

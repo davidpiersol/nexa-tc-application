@@ -1,7 +1,8 @@
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { tenantIsAccessible } from "@/lib/tenants/lifecycle";
 
-export type PublicUserProfile = { role: string; tenantId: string };
+export type PublicUserProfile = { role: string; tenantId: string; tenantEnabled: boolean };
 
 /**
  * Loads `public.users` role for routing — prefers service role so RLS never blocks post-login redirects.
@@ -11,12 +12,15 @@ export async function loadPublicUserProfile(userId: string): Promise<PublicUserP
     const admin = createServiceRoleClient();
     const { data } = await admin
       .from("users")
-      .select("role, tenant_id")
+      .select("role, tenant_id, tenants!inner(is_suspended, archived_at)")
       .eq("id", userId)
       .maybeSingle();
     const role = data?.role;
     const tenantId = data?.tenant_id;
-    if (typeof role === "string" && typeof tenantId === "string") return { role, tenantId };
+    const tenant = Array.isArray(data?.tenants) ? data?.tenants[0] : data?.tenants;
+    if (typeof role === "string" && typeof tenantId === "string") {
+      return { role, tenantId, tenantEnabled: tenantIsAccessible(tenant ?? {}) };
+    }
   } catch {
     /* Service role missing or DB error — fall back to session-scoped read. */
   }
@@ -30,7 +34,7 @@ export async function loadPublicUserProfile(userId: string): Promise<PublicUserP
       .maybeSingle();
     const role = data?.role;
     const tenantId = data?.tenant_id;
-    if (typeof role === "string" && typeof tenantId === "string") return { role, tenantId };
+    if (typeof role === "string" && typeof tenantId === "string") return { role, tenantId, tenantEnabled: true };
   } catch {
     /* */
   }

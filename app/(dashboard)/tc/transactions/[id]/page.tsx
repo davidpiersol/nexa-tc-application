@@ -211,6 +211,14 @@ export default async function TransactionDetailPage({ params }: Props) {
         </section>
         <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
           <h3 className="font-display text-heading-md text-brand-navy">Activity</h3>
+          <div className="mt-4 flex flex-wrap gap-2 font-sans text-xs font-semibold">
+            <span className="rounded-full bg-brand-gold-light px-2 py-1 text-brand-navy">
+              AI pass
+            </span>
+            <span className="rounded-full bg-brand-navy px-2 py-1 text-white">
+              Human pass
+            </span>
+          </div>
           <p className="mt-4 font-sans text-sm text-neutral-900">
             Created · {new Date(t.created_at).toLocaleDateString()}
           </p>
@@ -218,8 +226,8 @@ export default async function TransactionDetailPage({ params }: Props) {
             First pass · {t.first_pass_status || "Not started"}
           </p>
           <p className="mt-1 font-sans text-sm text-neutral-600">
-            Detailed message and audit activity remains available through Documents and First Pass
-            workflows.
+            Automation reviews will be labeled as AI pass events. TC edits, document reviews,
+            and coordinator decisions will be labeled as Human pass events.
           </p>
         </section>
       </div>

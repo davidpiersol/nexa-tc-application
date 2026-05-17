@@ -1,0 +1,93 @@
+import { redirect } from "next/navigation";
+import { loadActorContext } from "@/lib/auth/actor-context";
+import { isGlobalAdminRole } from "@/lib/auth/roles";
+import {
+  AI_FEATURE_CATALOG,
+  AI_PROVIDER_CATALOG,
+  defaultAiFeatureSettings,
+} from "@/lib/ai/catalog";
+import { listGlobalCredentialStatuses } from "@/lib/integrations/global-credentials-store";
+import { AiCredentialManager } from "./ai-credential-manager";
+
+export default async function GlobalAdminAiPage() {
+  const actor = await loadActorContext();
+  if (!actor) redirect("/login");
+  if (!isGlobalAdminRole(actor.role)) redirect("/forbidden");
+
+  const settings = defaultAiFeatureSettings();
+  const credentialStatuses = await listGlobalCredentialStatuses();
+  const credentialProviders = AI_PROVIDER_CATALOG.filter((provider) => provider.credentialProvider)
+    .map((provider) => ({
+      key: provider.key,
+      label: provider.label,
+      credentialProvider: provider.credentialProvider!,
+      authMode: provider.authMode,
+    }));
+
+  return (
+    <div className="flex flex-col gap-6">
+      <header className="border-b border-neutral-300 pb-5">
+        <p className="font-sans text-ui-label uppercase tracking-wide text-neutral-600">
+          Provider-neutral AI
+        </p>
+        <h2 className="mt-2 font-display text-heading-lg text-brand-navy">AI Configuration</h2>
+        <p className="mt-2 max-w-3xl font-sans text-ui-body text-neutral-600">
+          P28 scaffolds model/provider governance, feature-level defaults, cost controls, and audit
+          requirements. AI features are active for testing, while every legally sensitive workflow
+          remains human-review only.
+        </p>
+      </header>
+
+      <AiCredentialManager
+        providers={credentialProviders}
+        initialStatuses={credentialStatuses}
+      />
+
+      <section className="rounded-brand-lg border border-neutral-300 bg-white p-5 shadow-brand-sm">
+        <h3 className="font-display text-heading-md text-brand-navy">Feature defaults</h3>
+        <p className="mt-2 font-sans text-sm text-neutral-600">
+          Admin-selectable settings are represented per feature in the P28 schema. Defaults below
+          are enabled for testing with provider/model governance, budget placeholders, and review
+          rules still intact.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[840px] text-left font-sans text-sm">
+            <thead className="border-b border-neutral-200 text-ui-label uppercase tracking-wide text-neutral-600">
+              <tr>
+                <th className="py-2 pr-4">Feature</th>
+                <th className="py-2 pr-4">Status</th>
+                <th className="py-2 pr-4">Default provider</th>
+                <th className="py-2 pr-4">Model class</th>
+                <th className="py-2 pr-4">Max tokens</th>
+                <th className="py-2 pr-4">Budget</th>
+                <th className="py-2 pr-4">Review rule</th>
+              </tr>
+            </thead>
+            <tbody>
+              {settings.map((setting) => {
+                const feature = AI_FEATURE_CATALOG.find((item) => item.key === setting.featureKey);
+                return (
+                  <tr key={setting.featureKey} className="border-b border-neutral-100">
+                    <td className="py-3 pr-4 text-brand-navy">
+                      {feature?.label ?? setting.featureKey}
+                    </td>
+                    <td className="py-3 pr-4">{setting.enabled ? "Active" : "Disabled"}</td>
+                    <td className="py-3 pr-4">{setting.providerKey}</td>
+                    <td className="py-3 pr-4">{setting.modelKey}</td>
+                    <td className="py-3 pr-4">{setting.maxOutputTokens}</td>
+                    <td className="py-3 pr-4">
+                      ${(setting.monthlyBudgetCents / 100).toFixed(2)}
+                    </td>
+                    <td className="py-3 pr-4">
+                      {feature?.safetyBoundary ?? "Human review required"}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}

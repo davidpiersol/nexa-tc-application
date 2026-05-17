@@ -5,20 +5,24 @@ import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { enforceApiRateLimit } from "@/lib/security/enforce-rate-limit";
 import { validateCsrf } from "@/lib/security/csrf-server";
 
+const optionalText = (schema: z.ZodString) =>
+  z.preprocess((value) => (value === "" ? undefined : value), schema.optional());
+
 const patchSchema = z.object({
   name: z.string().min(2).max(120).optional(),
   seatLimit: z.number().int().min(1).max(10000).optional(),
-  companyType: z.string().min(2).max(80).optional(),
-  companyEmail: z.string().email().optional(),
-  companyPhone: z.string().max(40).optional(),
-  website: z.string().max(120).optional(),
-  address1: z.string().max(180).optional(),
-  address2: z.string().max(180).optional(),
-  city: z.string().max(80).optional(),
-  state: z.string().max(80).optional(),
-  postalCode: z.string().max(20).optional(),
-  country: z.string().max(80).optional(),
-  notes: z.string().max(500).optional(),
+  companyType: optionalText(z.string().min(2).max(80)),
+  companyEmail: optionalText(z.string().email()),
+  companyPhone: optionalText(z.string().max(40)),
+  website: optionalText(z.string().max(120)),
+  address1: optionalText(z.string().max(180)),
+  address2: optionalText(z.string().max(180)),
+  city: optionalText(z.string().max(80)),
+  state: optionalText(z.string().max(80)),
+  postalCode: optionalText(z.string().max(20)),
+  country: optionalText(z.string().max(80)),
+  notes: optionalText(z.string().max(500)),
+  action: z.enum(["deactivate", "reactivate", "archive", "restore"]).optional(),
 });
 
 type Params = { params: { tenantId: string } };
@@ -37,7 +41,7 @@ export async function GET(request: NextRequest, { params }: Params) {
   let [{ data: tenant, error: tErr }, { data: primaryAdmin }] = await Promise.all([
     admin
       .from("tenants")
-      .select("id, name, slug, seat_limit, is_suspended, settings, created_at")
+      .select("id, name, slug, seat_limit, is_suspended, archived_at, settings, created_at")
       .eq("id", params.tenantId)
       .maybeSingle(),
     admin
@@ -49,7 +53,12 @@ export async function GET(request: NextRequest, { params }: Params) {
       .limit(1)
       .maybeSingle(),
   ]);
-  if (tErr && (missingColumn(tErr.message, "is_suspended") || missingColumn(tErr.message, "settings"))) {
+  if (
+    tErr &&
+    (missingColumn(tErr.message, "is_suspended") ||
+      missingColumn(tErr.message, "settings") ||
+      missingColumn(tErr.message, "archived_at"))
+  ) {
     const fallback = await admin
       .from("tenants")
       .select("id, name, slug, seat_limit, created_at")
@@ -124,6 +133,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   const updates: Record<string, unknown> = {};
   if (parsed.data.name) updates.name = parsed.data.name.trim();
   if (typeof parsed.data.seatLimit === "number") updates.seat_limit = parsed.data.seatLimit;
+  if (parsed.data.action === "deactivate") updates.is_suspended = true;
+  if (parsed.data.action === "reactivate") updates.is_suspended = false;
+  if (parsed.data.action === "archive") updates.archived_at = new Date().toISOString();
+  if (parsed.data.action === "restore") updates.archived_at = null;
 
   const mergedSettings = {
     ...(existing.settings ?? {}),
@@ -145,9 +158,14 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     .from("tenants")
     .update(updates)
     .eq("id", params.tenantId)
-    .select("id, name, slug, seat_limit, is_suspended, settings")
+    .select("id, name, slug, seat_limit, is_suspended, archived_at, settings")
     .single();
-  if (updateErr && (missingColumn(updateErr.message, "settings") || missingColumn(updateErr.message, "is_suspended"))) {
+  if (
+    updateErr &&
+    (missingColumn(updateErr.message, "settings") ||
+      missingColumn(updateErr.message, "is_suspended") ||
+      missingColumn(updateErr.message, "archived_at"))
+  ) {
     const reduced = { ...updates };
     delete reduced.settings;
     const fallback = await admin
@@ -190,4 +208,3 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   return NextResponse.json({ ok: true, tenant: data });
 }
-

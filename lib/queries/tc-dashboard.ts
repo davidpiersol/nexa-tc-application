@@ -1,8 +1,17 @@
 import type { PipelineCard, PipelineColumnId } from "@/components/dashboard/tc-pipeline-kanban";
+import { formatCurrencyFromCents, nextInvoiceReminder } from "@/lib/billing/invoices";
 import {
   transactionStatusToColumn,
   type PipelineColumnKey,
 } from "@/lib/data/pipeline-map";
+import {
+  buildOperationalNotifications,
+  type OperationalNotification,
+} from "@/lib/operations/notifications";
+import {
+  buildScorecardPlaceholder,
+  type ScorecardSummary,
+} from "@/lib/operations/scorecard";
 import { createClient } from "@/lib/supabase/server";
 
 function initials(name: string | null | undefined): string {
@@ -44,6 +53,17 @@ export type TcStats = {
   signaturesNeeded: number;
 };
 
+export type BillingReminderItem = {
+  id: string;
+  invoiceNumber: string | null;
+  brokerName: string | null;
+  issueDate: string;
+  dueDate: string | null;
+  balanceLabel: string;
+  reminderLabel: string;
+  reminderStatus: string;
+};
+
 /** Empty pipeline columns for SSR fallback. */
 export function emptyPipelineColumns(): Record<PipelineColumnId, PipelineCard[]> {
   return {
@@ -65,9 +85,13 @@ export async function getTcDashboardData(): Promise<{
   stats: TcStats;
   deadlines: TcDeadlineRow[];
   tasks: TcTaskRow[];
+  billingReminders: BillingReminderItem[];
+  scorecard: ScorecardSummary;
+  operationalNotifications: OperationalNotification[];
 }> {
   const supabase = await createClient();
   const pipeline = emptyPipelineColumns();
+  const emptyScorecard = buildScorecardPlaceholder();
 
   const { data: txRows, error: txErr } = await supabase
     .from("transactions")
@@ -89,6 +113,13 @@ export async function getTcDashboardData(): Promise<{
       },
       deadlines: [],
       tasks: [],
+      billingReminders: [],
+      scorecard: emptyScorecard,
+      operationalNotifications: buildOperationalNotifications({
+        tasks: [],
+        billingReminders: [],
+        scorecard: emptyScorecard,
+      }),
     };
   }
 
@@ -110,7 +141,7 @@ export async function getTcDashboardData(): Promise<{
 
   const ids = txRows.map((t) => t.id);
 
-  const [{ data: items }, { data: tasksRows }, { data: docsAgg }] = await Promise.all([
+  const [{ data: items }, { data: tasksRows }, { data: docsAgg }, { data: invoiceRows }] = await Promise.all([
     supabase
       .from("checklist_items")
       .select("id, transaction_id, completed")
@@ -125,6 +156,13 @@ export async function getTcDashboardData(): Promise<{
       .from("documents")
       .select("id, transaction_id, status, category")
       .in("transaction_id", ids),
+    supabase
+      .from("billing_invoices")
+      .select("id, invoice_number, broker_name, issue_date, due_date, balance_cents, receivable_status, reminder_schedule")
+      .gt("balance_cents", 0)
+      .in("receivable_status", ["sent", "partially_paid", "overdue"])
+      .order("due_date", { ascending: true, nullsFirst: false })
+      .limit(12),
   ]);
 
   const itemByTx = new Map<string, { total: number; done: number }>();
@@ -206,6 +244,34 @@ export async function getTcDashboardData(): Promise<{
     completed: Boolean(row.completed_at),
     priority: "medium",
   }));
+  const billingReminders: BillingReminderItem[] = (invoiceRows ?? []).map((row) => {
+    const balanceCents = Number(row.balance_cents ?? 0);
+    const reminder = nextInvoiceReminder({
+      issueDate: row.issue_date as string,
+      dueDate: (row.due_date as string | null) ?? null,
+      balanceCents,
+      receivableStatus: row.receivable_status as string,
+      reminderDays: Array.isArray(row.reminder_schedule)
+        ? (row.reminder_schedule as number[])
+        : undefined,
+    });
+    return {
+      id: row.id as string,
+      invoiceNumber: (row.invoice_number as string | null) ?? null,
+      brokerName: (row.broker_name as string | null) ?? null,
+      issueDate: row.issue_date as string,
+      dueDate: (row.due_date as string | null) ?? null,
+      balanceLabel: formatCurrencyFromCents(balanceCents),
+      reminderLabel: reminder.label,
+      reminderStatus: reminder.status,
+    };
+  });
+  const scorecard = buildScorecardPlaceholder();
+  const operationalNotifications = buildOperationalNotifications({
+    tasks,
+    billingReminders,
+    scorecard,
+  });
 
   return {
     pipeline,
@@ -217,5 +283,8 @@ export async function getTcDashboardData(): Promise<{
     },
     deadlines: deadlineCandidates.slice(0, 12),
     tasks,
+    billingReminders,
+    scorecard,
+    operationalNotifications,
   };
 }

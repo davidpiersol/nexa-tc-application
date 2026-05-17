@@ -140,17 +140,25 @@ Use these MSP scopes:
 - `P20`: `v4.20.0-dev` - package rules and AI-assisted mapping
 - `P21`: `v4.21.0-dev` - signing, packet export, and document sharing
 - `P22`: `v4.22.0-dev` - broker dashboard and client/party visibility
-- `P23`: `v4.23.0-dev` - mLS-only jobs and MLS write-access spike
+- `P23`: `v4.23.0-dev` - MLS-only jobs and MLS write-access spike
 - `P24`: `v4.24.0-dev` - billing, invoicing, and accounting integration path
-- `P25`: `v4.25.0-dev` - hardening gate: signing, integrations, billing, and workflow handoffs
-- `P26`: `v4.26.0-dev` - scorecard, notifications, calendar, and communication integrations
-- `P27`: `v4.27.0-dev` - aI insertion architecture and assistive workflows
-- `P28`: `v4.28.0-dev` - cRM module and external CRM integration assessment
-- `P29`: `v4.29.0-dev` - hardening gate: AI, CRM, privacy, cost, and provider adapters
-- `P30`: `v4.30.0-dev` - uI/UX polish, graphics, and design system button-up
-- `P31`: `v4.31.0-dev` - statewide New Mexico property data lookup
-- `P32`: `v4.32.0-dev` - hardening gate: statewide property data, UI/UX, and final pre-release cleanup
-- `P33`: `v4.33.0-dev` - release hardening and stable rollback checkpoint
+- `P25`: `v4.25.0-dev` - broker e-sign provider setup and DocuSign status sync
+- `P26`: `v4.26.0-dev` - hardening gate: signing, integrations, billing, and workflow handoffs
+- `P27`: `v4.27.0-dev` - scorecard, notifications, calendar, and communication integrations
+- `P28`: `v4.28.0-dev` - AI insertion architecture and assistive workflows
+- `P29`: `v4.29.0-dev` - CRM module and external CRM integration assessment
+- `P30`: `v4.30.0-dev` - hardening gate: AI, CRM, privacy, cost, and provider adapters
+- `P31`: `v4.31.0-dev` - CRM build-out: actions, follow-ups, contacts, calendar, and external CRM connections
+- `P32`: `v4.32.0-dev` - UI/UX polish, graphics, and design system button-up
+- `P33`: `v4.33.0-dev` - statewide New Mexico property data lookup
+- `P34`: `v4.34.0-dev` - hardening gate: statewide property data, UI/UX, and final pre-release cleanup
+- `P35`: `v4.35.0-dev` - release hardening and stable rollback checkpoint
+- `P36`: `v4.36.0-dev` - UAT issue triage and admin review
+- `P37`: `v4.37.0-dev` - user onboarding and invite emails
+- `P38`: `v4.38.0-dev` - self-service password recovery
+- `P39`: `v4.39.0-dev` - external CRM and calendar provider integrations
+- `P40`: `v4.40.0-dev` - public marketing content expansion
+- `P41`: `v4.41.0-dev` - production launch for choralpoint.com
 
 Do not mark any of these sprints `done` until Cursor has implemented the code and build/test validation is complete. Do not mark them `approved` until you review the work.
 

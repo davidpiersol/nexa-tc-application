@@ -29,7 +29,7 @@ function record(area: string, name: string, ok: boolean, detail?: string) {
   rows.push({ area, name, ok, detail });
 }
 
-async function login(email: string, password: string): Promise<CookieJar> {
+async function login(email: string, password: string, ip = "127.0.0.1"): Promise<CookieJar> {
   const jar = new CookieJar();
   const csrf = await fetchCsrfAndJar(BASE, jar);
   const loginRes = await fetch(`${BASE}/api/auth/login`, {
@@ -39,6 +39,7 @@ async function login(email: string, password: string): Promise<CookieJar> {
       "Content-Type": "application/json",
       Cookie: jar.header(),
       "x-csrf-token": csrf,
+      "x-forwarded-for": ip,
     },
     body: JSON.stringify({ email, password }),
   });
@@ -94,7 +95,7 @@ async function main() {
   // Auth
   // -------------------------------------------------------------------------
   try {
-    const jar = await login(UAT_USERS.tc.email, UAT_PASSWORD);
+    const jar = await login(UAT_USERS.tc.email, UAT_PASSWORD, "203.0.113.10");
     const me = await fetch(`${BASE}/api/transactions`, {
       headers: { Cookie: jar.header() },
     });
@@ -116,7 +117,7 @@ async function main() {
   ];
   for (const key of roles) {
     try {
-      const jar = await login(UAT_USERS[key].email, UAT_PASSWORD);
+      const jar = await login(UAT_USERS[key].email, UAT_PASSWORD, `203.0.113.${20 + roles.indexOf(key)}`);
       const r = await fetch(`${BASE}/api/auth/role-redirect`, {
         redirect: "manual",
         headers: { Cookie: jar.header() },
@@ -126,12 +127,12 @@ async function main() {
       if (key === "g_admin") okPath = loc.includes("/admin/global");
       else if (key === "t_admin" || key === "admin") okPath = loc.includes("/admin/tenant");
       else if (key === "tc") okPath = loc.includes("/tc");
-      else if (key === "agent") okPath = loc.includes("/agent/");
+      else if (key === "agent") okPath = loc.includes("/agent");
       else if (key === "buyer") okPath = loc.includes("/buyer/");
       else if (key === "seller") okPath = loc.includes("/seller/");
       else if (key === "mortgage") okPath = loc.includes("/mortgage/");
       else if (key === "title") okPath = loc.includes("/title/");
-      const ok = r.status === 302 && okPath;
+      const ok = r.status >= 300 && r.status < 400 && okPath;
       record("auth", `role redirect: ${key}`, ok, `→ ${loc || "n/a"}`);
     } catch (e) {
       record("auth", `role redirect: ${key}`, false, String(e));
@@ -139,7 +140,7 @@ async function main() {
   }
 
   try {
-    const jar = await login(UAT_USERS.buyer.email, UAT_PASSWORD);
+    const jar = await login(UAT_USERS.buyer.email, UAT_PASSWORD, "203.0.113.40");
     const r = await fetch(`${BASE}/tc`, {
       redirect: "manual",
       headers: { Cookie: jar.header() },
@@ -150,7 +151,7 @@ async function main() {
   }
 
   try {
-    const jar = await login(UAT_USERS.tc.email, UAT_PASSWORD);
+    const jar = await login(UAT_USERS.tc.email, UAT_PASSWORD, "203.0.113.41");
     const r = await fetch(`${BASE}/buyer/${UAT_OTHER_TRANSACTION_ID}`, {
       redirect: "manual",
       headers: { Cookie: jar.header() },
@@ -174,6 +175,7 @@ async function main() {
         "Content-Type": "application/json",
         Cookie: jar.header(),
         "x-csrf-token": csrf,
+        "x-forwarded-for": "203.0.113.50",
       },
       body: JSON.stringify({ email: "nope@nexa.test", password: "wrong" }),
     });
@@ -199,6 +201,7 @@ async function main() {
           "Content-Type": "application/json",
           Cookie: jar.header(),
           "x-csrf-token": csrf,
+          "x-forwarded-for": "203.0.113.250",
         },
         body: JSON.stringify({ email: "ratelimit@nexa.test", password: "bad-password-xx" }),
       });
@@ -216,7 +219,7 @@ async function main() {
   // Data isolation
   // -------------------------------------------------------------------------
   try {
-    const jarTc = await login(UAT_USERS.tc.email, UAT_PASSWORD);
+    const jarTc = await login(UAT_USERS.tc.email, UAT_PASSWORD, "203.0.113.60");
     const r = await fetch(`${BASE}/api/transactions`, { headers: { Cookie: jarTc.header() } });
     const j = (await r.json()) as { transactions?: unknown[] };
     const ids = j.transactions ?? [];
@@ -227,7 +230,7 @@ async function main() {
       `${ids.length} rows`,
     );
 
-    const jarBuyer = await login(UAT_USERS.buyer.email, UAT_PASSWORD);
+    const jarBuyer = await login(UAT_USERS.buyer.email, UAT_PASSWORD, "203.0.113.61");
     const rb = await fetch(`${BASE}/api/transactions`, {
       headers: { Cookie: jarBuyer.header() },
     });
@@ -244,7 +247,7 @@ async function main() {
   }
 
   try {
-    const jar = await login(UAT_USERS.mortgage.email, UAT_PASSWORD);
+    const jar = await login(UAT_USERS.mortgage.email, UAT_PASSWORD, "203.0.113.62");
     const r = await fetch(`${BASE}/api/documents/${seed.isoDocumentId}`, {
       headers: { Cookie: jar.header() },
     });

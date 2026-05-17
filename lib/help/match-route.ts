@@ -52,12 +52,36 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
     test: (p) => p === "/tc/brokers" || p.startsWith("/tc/brokers/"),
   },
   {
+    slug: "tc-mls-entry",
+    test: (p) => p === "/tc/mls-entry" || p.startsWith("/tc/mls-entry/"),
+  },
+  {
+    slug: "tc-billing-and-invoices",
+    test: (p) => p === "/tc/billing" || p.startsWith("/tc/billing/"),
+  },
+  {
+    slug: "tc-reports",
+    test: (p) => p === "/tc/reports" || p.startsWith("/tc/reports/"),
+  },
+  {
+    slug: "tc-crm",
+    test: (p) => p === "/tc/crm" || p.startsWith("/tc/crm/"),
+  },
+  {
     slug: "tc-deadlines-and-tasks",
     test: (p) => p === "/tc/settings" || p.startsWith("/tc/settings/"),
   },
   {
     slug: "tc-dashboard-overview",
     test: (p) => p === "/tc" || p === "/tc/" || p === "/tc/profile" || p === "/tc/archive",
+  },
+  {
+    slug: "agent-dashboard-overview",
+    test: (p) => p === "/agent" || p === "/agent/profile",
+  },
+  {
+    slug: "agent-crm",
+    test: (p) => p === "/agent/crm" || p.startsWith("/agent/crm/"),
   },
   {
     slug: "agent-uploading-documents",
@@ -102,6 +126,10 @@ const ROUTE_RULES: { slug: string; test: (pathname: string) => boolean }[] = [
   {
     slug: "global-admin-tenants",
     test: (p) => p === "/admin/global/tenants" || p.startsWith("/admin/global/tenants/"),
+  },
+  {
+    slug: "tenant-admin-user-management",
+    test: (p) => p === "/admin/tenant/users" || p.startsWith("/admin/tenant/users/"),
   },
   {
     slug: "global-admin-overview",

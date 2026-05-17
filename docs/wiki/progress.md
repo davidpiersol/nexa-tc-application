@@ -2,7 +2,7 @@
 
 **Read next:** [`docs/session-next.md`](../../docs/session-next.md) — handoff, permissions checklist, **NEXT STEP**.
 
-**Last updated:** 2026-05-09  
+**Last updated:** 2026-05-17  
 **Guide:** [`nexa_build_guide.md`](../../nexa_build_guide.md)
 
 Update this file whenever you **finish a step**, **move to a new step**, or need to **correct** status. The AI assistant should treat this file as the source of truth for “where we are” in the build guide.
@@ -13,10 +13,10 @@ Update this file whenever you **finish a step**, **move to a new step**, or need
 
 | | |
 |--|--|
-| **Current position** | **User review application 80** |
-| **Completed** | Sprint work through **`v4.4.2`** is in place, including TC intake enhancements, buyer documents/messages routes, hosted auth/API hardening, and role-based access guard fixes (see [`CHANGELOG.md`](../../CHANGELOG.md)). |
-| **Next** | **Final Sprint — Client Required/Optional Mapping** from [`first-pass-changes.md`](../../first-pass-changes.md): review intake fields with client, mark required/optional by packet + stage, and capture approval. |
-| **After that** | Resume **Chapter 4 · Step 11** (external API integrations) after client mapping decisions are finalized. |
+| **Current position** | **UAT remediation active at P39 — tenant lifecycle management, with P40 reserved for multi-role users** |
+| **Completed** | Core workflow sprints, UAT intake, onboarding, and password recovery are complete through **`v4.38.0-uat`**. Only three UAT items remain open: tenant lifecycle management, save-to-list retest, and multi-role users. |
+| **Next** | Complete **P39** tenant lifecycle management, then **P40** multi-role users with explicit role switching and version checkpoints between sprints. |
+| **After that** | After UAT remediation, continue with the deferred future roadmap sprints now shifted to **P41-P43**. |
 
 ---
 
@@ -77,8 +77,8 @@ Per the guide: Next.js 14 App Router scaffold (TypeScript strict), folder layout
 
 | Step | Title | Status |
 |------|--------|--------|
-| 14 | Build the in-app help panel | Not started |
-| 15 | Write all help articles — every role | Not started |
+| 14 | Build the in-app help panel | **Complete** |
+| 15 | Write all help articles — every role | **In progress** — original role coverage exists; new feature help is being added as roadmap surfaces ship |
 
 ---
 
@@ -88,6 +88,7 @@ Brief notes per session (append newest at top).
 
 | Date | Notes |
 |------|--------|
+| 2026-05-14 | Added help coverage for MLS entry, billing/invoices, reports, TC CRM, and agent CRM; refreshed wiki status for current Choral Point roadmap work. |
 | 2026-05-02 | **QA pass:** Vitest + `verify` + smoke script + Supabase empty-env fix + CI workflow + [`docs/session-next.md`](../../docs/session-next.md) — **`v2.1.1`**. |
 | 2026-05-02 | **Step 10 done:** Auth/MFA/middleware/CSRF/invites/security headers — **`v2.1.0`**. |
 | 2026-05-02 | **RLS follow-up:** Agent **`transactions` INSERT** policy + **`email_ingestion.from_email`** index — migration **`20260503120000_*`** · **`v2.0.2`**. |

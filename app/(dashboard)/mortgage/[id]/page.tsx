@@ -1,14 +1,21 @@
-import { Badge } from "@/components/ui/badge";
+import { notFound } from "next/navigation";
 import { ProgressRing } from "@/components/graphics/ProgressRing";
+import { Badge } from "@/components/ui/badge";
+import { getClientPartyTransactionOverview } from "@/lib/queries/client-party-overview";
+import {
+  formatTransactionNextLabel,
+  formatTransactionStatusLabel,
+} from "@/lib/queries/tc-transactions-list";
 
 type Props = { params: { id: string } };
 
 /**
- * Figma: **Mortgage Dashboard/Default** → `/mortgage/[id]`
- * TODO: LOS milestones + conditions.
+ * Mortgage partner workspace — milestones are illustrative until LOS wiring lands.
  */
-export default function MortgageDashboardPage({ params }: Props) {
-  /* TODO: GET /api/mortgage/:id/progress */
+export default async function MortgageDashboardPage({ params }: Props) {
+  const overview = await getClientPartyTransactionOverview(params.id);
+  if (!overview) notFound();
+
   const milestones = [
     { id: "m1", label: "Application", done: true },
     { id: "m2", label: "Processing", done: true },
@@ -23,11 +30,29 @@ export default function MortgageDashboardPage({ params }: Props) {
       <div className="flex flex-1 flex-col gap-6">
         <header>
           <p className="font-sans text-ui-label uppercase tracking-wide text-neutral-600">
-            Loan file · {params.id}
+            Mortgage partner workspace
           </p>
           <h2 className="mt-2 font-display text-heading-lg text-brand-navy">
             Loan milestones
           </h2>
+          <p className="mt-3 max-w-2xl font-prose text-prose-body text-neutral-900">
+            {overview.property_address?.trim() ||
+              "Property details publish here once shared by the coordinator."}{" "}
+            Status:{" "}
+            <span className="font-semibold text-brand-navy">
+              {formatTransactionStatusLabel(overview.status)}
+            </span>
+            {overview.close_date ? (
+              <>
+                {" "}
+                · Scheduled close {formatTransactionNextLabel(overview.close_date)}
+              </>
+            ) : null}
+          </p>
+          <p className="mt-3 font-sans text-sm text-neutral-600">
+            Documents and messaging use your coordinator-assigned workspace links when those routes are
+            enabled for your role.
+          </p>
         </header>
         <ul className="flex flex-col gap-3">
           {milestones.map((m) => (
@@ -47,8 +72,7 @@ export default function MortgageDashboardPage({ params }: Props) {
         <p className="font-display text-sm text-brand-navy">File progress</p>
         <ProgressRing value={pct} size={112} strokeWidth={9} />
         <p className="text-center font-sans text-sm text-neutral-600">
-          {/* TODO: explain score */}
-          {pct}% documentation complete
+          Illustrative — {pct}% documentation complete
         </p>
       </aside>
     </div>
